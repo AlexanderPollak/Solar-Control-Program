@@ -13,13 +13,27 @@
 from pyModbusTCP.client import ModbusClient
 import time
 
+
+from ModbusWrapperClient import ModbusWrapperClient
+
+
+
 SERVER_HOST = "192.168.0.210"
 SERVER_PORT = 502
-SERVER_UNIT = 201
+
+
+mb = ModbusWrapperClient(10,20,5)
+
+mb.openConnectionTCP(SERVER_HOST,SERVER_PORT)
+
+mb.readRegisters(0,10)
+
+
+
+
+
 
 c = ModbusClient()
-
-
 
 # uncomment this line to see debug message
 c.debug(True)
@@ -27,7 +41,6 @@ c.debug(True)
 # define modbus server host, port
 c.host(SERVER_HOST)
 c.port(SERVER_PORT)
-c.unit_id(SERVER_UNIT)
 
 while True:
     # open or reconnect TCP to server
@@ -38,7 +51,7 @@ while True:
     # if open() is ok, read register (modbus function 0x03)
     if c.is_open():
         # read 10 registers at address 0, store result in regs list
-        regs = c.read_holding_registers(0, 10)
+        regs = c.read_holding_registers(10, 16)
         # if success display registers
         if regs:
             print("reg ad #0 to 9: "+str(regs))
