@@ -44,6 +44,7 @@ class ModbusWrapperClient():
 		self.client = ModbusTcpClient(modbusHost, modbusPort)
 		self.tryReconnect()
 
+
 	def closeConnection(self):
 		if self.isConnected is True:
 			self.client.close()
