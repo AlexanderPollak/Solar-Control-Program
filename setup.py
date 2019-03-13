@@ -9,7 +9,8 @@ setup(
     install_requires=[
         'matplotlib',
         'numpy',
-        'pyModbusTCP'
+        'pyModbusTCP',
+        'serial'
     ],
     author='Dr. Alexander Pollak',
     author_email='Alexander.Pollak.87@gmail.com',
