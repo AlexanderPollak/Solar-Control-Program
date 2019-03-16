@@ -382,7 +382,8 @@ class US2000B(object):
     def log_SoC(self, path='../Log/',n_modules=1):
 
         filename = str(path) + '/' + str(datetime.date.today()) + '.csv'
-        csvfile = open(filename, mode='w+')
+        tmp_check_file = os.path.isfile(filename)
+        csvfile = open(filename, mode='a')
         name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
                 'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
                 'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
@@ -393,14 +394,45 @@ class US2000B(object):
                 'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
                 ]
         data_writer = csv.DictWriter(csvfile, fieldnames=name)
-        if not os.path.isfile(filename):
+        if not tmp_check_file:
             data_writer.writeheader()
 
-        tmp_SoC =  US2000B.read_SoC(n_modules)
-        data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),'SoC_1':tmp_SoC[0,1]})
+        tmp_SoC = self.read_SoC(n_modules)
+
+        if n_modules == 1:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
+                                  'SoC_1':tmp_SoC[0,0]})
+        if n_modules == 2:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
+                                  'SoC_1':tmp_SoC[0,0],'SoC_2':tmp_SoC[1,0]})
+        if n_modules == 3:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0]})
+        if n_modules == 4:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0]})
+
+        if n_modules == 5:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
+                                  'SoC_5': tmp_SoC[4, 0]})
+        if n_modules == 6:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
+                                  'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0]})
+        if n_modules == 7:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
+                                  'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0],'SoC_7': tmp_SoC[6, 0]})
+        if n_modules == 8:
+            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
+                                  'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0],'SoC_7': tmp_SoC[6, 0],'SoC_8': tmp_SoC[7, 0]})
+        else:
+            return False
+
         csvfile.flush()
-
-        return csvfile.close()
-
+        csvfile.close()
+        return True
 
 
