@@ -29,31 +29,22 @@ class US2000B(object):
     """This class implements the serial connection functions """
     def __init__(self):
         ''' Constructor for this class. '''
-        #self.__port = 0
-        #try:
-            #tmp = open('tmp.txt', 'r')
-            #self.__comp_time_disabled = float(tmp.read())
-            #tmp.close()
-            # Store configuration file values
-        #except:
-            #Keep preset values
-            #self.__comp_time_disabled=0
+        self.__port = 0
+
 
     def __del__(self):
         ''' Destructor for this class. '''
-        #if self.__port !=0:
-            #self.close()
+        if self.__port !=0:
+            self.close()
+
+
 
 
     def initialise(self, port='/dev/ttyUSB0'):
         """Initialises the console communication fo the US2000B BMS
-
         Args:
             port: path to serial port. Default='/dev/ttyUSB0'
-
-        Returns: Boolean value True or False
-
-        """
+        Returns: Boolean value True or False"""
         temp_port = serial.Serial(port,1200, timeout=0.05)
         temp_port.write('~20014682C0048520FCC3\r')
         time.sleep(5)
@@ -62,11 +53,6 @@ class US2000B(object):
         temp_receive = repr(temp_port.read(1000))
         temp_port.close()
         return temp_receive == str("'\\n\\rpylon>\\n\\rpylon>'")
-
-
-
-
-
 
     def open(self, port='/dev/ttyUSB0', baud=115200):
         """Open serial port for communication
@@ -88,17 +74,19 @@ class US2000B(object):
 
         """
         self.__port.close()
-        #self.sensor.__del__()
-        #self.error.__del__()
-        #self.__comp_time_disabled = self.compressor.__del__()
-        #try:
-        #    tmp = open('tmp.txt', 'w+')
-        #    tmp.write(str(self.__comp_time_disabled))
-        #    tmp.close()
-            # Store configuration file values
-        #except:
-        #    print'ERROR in saving the temp file!'
         return not self.__port.is_open
+
+    def is_connected(self):
+        """This function checks if the connection to the BMS is established
+        and if the BMS responds to readout commands.
+
+        Returns: Boolean value True or False
+
+        """
+        self.__port.write('\r\n')
+        temp_receive = repr(self.__port.read(1000))
+        return temp_receive == str("'\\n\\rpylon>\\n\\rpylon>'")
+
 
     def read_SOC(self,n_modules=1):
         """This function returns the State of Charge value of the
@@ -106,7 +94,7 @@ class US2000B(object):
         Args:
             n_modules: number of modules to be read. Default=1
 
-        Returns: numpy array with the length of n_modules containing the SOC.
+        Returns: list of length n_modules containing numpy arrays with the [SOC] dtype=float64.
 
         """
         try:
@@ -179,8 +167,8 @@ class US2000B(object):
         Args:
             n_modules: number of modules to be read. Default=1
 
-        Returns: numpy array with the length of n_modules containing the:
-        [SoC, Voltage, Current, Temperature].
+        Returns: list of length n_modules containing numpy arrays with the:
+        [SoC, Voltage, Current, Temperature] dtype=float64.
 
         """
         try:
@@ -390,3 +378,6 @@ class US2000B(object):
                 return BMS_array
         except:
             print"ERROR no communication possible, check if the connection has been opened with open()"
+
+
+
