@@ -22,6 +22,25 @@ def test_initialise():
     assert console == True
 
 
+def test_read_SOC():
+    """Checks if the initialisation of the terminal was
+    successful."""
+
+    BMS = US2000B()
+
+    console =BMS.open()
+
+    print console
+
+    print BMS.read_SOC(1)
+
+
+
+    # Test for successful initialisation of the connection.
+    assert console == True
+
+
+
 if __name__ == "__main__":
 
     test_initialise()
