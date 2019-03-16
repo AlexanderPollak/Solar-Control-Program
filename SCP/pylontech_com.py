@@ -382,10 +382,8 @@ class US2000B(object):
     def log_SoC(self, path='../Log/',n_modules=1):
 
         filename = str(path) + '/' + str(datetime.date.today()) + '.csv'
-        date = str(datetime.date.today())
-        if not os.path.isfile(filename):
-            csvfile = open(filename, mode='w+')
-            name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
+        csvfile = open(filename, mode='w+')
+        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
                 'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
                 'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
                 'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4',
@@ -394,10 +392,14 @@ class US2000B(object):
                 'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7',
                 'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
                 ]
-            data_writer = csv.DictWriter(csvfile, fieldnames=name)
+        data_writer = csv.DictWriter(csvfile, fieldnames=name)
+        if not os.path.isfile(filename):
             data_writer.writeheader()
 
-        tmp_Soc =  US2000B.read_SoC(n_modules)
+        tmp_SoC =  US2000B.read_SoC(n_modules)
+        data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),'SoC_1':tmp_SoC[0,1]})
+        csvfile.flush()
+
 
 
 
