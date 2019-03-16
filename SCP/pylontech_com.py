@@ -19,7 +19,7 @@ communicate with the Pylontech US2000B Plus BMS.
 
 """
 
-import serial,time,re
+import serial,time,re,datetime,csv,os
 import numpy as np
 
 
@@ -88,7 +88,7 @@ class US2000B(object):
         return temp_receive == str("'\\n\\rpylon>\\n\\rpylon>'")
 
 
-    def read_SOC(self,n_modules=1):
+    def read_SoC(self,n_modules=1):
         """This function returns the State of Charge value of the
         Pylontech Batteries.
         Args:
@@ -98,66 +98,66 @@ class US2000B(object):
 
         """
         try:
-            SOC_array = np.zeros((n_modules, 1))
+            SoC_array = np.zeros((n_modules, 1))
             self.__port.write('pwr\r')
             time.sleep(0.5)
             rec_str = self.__port.read(2200)
             rec_int = re.findall(r'\d+', rec_str)
             #Writes values into SOC_array and returns it.
             if n_modules == 1:
-                SOC_array[0,0] = str(rec_int[8])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                return SoC_array
             if n_modules == 2:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                return SoC_array
             if n_modules == 3:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                SOC_array[2,0] = str(rec_int[38])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                SoC_array[2,0] = str(rec_int[38])
+                return SoC_array
             if n_modules == 4:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                SOC_array[2,0] = str(rec_int[38])
-                SOC_array[3,0] = str(rec_int[53])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                SoC_array[2,0] = str(rec_int[38])
+                SoC_array[3,0] = str(rec_int[53])
+                return SoC_array
             if n_modules == 5:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                SOC_array[2,0] = str(rec_int[38])
-                SOC_array[3,0] = str(rec_int[53])
-                SOC_array[4,0] = str(rec_int[68])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                SoC_array[2,0] = str(rec_int[38])
+                SoC_array[3,0] = str(rec_int[53])
+                SoC_array[4,0] = str(rec_int[68])
+                return SoC_array
             if n_modules == 6:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                SOC_array[2,0] = str(rec_int[38])
-                SOC_array[3,0] = str(rec_int[53])
-                SOC_array[4,0] = str(rec_int[68])
-                SOC_array[5,0] = str(rec_int[83])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                SoC_array[2,0] = str(rec_int[38])
+                SoC_array[3,0] = str(rec_int[53])
+                SoC_array[4,0] = str(rec_int[68])
+                SoC_array[5,0] = str(rec_int[83])
+                return SoC_array
             if n_modules == 7:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                SOC_array[2,0] = str(rec_int[38])
-                SOC_array[3,0] = str(rec_int[53])
-                SOC_array[4,0] = str(rec_int[68])
-                SOC_array[5,0] = str(rec_int[83])
-                SOC_array[6,0] = str(rec_int[98])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                SoC_array[2,0] = str(rec_int[38])
+                SoC_array[3,0] = str(rec_int[53])
+                SoC_array[4,0] = str(rec_int[68])
+                SoC_array[5,0] = str(rec_int[83])
+                SoC_array[6,0] = str(rec_int[98])
+                return SoC_array
             if n_modules == 8:
-                SOC_array[0,0] = str(rec_int[8])
-                SOC_array[1,0] = str(rec_int[23])
-                SOC_array[2,0] = str(rec_int[38])
-                SOC_array[3,0] = str(rec_int[53])
-                SOC_array[4,0] = str(rec_int[68])
-                SOC_array[5,0] = str(rec_int[83])
-                SOC_array[6,0] = str(rec_int[98])
-                SOC_array[7,0] = str(rec_int[113])
-                return SOC_array
+                SoC_array[0,0] = str(rec_int[8])
+                SoC_array[1,0] = str(rec_int[23])
+                SoC_array[2,0] = str(rec_int[38])
+                SoC_array[3,0] = str(rec_int[53])
+                SoC_array[4,0] = str(rec_int[68])
+                SoC_array[5,0] = str(rec_int[83])
+                SoC_array[6,0] = str(rec_int[98])
+                SoC_array[7,0] = str(rec_int[113])
+                return SoC_array
             else:
-                return SOC_array
+                return SoC_array
         except:
             print"ERROR no communication possible, check if the connection has been opened with open()"
 
@@ -378,6 +378,27 @@ class US2000B(object):
                 return BMS_array
         except:
             print"ERROR no communication possible, check if the connection has been opened with open()"
+
+    def log_SoC(self, path='../Log/',n_modules=1):
+
+        filename = str(path) + '/' + str(datetime.date.today()) + '.csv'
+        date = str(datetime.date.today())
+        if not os.path.isfile(filename):
+            csvfile = open(filename, mode='w+')
+            name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
+                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
+                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
+                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4',
+                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5',
+                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6',
+                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7',
+                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
+                ]
+            data_writer = csv.DictWriter(csvfile, fieldnames=name)
+            data_writer.writeheader()
+
+        tmp_Soc =  US2000B.read_SoC(n_modules)
+
 
 
 
