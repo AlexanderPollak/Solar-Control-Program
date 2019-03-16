@@ -400,7 +400,7 @@ class US2000B(object):
         data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),'SoC_1':tmp_SoC[0,1]})
         csvfile.flush()
 
-
+        return csvfile.close()
 
 
 
