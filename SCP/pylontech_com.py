@@ -23,7 +23,7 @@ import serial,time,re,datetime,csv,os
 import numpy as np
 
 
-# EMBEDDING CIRCUIT CLASS ----------------------------------------------------
+# EMBEDDING US2000B CLASS ----------------------------------------------------
 
 class US2000B(object):
     """This class implements the serial connection functions """

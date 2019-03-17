@@ -62,4 +62,4 @@ def test_log_SOC():
 
 if __name__ == "__main__":
 
-    test_initialise()
+    test_is_connected()

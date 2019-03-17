@@ -12,7 +12,7 @@
 
 from pyModbusTCP.client import ModbusClient
 from pymodbus.payload import BinaryPayloadDecoder, BinaryPayloadBuilder
-import time
+import time, struct
 
 
 def encode_field(self, value, mb_type='unit16'):
@@ -46,7 +46,7 @@ def encode_field(self, value, mb_type='unit16'):
     return builder.build()
 
 
-def decode(self, raw, size, mb_type, mb_funcall=3):
+def decode(self, raw, size, mb_type, mb_funcall=2):
     print('decode param (raw=%s, size=%s, mb_type=%s, mb_funcall=%s)' % (raw, size, mb_type, mb_funcall))
     if mb_funcall == 1:
         # Read Coil Status (FC=01)
@@ -149,10 +149,16 @@ if not c.is_open():
 # if open() is ok, read register (modbus function 0x03)
 if c.is_open():
     # read 10 registers at address 0, store result in regs list
-    regs = c.read_holding_registers(0, 10)
+    regs = c.read_holding_registers(0x001E, 7)
     # if success display registers
+
+
+
     if regs:
-        print(encode_field(regs(0),'str'))
-        print("reg ad #0 to 9: "+str(regs))
+        decoder = BinaryPayloadDecoder.fromRegisters(regs)
+        result = decoder.decode_string(14)
+
+        print result
+
 
     # sleep 2s before next polling
