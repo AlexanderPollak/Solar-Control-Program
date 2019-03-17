@@ -80,14 +80,14 @@ from  SCP.conext_com import *
 #    xw.close()
 
 
-#def test_read_Inverter_Status():
-#    """Reads the Low Battery Cut Out Voltage and Delay from the XW+"""
-#
-#    xw = XW()
-#    xw.open()
-#    tmp = xw.read_Inverter_Status()
-#    print tmp
-#    xw.close()
+def test_read_Inverter_Status():
+    """Reads the Low Battery Cut Out Voltage and Delay from the XW+"""
+
+    xw = XW()
+    xw.open()
+    tmp = xw.read_Inverter_Status()
+    print tmp
+    xw.close()
 
 #def test_Low_Battery_Cut_Out_Delay():
 #    """Reads the Low Battery Cut Out Voltage and Delay from the XW+"""
@@ -98,12 +98,22 @@ from  SCP.conext_com import *
 #    print tmp
 #    xw.close()
 
-def test_write_Low_Battery_Cut_Out():
+#def test_write_Low_Battery_Cut_Out():
+#    """Reads the Low Battery Cut Out Voltage and Delay from the XW+"""
+#
+#    xw = XW()
+#    xw.open()
+#    tmp = xw.write_Low_Battery_Cut_Out(47)
+#    print tmp
+#    xw.close()
+
+
+def test_read_Hysteresis():
     """Reads the Low Battery Cut Out Voltage and Delay from the XW+"""
 
     xw = XW()
     xw.open()
-    tmp = xw.write_Low_Battery_Cut_Out(47)
+    tmp = xw.read_Hysteresis()
     print tmp
     xw.close()
 
@@ -115,4 +125,5 @@ if __name__ == "__main__":
     #test_read_Grid_Voltage()
     #test_read_Grid_Frequency()
     #test_read_Inverter_Status()
-    test_write_Low_Battery_Cut_Out()
+    #test_write_Low_Battery_Cut_Out()
+    test_read_Hysteresis()

@@ -294,33 +294,33 @@ class XW():
         result = (decoder.decode_16bit_uint())
         if result == 1024:
             return str('Invert')
-        if result == 1025:
+        elif result == 1025:
             return str('AC Pass Through')
-        if result == 1026:
+        elif result == 1026:
             return str('APS Only')
-        if result == 1027:
+        elif result == 1027:
             return str('Load Sense')
-        if result == 1028:
+        elif result == 1028:
             return str('Inverter Disabled')
-        if result == 1029:
+        elif result == 1029:
             return str('Load Sense Ready')
-        if result == 1030:
+        elif result == 1030:
             return str('Engaging Inverter')
-        if result == 1031:
+        elif result == 1031:
             return str('Invert Fault')
-        if result == 1032:
+        elif result == 1032:
             return str('Inverter Standby')
-        if result == 1033:
+        elif result == 1033:
             return str('Grid-Tied')
-        if result == 1034:
+        elif result == 1034:
             return str('Grid Support')
-        if result == 1035:
+        elif result == 1035:
             return str('Gen Support')
-        if result == 1036:
+        elif result == 1036:
             return str('Sell-to-Grid')
-        if result == 1037:
+        elif result == 1037:
             return str('Load Shaving')
-        if result == 1038:
+        elif result == 1038:
             return str('Grid Frequency Stabilization')
         else:
             return str('UNKNOWN STATE!')
@@ -386,9 +386,9 @@ class XW():
         Returns: str {Load Shave state}
 
         """
-        if status =='enable'or status == 'Enable' or status == 'ENABLE':
+        if status == 'enable' or status == 'Enable' or status == 'ENABLE':
             self.__port.write_single_register(0x01B2, 1)
-        if status =='disable'or status == 'Disable' or status == 'DISABLE':
+        elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
             self.__port.write_single_register(0x01B2, 0)
         else:
             print ('ERROR: Input Parameter must be: "enable" or "disable"')
@@ -400,3 +400,16 @@ class XW():
             return str('Disable')
         if result == 1:
             return str('Enable')
+
+
+    def read_Hysteresis(self):
+        """This function reads the Low_Battery_Cut_Out Voltage from the XW+ inverter and returns it in Volt.
+
+        Returns: float {Low Battery Cut Out in Volt}
+
+        """
+
+        bitstream = self.__port.read_holding_registers(0x01DD, 1)  # 0x017C Low Battery Cut Out uint32 r/w
+        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
+        result = (decoder.decode_16bit_uint()) / 100.0
+        return result
