@@ -21,6 +21,7 @@ communicate with the Pylontech US2000B Plus BMS.
 
 import serial,time,re,datetime,csv,os
 import numpy as np
+import socket
 
 
 # EMBEDDING US2000B CLASS ----------------------------------------------------
@@ -513,3 +514,304 @@ class US2000B(object):
         csvfile.flush()
         csvfile.close()
         return True
+
+
+    def socket_SoC(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT = 5005):
+        """This function sends the State of Charge value of the
+        Pylontech Batteries to a dedicated socket via UDP protocol.
+        Args:
+            N_MODULES: number of modules to be read. Default=1
+            UDP_IP: udp ip address. Default="127.0.0.1"
+            UDP_PORT: port to which the packets should be send to. Default=5005
+        Returns:
+
+        """
+        sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+
+        try:
+            while True:
+                self.__port.write('pwr\r')
+                time.sleep(0.5)
+                rec_str = self.__port.read(2200)
+                rec_int = re.findall(r'\d+', rec_str)
+                #Writes values into SOC_array and returns it.
+                if N_MODULES == 1:
+                    MESSAGE = "SoC"+"\t"+"N=1"+"\t"+"A="+str(rec_int[8])
+                    sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+
+
+                if N_MODULES == 2:
+                    str(rec_int[8])
+                    str(rec_int[23])
+
+                if N_MODULES == 3:
+                    str(rec_int[8])
+                    str(rec_int[23])
+                    str(rec_int[38])
+
+                if N_MODULES == 4:
+                    str(rec_int[8])
+                    str(rec_int[23])
+                    str(rec_int[38])
+                    str(rec_int[53])
+
+                if N_MODULES == 5:
+                    str(rec_int[8])
+                    str(rec_int[23])
+                    str(rec_int[38])
+                    str(rec_int[53])
+                    str(rec_int[68])
+
+                if N_MODULES == 6:
+                    str(rec_int[8])
+                    str(rec_int[23])
+                    str(rec_int[38])
+                    str(rec_int[53])
+                    str(rec_int[68])
+                    str(rec_int[83])
+
+                if N_MODULES == 7:
+                    str(rec_int[8])
+                    str(rec_int[23])
+                    str(rec_int[38])
+                    str(rec_int[53])
+                    str(rec_int[68])
+                    str(rec_int[83])
+                    str(rec_int[98])
+
+            if N_MODULES == 8:
+                    str(rec_int[8])
+                    str(rec_int[23])
+                    str(rec_int[38])
+                    str(rec_int[53])
+                    str(rec_int[68])
+                    str(rec_int[83])
+                    str(rec_int[98])
+                    str(rec_int[113])
+
+            else:
+                print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                return
+        except KeyboardInterrupt:
+                return
+        except Exception:
+            print"ERROR no communication possible, check if the connection has been opened with open()"
+            return
+
+    def socket_BMS(self,n_modules=1):
+        """This function returns the values of the: SoC, Voltage, Current, and Temperature
+        provided by the Pylontech BMS.
+        Args:
+            n_modules: number of modules to be read. Default=1
+
+        Returns: list of length n_modules containing numpy arrays with the:
+        [SoC, Voltage, Current, Temperature] dtype=float64.
+
+        """
+        try:
+            BMS_array = np.zeros((n_modules, 4))
+            self.__port.write('pwr\r')
+            time.sleep(0.5)
+            rec_str = self.__port.read(2200)
+            rec_int = re.findall(r'\d+', rec_str)
+            #Writes values into BMS_array and returns it.
+            if n_modules == 1:
+                BMS_array[0,0] = str(rec_int[8])#SOC
+                BMS_array[0,1] = str(rec_int[1])#Voltage
+                BMS_array[0,2] = str(rec_int[2])#Current
+                BMS_array[0,3] = str(rec_int[3])#Temperature
+                return BMS_array
+
+            if n_modules == 2:
+                BMS_array[0,0] = str(rec_int[8])#SOC
+                BMS_array[0,1] = str(rec_int[1])#Voltage
+                BMS_array[0,2] = str(rec_int[2])#Current
+                BMS_array[0,3] = str(rec_int[3])#Temperature
+
+                BMS_array[1,0] = str(rec_int[23])#SOC
+                BMS_array[1,1] = str(rec_int[16])#Voltage
+                BMS_array[1,2] = str(rec_int[17])#Current
+                BMS_array[1,3] = str(rec_int[18])#Temperature
+                return BMS_array
+
+            if n_modules == 3:
+                BMS_array[0, 0] = str(rec_int[8])  # SOC
+                BMS_array[0, 1] = str(rec_int[1])  # Voltage
+                BMS_array[0, 2] = str(rec_int[2])  # Current
+                BMS_array[0, 3] = str(rec_int[3])  # Temperature
+
+                BMS_array[1, 0] = str(rec_int[23])  # SOC
+                BMS_array[1, 1] = str(rec_int[16])  # Voltage
+                BMS_array[1, 2] = str(rec_int[17])  # Current
+                BMS_array[1, 3] = str(rec_int[18])  # Temperature
+
+                BMS_array[2, 0] = str(rec_int[38])  # SOC
+                BMS_array[2, 1] = str(rec_int[31])  # Voltage
+                BMS_array[2, 2] = str(rec_int[32])  # Current
+                BMS_array[2, 3] = str(rec_int[33])  # Temperature
+                return BMS_array
+
+            if n_modules == 4:
+                BMS_array[0, 0] = str(rec_int[8])  # SOC
+                BMS_array[0, 1] = str(rec_int[1])  # Voltage
+                BMS_array[0, 2] = str(rec_int[2])  # Current
+                BMS_array[0, 3] = str(rec_int[3])  # Temperature
+
+                BMS_array[1, 0] = str(rec_int[23])  # SOC
+                BMS_array[1, 1] = str(rec_int[16])  # Voltage
+                BMS_array[1, 2] = str(rec_int[17])  # Current
+                BMS_array[1, 3] = str(rec_int[18])  # Temperature
+
+                BMS_array[2, 0] = str(rec_int[38])  # SOC
+                BMS_array[2, 1] = str(rec_int[31])  # Voltage
+                BMS_array[2, 2] = str(rec_int[32])  # Current
+                BMS_array[2, 3] = str(rec_int[33])  # Temperature
+
+                BMS_array[3, 0] = str(rec_int[53])  # SOC
+                BMS_array[3, 1] = str(rec_int[46])  # Voltage
+                BMS_array[3, 2] = str(rec_int[47])  # Current
+                BMS_array[3, 3] = str(rec_int[48])  # Temperature
+                return BMS_array
+
+            if n_modules == 5:
+                BMS_array[0, 0] = str(rec_int[8])  # SOC
+                BMS_array[0, 1] = str(rec_int[1])  # Voltage
+                BMS_array[0, 2] = str(rec_int[2])  # Current
+                BMS_array[0, 3] = str(rec_int[3])  # Temperature
+
+                BMS_array[1, 0] = str(rec_int[23])  # SOC
+                BMS_array[1, 1] = str(rec_int[16])  # Voltage
+                BMS_array[1, 2] = str(rec_int[17])  # Current
+                BMS_array[1, 3] = str(rec_int[18])  # Temperature
+
+                BMS_array[2, 0] = str(rec_int[38])  # SOC
+                BMS_array[2, 1] = str(rec_int[31])  # Voltage
+                BMS_array[2, 2] = str(rec_int[32])  # Current
+                BMS_array[2, 3] = str(rec_int[33])  # Temperature
+
+                BMS_array[3, 0] = str(rec_int[53])  # SOC
+                BMS_array[3, 1] = str(rec_int[46])  # Voltage
+                BMS_array[3, 2] = str(rec_int[47])  # Current
+                BMS_array[3, 3] = str(rec_int[48])  # Temperature
+
+                BMS_array[4, 0] = str(rec_int[68])  # SOC
+                BMS_array[4, 1] = str(rec_int[61])  # Voltage
+                BMS_array[4, 2] = str(rec_int[62])  # Current
+                BMS_array[4, 3] = str(rec_int[63])  # Temperature
+                return BMS_array
+
+            if n_modules == 6:
+                BMS_array[0, 0] = str(rec_int[8])  # SOC
+                BMS_array[0, 1] = str(rec_int[1])  # Voltage
+                BMS_array[0, 2] = str(rec_int[2])  # Current
+                BMS_array[0, 3] = str(rec_int[3])  # Temperature
+
+                BMS_array[1, 0] = str(rec_int[23])  # SOC
+                BMS_array[1, 1] = str(rec_int[16])  # Voltage
+                BMS_array[1, 2] = str(rec_int[17])  # Current
+                BMS_array[1, 3] = str(rec_int[18])  # Temperature
+
+                BMS_array[2, 0] = str(rec_int[38])  # SOC
+                BMS_array[2, 1] = str(rec_int[31])  # Voltage
+                BMS_array[2, 2] = str(rec_int[32])  # Current
+                BMS_array[2, 3] = str(rec_int[33])  # Temperature
+
+                BMS_array[3, 0] = str(rec_int[53])  # SOC
+                BMS_array[3, 1] = str(rec_int[46])  # Voltage
+                BMS_array[3, 2] = str(rec_int[47])  # Current
+                BMS_array[3, 3] = str(rec_int[48])  # Temperature
+
+                BMS_array[4, 0] = str(rec_int[68])  # SOC
+                BMS_array[4, 1] = str(rec_int[61])  # Voltage
+                BMS_array[4, 2] = str(rec_int[62])  # Current
+                BMS_array[4, 3] = str(rec_int[63])  # Temperature
+
+                BMS_array[5, 0] = str(rec_int[83])  # SOC
+                BMS_array[5, 1] = str(rec_int[76])  # Voltage
+                BMS_array[5, 2] = str(rec_int[77])  # Current
+                BMS_array[5, 3] = str(rec_int[78])  # Temperature
+                return BMS_array
+
+            if n_modules == 7:
+                BMS_array[0, 0] = str(rec_int[8])  # SOC
+                BMS_array[0, 1] = str(rec_int[1])  # Voltage
+                BMS_array[0, 2] = str(rec_int[2])  # Current
+                BMS_array[0, 3] = str(rec_int[3])  # Temperature
+
+                BMS_array[1, 0] = str(rec_int[23])  # SOC
+                BMS_array[1, 1] = str(rec_int[16])  # Voltage
+                BMS_array[1, 2] = str(rec_int[17])  # Current
+                BMS_array[1, 3] = str(rec_int[18])  # Temperature
+
+                BMS_array[2, 0] = str(rec_int[38])  # SOC
+                BMS_array[2, 1] = str(rec_int[31])  # Voltage
+                BMS_array[2, 2] = str(rec_int[32])  # Current
+                BMS_array[2, 3] = str(rec_int[33])  # Temperature
+
+                BMS_array[3, 0] = str(rec_int[53])  # SOC
+                BMS_array[3, 1] = str(rec_int[46])  # Voltage
+                BMS_array[3, 2] = str(rec_int[47])  # Current
+                BMS_array[3, 3] = str(rec_int[48])  # Temperature
+
+                BMS_array[4, 0] = str(rec_int[68])  # SOC
+                BMS_array[4, 1] = str(rec_int[61])  # Voltage
+                BMS_array[4, 2] = str(rec_int[62])  # Current
+                BMS_array[4, 3] = str(rec_int[63])  # Temperature
+
+                BMS_array[5, 0] = str(rec_int[83])  # SOC
+                BMS_array[5, 1] = str(rec_int[76])  # Voltage
+                BMS_array[5, 2] = str(rec_int[77])  # Current
+                BMS_array[5, 3] = str(rec_int[78])  # Temperature
+
+                BMS_array[6, 0] = str(rec_int[98])  # SOC
+                BMS_array[6, 1] = str(rec_int[91])  # Voltage
+                BMS_array[6, 2] = str(rec_int[92])  # Current
+                BMS_array[6, 3] = str(rec_int[93])  # Temperature
+                return BMS_array
+
+            if n_modules == 8:
+                BMS_array[0, 0] = str(rec_int[8])  # SOC
+                BMS_array[0, 1] = str(rec_int[1])  # Voltage
+                BMS_array[0, 2] = str(rec_int[2])  # Current
+                BMS_array[0, 3] = str(rec_int[3])  # Temperature
+
+                BMS_array[1, 0] = str(rec_int[23])  # SOC
+                BMS_array[1, 1] = str(rec_int[16])  # Voltage
+                BMS_array[1, 2] = str(rec_int[17])  # Current
+                BMS_array[1, 3] = str(rec_int[18])  # Temperature
+
+                BMS_array[2, 0] = str(rec_int[38])  # SOC
+                BMS_array[2, 1] = str(rec_int[31])  # Voltage
+                BMS_array[2, 2] = str(rec_int[32])  # Current
+                BMS_array[2, 3] = str(rec_int[33])  # Temperature
+
+                BMS_array[3, 0] = str(rec_int[53])  # SOC
+                BMS_array[3, 1] = str(rec_int[46])  # Voltage
+                BMS_array[3, 2] = str(rec_int[47])  # Current
+                BMS_array[3, 3] = str(rec_int[48])  # Temperature
+
+                BMS_array[4, 0] = str(rec_int[68])  # SOC
+                BMS_array[4, 1] = str(rec_int[61])  # Voltage
+                BMS_array[4, 2] = str(rec_int[62])  # Current
+                BMS_array[4, 3] = str(rec_int[63])  # Temperature
+
+                BMS_array[5, 0] = str(rec_int[83])  # SOC
+                BMS_array[5, 1] = str(rec_int[76])  # Voltage
+                BMS_array[5, 2] = str(rec_int[77])  # Current
+                BMS_array[5, 3] = str(rec_int[78])  # Temperature
+
+                BMS_array[6, 0] = str(rec_int[98])  # SOC
+                BMS_array[6, 1] = str(rec_int[91])  # Voltage
+                BMS_array[6, 2] = str(rec_int[92])  # Current
+                BMS_array[6, 3] = str(rec_int[93])  # Temperature
+
+                BMS_array[7, 0] = str(rec_int[113])  # SOC
+                BMS_array[7, 1] = str(rec_int[106])  # Voltage
+                BMS_array[7, 2] = str(rec_int[107])  # Current
+                BMS_array[7, 3] = str(rec_int[108])  # Temperature
+                return BMS_array
+
+            else:
+                return BMS_array
+        except:
+            print"ERROR no communication possible, check if the connection has been opened with open()"

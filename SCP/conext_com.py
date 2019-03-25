@@ -403,13 +403,32 @@ class XW():
 
 
     def read_Hysteresis(self):
-        """This function reads the Low_Battery_Cut_Out Voltage from the XW+ inverter and returns it in Volt.
+        """This function reads the Low_Battery_Cut_Out Hysteresis from the XW+ inverter and returns it in Volt.
+
+        Returns: float {Low Battery Cut Out Hysteresis in Volt}
+
+        """
+
+        bitstream = self.__port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
+        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
+        result = (decoder.decode_32bit_uint()) / 1000.0
+        return result
+
+    def write_Hysteresis(self, voltage=2.3):
+        """This function writes the Low Battery Cut Out Hysteresis to the XW+ inverter and returns the value in the register.
 
         Returns: float {Low Battery Cut Out in Volt}
 
         """
+        voltage = np.uint32(voltage * 1000)
+        Upper_limit = np.uint32(1000 * 5) #upper limit 5 Volt
+        Lower_limit = np.uint32(1000 * 1)#Lower limit 1 Volt
+        if voltage in range(Lower_limit, Upper_limit):
+            self.__port.write_multiple_registers(0x01F2,[voltage,00000])
+        else:
+            print ('ERROR: delay value out of range!')
 
-        bitstream = self.__port.read_holding_registers(0x01DD, 1)  # 0x017C Low Battery Cut Out uint32 r/w
+        bitstream = self.__port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint()) / 100.0
+        result = (decoder.decode_16bit_uint()) / 1000.0
         return result
