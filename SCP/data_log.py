@@ -24,7 +24,7 @@ import datetime,os,csv,socket
 import numpy as np
 
 
-class log():
+class Log():
         """This class implements the serial connection functions """
 
         def __init__(self):
