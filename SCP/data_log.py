@@ -20,7 +20,7 @@ log provided data via sockets to file.
 Each function checks if the socket has data in it and logs the values.
 
 """
-import datetime,os,csv,socket
+import datetime,time,os,csv,socket,re
 import numpy as np
 
 
@@ -50,90 +50,111 @@ class Log():
             sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)  # UDP
             sock.bind((UDP_IP, UDP_PORT))
 
+            #file handling
+            filename = str(PATH) + '/' + 'BMS_' + str(datetime.date.today()) + '.csv'
+            tmp_date = str(datetime.date.today())
+            tmp_check_file = os.path.isfile(filename)
+            csvfile = open(filename, mode='a')
+            name = ['Time', 'SoC_1', 'Voltage_1', 'Current_1', 'Temperature_1',
+                    'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
+                    'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
+                    'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4',
+                    'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5',
+                    'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6',
+                    'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7',
+                    'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
+                    ]
+            data_writer = csv.DictWriter(csvfile, fieldnames=name)
+            if not tmp_check_file:
+                data_writer.writeheader()
+
+
             try:
                 while True:
-                    # filename = str(PATH) + '/' + 'BMS_'+ str(datetime.date.today()) + '.csv'
-                    # tmp_check_file = os.path.isfile(filename)
-                    # csvfile = open(filename, mode='a')
-                    # name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
-                    #         'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
-                    #         'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
-                    #         'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4',
-                    #         'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5',
-                    #         'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6',
-                    #         'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7',
-                    #         'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
-                    #         ]
-                    # data_writer = csv.DictWriter(csvfile, fieldnames=name)
-                    # if not tmp_check_file:
-                    #     data_writer.writeheader()
+
+                    if tmp_date != str(datetime.date.today()): #Creates a new file with the new date.
+                        filename = str(PATH) + '/' + 'BMS_' + str(datetime.date.today()) + '.csv'
+                        tmp_date = str(datetime.date.today())
+                        csvfile = open(filename, mode='a')
+                        data_writer = csv.DictWriter(csvfile, fieldnames=name)
+                        data_writer.writeheader()
 
 
                     data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
-                    tmp_pointer = data.find('N=')
-                    N_MODULES = int(data[tmp_pointer:tmp_pointer+1])
-                    tmp_BMS = np.zeros((N_MODULES, 4))
+                    tmp_pointer = data.find('N=')+len('N=')
+                    if not tmp_pointer==0:
+                        N_MODULES = int(data[tmp_pointer:tmp_pointer+1])
 
 
 
-                    # if N_MODULES == 1:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3]})
-                    # elif N_MODULES == 2:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3]})
-                    # elif N_MODULES == 3:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                    #                         'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3]})
-                    # elif N_MODULES == 4:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                    #                         'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                    #                         'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3]})
-                    # elif N_MODULES == 5:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                    #                         'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                    #                         'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                    #                         'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3]})
-                    # elif N_MODULES == 6:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                    #                         'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                    #                         'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                    #                         'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
-                    #                         'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3]})
-                    # elif N_MODULES == 7:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                    #                         'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                    #                         'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                    #                         'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
-                    #                         'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3],
-                    #                         'SoC_7':tmp_BMS[6,0],'Voltage_7':tmp_BMS[6,1],'Current_7':tmp_BMS[6,2],'Temperature_7':tmp_BMS[6,3]})
-                    # elif N_MODULES == 8:
-                    #     data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                    #                         'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                    #                         'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                    #                         'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                    #                         'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                    #                         'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
-                    #                         'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3],
-                    #                         'SoC_7':tmp_BMS[6,0],'Voltage_7':tmp_BMS[6,1],'Current_7':tmp_BMS[6,2],'Temperature_7':tmp_BMS[6,3],
-                    #                         'SoC_8':tmp_BMS[7,0],'Voltage_8':tmp_BMS[7,1],'Current_8':tmp_BMS[7,2],'Temperature_8':tmp_BMS[7,3]})
-                    #
-                    # csvfile.flush()
+                    if N_MODULES == 1:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4]})
+                    elif N_MODULES == 2:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8]})
+                    elif N_MODULES == 3:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8],
+                                            'SoC_3':tmp_BMS[9],'Voltage_3':tmp_BMS[10],'Current_3':tmp_BMS[11],'Temperature_3':tmp_BMS[12]})
+                    elif N_MODULES == 4:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8],
+                                            'SoC_3':tmp_BMS[9],'Voltage_3':tmp_BMS[10],'Current_3':tmp_BMS[11],'Temperature_3':tmp_BMS[12],
+                                            'SoC_4':tmp_BMS[13],'Voltage_4':tmp_BMS[14],'Current_4':tmp_BMS[15],'Temperature_4':tmp_BMS[16]})
+                    elif N_MODULES == 5:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8],
+                                            'SoC_3':tmp_BMS[9],'Voltage_3':tmp_BMS[10],'Current_3':tmp_BMS[11],'Temperature_3':tmp_BMS[12],
+                                            'SoC_4':tmp_BMS[13],'Voltage_4':tmp_BMS[14],'Current_4':tmp_BMS[15],'Temperature_4':tmp_BMS[16],
+                                            'SoC_5':tmp_BMS[17],'Voltage_5':tmp_BMS[18],'Current_5':tmp_BMS[19],'Temperature_5':tmp_BMS[20]})
+                    elif N_MODULES == 6:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8],
+                                            'SoC_3':tmp_BMS[9],'Voltage_3':tmp_BMS[10],'Current_3':tmp_BMS[11],'Temperature_3':tmp_BMS[12],
+                                            'SoC_4':tmp_BMS[13],'Voltage_4':tmp_BMS[14],'Current_4':tmp_BMS[15],'Temperature_4':tmp_BMS[16],
+                                            'SoC_5':tmp_BMS[17],'Voltage_5':tmp_BMS[18],'Current_5':tmp_BMS[19],'Temperature_5':tmp_BMS[20],
+                                            'SoC_6':tmp_BMS[21],'Voltage_6':tmp_BMS[22],'Current_6':tmp_BMS[23],'Temperature_6':tmp_BMS[24]})
+                    elif N_MODULES == 7:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8],
+                                            'SoC_3':tmp_BMS[9],'Voltage_3':tmp_BMS[10],'Current_3':tmp_BMS[11],'Temperature_3':tmp_BMS[12],
+                                            'SoC_4':tmp_BMS[13],'Voltage_4':tmp_BMS[14],'Current_4':tmp_BMS[15],'Temperature_4':tmp_BMS[16],
+                                            'SoC_5':tmp_BMS[17],'Voltage_5':tmp_BMS[18],'Current_5':tmp_BMS[19],'Temperature_5':tmp_BMS[20],
+                                            'SoC_6':tmp_BMS[21],'Voltage_6':tmp_BMS[22],'Current_6':tmp_BMS[23],'Temperature_6':tmp_BMS[24],
+                                            'SoC_7':tmp_BMS[25],'Voltage_7':tmp_BMS[26],'Current_7':tmp_BMS[27],'Temperature_7':tmp_BMS[28]})
+                    elif N_MODULES == 8:
+                        tmp_BMS = re.findall(r'\d+', data)
+                        data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+                                            'SoC_1':tmp_BMS[1],'Voltage_1':tmp_BMS[2],'Current_1':tmp_BMS[3],'Temperature_1':tmp_BMS[4],
+                                            'SoC_2':tmp_BMS[5],'Voltage_2':tmp_BMS[6],'Current_2':tmp_BMS[7],'Temperature_2':tmp_BMS[8],
+                                            'SoC_3':tmp_BMS[9],'Voltage_3':tmp_BMS[10],'Current_3':tmp_BMS[11],'Temperature_3':tmp_BMS[12],
+                                            'SoC_4':tmp_BMS[13],'Voltage_4':tmp_BMS[14],'Current_4':tmp_BMS[15],'Temperature_4':tmp_BMS[16],
+                                            'SoC_5':tmp_BMS[17],'Voltage_5':tmp_BMS[18],'Current_5':tmp_BMS[19],'Temperature_5':tmp_BMS[20],
+                                            'SoC_6':tmp_BMS[21],'Voltage_6':tmp_BMS[22],'Current_6':tmp_BMS[23],'Temperature_6':tmp_BMS[24],
+                                            'SoC_7':tmp_BMS[25],'Voltage_7':tmp_BMS[26],'Current_7':tmp_BMS[27],'Temperature_7':tmp_BMS[28],
+                                            'SoC_8':tmp_BMS[29],'Voltage_8':tmp_BMS[30],'Current_8':tmp_BMS[31],'Temperature_8':tmp_BMS[32]})
+
+                    csvfile.flush()
+                    time.sleep(30)
 
             except KeyboardInterrupt:
                 sock.close()
                 csvfile.close()
+                print('interrupted!')
                 return
             except Exception:
                 print"ERROR no communication possible"
