@@ -514,15 +514,17 @@ class US2000B(object):
         return True
 
 
-    def socket_SoC(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT = 5005):
+    def socket_SoC(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 50057):
         """This function sends the State of Charge value of the
         Pylontech Batteries to a dedicated socket via UDP protocol.
-        The program opens 3 ports incremental to the specified UDP port eg. Default=5005
-        so it sends the data to ports: 5005,5006,5007
+        The program opens 3 ports for the Control, Control, and Plot functions.
+        Basically it sends the data to ports: 5005,5006,5007
         Args:
             N_MODULES: number of modules to be read. Default=1
             UDP_IP: udp ip address. Default="127.0.0.1"
-            UDP_PORT: port to which the packets should be send to. Default=5005
+            UDP_PORT1: port to which the "Control" packets should be send to. Default=5005
+            UDP_PORT2: port to which the "Log" packets should be send to. Default=5006
+            UDP_PORT3: port to which the "Plot" packets should be send to. Default=5007
         Returns:
 
         """
@@ -563,9 +565,9 @@ class US2000B(object):
                     print"ERROR number of modules not recognised please specify a number between 1 and 8"
                     sock.close()
                     return
-                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT+1))
-                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT+2))
+                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT1))
+                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT2))
+                sock.sendto(MESSAGE, (UDP_IP, UDP_PORT3))
                 time.sleep(5)
         except KeyboardInterrupt:
                 sock.close()
