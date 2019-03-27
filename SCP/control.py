@@ -42,12 +42,10 @@ class Socket_BMS_Thread(Thread):
             if i == 10:
                 print "ERROR, no connection could be established!"
                 return
-        BMS.socket_BMS(1,self._stop)
+        BMS.socket_BMS(1,UDP_IP,UDP_PORT1,UDP_PORT2,UDP_PORT3)
 
 
 
-    def stop(self):
-        self._stop = True
 
 
 

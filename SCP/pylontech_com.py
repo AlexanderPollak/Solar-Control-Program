@@ -514,7 +514,7 @@ class US2000B(object):
         return True
 
 
-    def socket_SoC(self, N_MODULES=1,STOP=False, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
+    def socket_SoC(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
         """This function sends the State of Charge value of the
         Pylontech Batteries to a dedicated socket via UDP protocol.
         The program opens 3 ports for the Control, Control, and Plot functions.
@@ -568,8 +568,6 @@ class US2000B(object):
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT1))
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT2))
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT3))
-                if STOP==True:
-                    return
                 time.sleep(5)
         except KeyboardInterrupt:
                 sock.close()
@@ -579,7 +577,7 @@ class US2000B(object):
             sock.close()
             return
 
-    def socket_BMS(self, N_MODULES=1,STOP=False, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
+    def socket_BMS(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
         """This function sends the values of the: SoC, Voltage, Current, and Temperature
         provided by the Pylontech BMS to an dedicated socket via UDP protocol.
         The program opens 3 ports incremental to the specified UDP port eg. Default=5005
@@ -669,8 +667,6 @@ class US2000B(object):
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT1))
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT2))
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT3))
-                if STOP==True:
-                    return
                 time.sleep(5)
         except KeyboardInterrupt:
             sock.close()
