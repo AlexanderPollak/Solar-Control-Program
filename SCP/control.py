@@ -23,6 +23,94 @@ from conext_com import *
 from data_log import *
 
 
+
+# EMBEDDING Controller_Thread CLASS ----------------------------------------------------
+
+class Controller_Thread(threading.Thread):
+
+
+    def __init__(self,group=None,target=None,name=None,verbose=None,N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
+
+        threading.Thread.__init__(self,group=group,target=target,name=name,verbose=verbose)
+
+        self._stopevent =threading.Event()# used to stop the socket loop.
+
+        self.N_MODULES=N_MODULES
+        self.UDP_IP=UDP_IP
+        self.UDP_PORT1=UDP_PORT1
+        self.UDP_PORT2 = UDP_PORT2
+        self.UDP_PORT3 = UDP_PORT3
+
+
+    def run(self):
+        """Main control loop"""
+        BMS = US2000B()
+        BMS.open()
+        self._port = BMS._port
+
+        for i in range(1,10):
+            if BMS.is_connected():
+                break
+            time.sleep(1)
+            if i == 5:
+                BMS.initialise()
+            if i == 10:
+                print "ERROR, no connection could be established!"
+                return
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        try:
+            while not self._stopevent.isSet():
+
+                self._port.write('pwr\r')
+                time.sleep(0.5)
+                rec_str = self._port.read(2200)
+                rec_int = re.findall(r'\d+', rec_str)
+                #Writes values into SOC_array and returns it.
+                if self.N_MODULES == 1:
+                    MESSAGE = "SoC"+"\t"+"N=1"+"\t"+"A="+str(rec_int[8])
+
+                elif self.N_MODULES == 2:
+                    MESSAGE = "SoC"+"\t"+"N=2"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])
+
+                elif self.N_MODULES == 3:
+                    MESSAGE = "SoC"+"\t"+"N=3"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])
+
+                elif self.N_MODULES == 4:
+                    MESSAGE = "SoC"+"\t"+"N=4"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])
+
+                elif self.N_MODULES == 5:
+                    MESSAGE = "SoC"+"\t"+"N=5"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])
+
+                elif self.N_MODULES == 6:
+                    MESSAGE = "SoC"+"\t"+"N=6"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])
+
+                elif self.N_MODULES == 7:
+                    MESSAGE = "SoC"+"\t"+"N=7"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])
+
+                elif self.N_MODULES == 8:
+                    MESSAGE = "SoC"+"\t"+"N=8"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])+"\t"+"H="+str(rec_int[113])
+
+                else:
+                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    sock.close()
+                    return
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT2))
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT3))
+                time.sleep(5)
+        except Exception:
+            sock.close()
+            print"ERROR no communication possible, check if the connection has been opened with open()"
+            return
+
+    def join(self, timeout=None):
+        """Stop the thread"""
+        self._stopevent.set()
+        threading.Thread.join(self, timeout)
+
+
+
 # EMBEDDING SystemControl CLASS ----------------------------------------------------
 
 class SystemControl():

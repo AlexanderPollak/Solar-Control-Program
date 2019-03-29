@@ -30,10 +30,10 @@ class US2000B(object):
     """This class implements the serial connection functions """
     def __init__(self):
         ''' Constructor for this class. '''
-        self.__port = 0
+        self._port = 0
     def __del__(self):
         ''' Destructor for this class. '''
-        if self.__port !=0:
+        if self._port !=0:
             self.close()
 
 
@@ -63,8 +63,8 @@ class US2000B(object):
         Returns: Boolean value True or False
 
         """
-        self.__port = serial.Serial(port,baud, timeout=0.05)
-        return self.__port.is_open
+        self._port = serial.Serial(port, baud, timeout=0.05)
+        return self._port.is_open
 
     def close(self):
         """Close serial port
@@ -72,8 +72,8 @@ class US2000B(object):
         Returns: Boolean value True or False
 
         """
-        self.__port.close()
-        return not self.__port.is_open
+        self._port.close()
+        return not self._port.is_open
 
     def is_connected(self):
         """This function checks if the connection to the BMS is established
@@ -82,8 +82,8 @@ class US2000B(object):
         Returns: Boolean value True or False
 
         """
-        self.__port.write('\r\n')
-        temp_receive = repr(self.__port.read(1000))
+        self._port.write('\r\n')
+        temp_receive = repr(self._port.read(1000))
         return temp_receive == str("'\\n\\rpylon>\\n\\rpylon>'")
 
 
@@ -98,9 +98,9 @@ class US2000B(object):
         """
         try:
             SoC_array = np.zeros((N_MODULES, 1))
-            self.__port.write('pwr\r')
+            self._port.write('pwr\r')
             time.sleep(0.5)
-            rec_str = self.__port.read(2200)
+            rec_str = self._port.read(2200)
             rec_int = re.findall(r'\d+', rec_str)
             #Writes values into SOC_array and returns it.
             if N_MODULES == 1:
@@ -172,9 +172,9 @@ class US2000B(object):
         """
         try:
             BMS_array = np.zeros((N_MODULES, 4))
-            self.__port.write('pwr\r')
+            self._port.write('pwr\r')
             time.sleep(0.5)
-            rec_str = self.__port.read(2200)
+            rec_str = self._port.read(2200)
             rec_int = re.findall(r'\d+', rec_str)
             #Writes values into BMS_array and returns it.
             if N_MODULES == 1:
@@ -532,9 +532,9 @@ class US2000B(object):
 
         try:
             while True:
-                self.__port.write('pwr\r')
+                self._port.write('pwr\r')
                 time.sleep(0.5)
-                rec_str = self.__port.read(2200)
+                rec_str = self._port.read(2200)
                 rec_int = re.findall(r'\d+', rec_str)
                 #Writes values into SOC_array and returns it.
                 if N_MODULES == 1:
@@ -594,9 +594,9 @@ class US2000B(object):
         try:
             while True:
 
-                self.__port.write('pwr\r')
+                self._port.write('pwr\r')
                 time.sleep(0.5)
-                rec_str = self.__port.read(2200)
+                rec_str = self._port.read(2200)
                 rec_int = re.findall(r'\d+', rec_str)
                 #Writes values into BMS_array and returns it.
 
@@ -699,6 +699,7 @@ class US2000B_socket_BMS_Thread(threading.Thread):
         """Main control loop"""
         BMS = US2000B()
         BMS.open()
+        self._port = BMS._port
 
         for i in range(1,10):
             if BMS.is_connected():
@@ -714,15 +715,72 @@ class US2000B_socket_BMS_Thread(threading.Thread):
         try:
             while not self._stopevent.isSet():
 
-                self.__port.write('pwr\r')
+                self._port.write('pwr\r')
                 time.sleep(0.5)
-                rec_str = self.__port.read(2200)
+                rec_str = self._port.read(2200)
                 rec_int = re.findall(r'\d+', rec_str)
                 # Writes values into BMS_array and returns it.
 
                 if self.N_MODULES == 1:
                     MESSAGE = "BMS" + "\t" + "N=1" + "\t" + "A=" + str(rec_int[8]) + "\t" + str(
                         rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3])
+
+                elif self.N_MODULES == 2:
+                    MESSAGE = "BMS" + "\t" + "N=2"\
+                              + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3])\
+                              + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])
+
+                elif self.N_MODULES == 3:
+                    MESSAGE = "BMS" + "\t" + "N=3" \
+                          + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3]) \
+                          + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])\
+                          + "\t" + "C=" + str(rec_int[38]) + "\t" + str(rec_int[31]) + "\t" + str(rec_int[32]) + "\t" + str(rec_int[33])
+
+                elif self.N_MODULES == 4:
+                    MESSAGE = "BMS" + "\t" + "N=4" \
+                          + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3]) \
+                          + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])\
+                          + "\t" + "C=" + str(rec_int[38]) + "\t" + str(rec_int[31]) + "\t" + str(rec_int[32]) + "\t" + str(rec_int[33])\
+                          + "\t" + "D=" + str(rec_int[53]) + "\t" + str(rec_int[46]) + "\t" + str(rec_int[47]) + "\t" + str(rec_int[48])
+
+                elif self.N_MODULES == 5:
+                    MESSAGE = "BMS" + "\t" + "N=5" \
+                          + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3]) \
+                          + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])\
+                          + "\t" + "C=" + str(rec_int[38]) + "\t" + str(rec_int[31]) + "\t" + str(rec_int[32]) + "\t" + str(rec_int[33])\
+                          + "\t" + "D=" + str(rec_int[53]) + "\t" + str(rec_int[46]) + "\t" + str(rec_int[47]) + "\t" + str(rec_int[48])\
+                          + "\t" + "E=" + str(rec_int[68]) + "\t" + str(rec_int[61]) + "\t" + str(rec_int[62]) + "\t" + str(rec_int[63])
+
+                elif self.N_MODULES == 6:
+                    MESSAGE = "BMS" + "\t" + "N=6" \
+                          + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3]) \
+                          + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])\
+                          + "\t" + "C=" + str(rec_int[38]) + "\t" + str(rec_int[31]) + "\t" + str(rec_int[32]) + "\t" + str(rec_int[33])\
+                          + "\t" + "D=" + str(rec_int[53]) + "\t" + str(rec_int[46]) + "\t" + str(rec_int[47]) + "\t" + str(rec_int[48])\
+                          + "\t" + "E=" + str(rec_int[68]) + "\t" + str(rec_int[61]) + "\t" + str(rec_int[62]) + "\t" + str(rec_int[63])\
+                          + "\t" + "F=" + str(rec_int[83]) + "\t" + str(rec_int[76]) + "\t" + str(rec_int[77]) + "\t" + str(rec_int[78])
+
+                elif self.N_MODULES == 7:
+                    MESSAGE = "BMS" + "\t" + "N=7" \
+                          + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3]) \
+                          + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])\
+                          + "\t" + "C=" + str(rec_int[38]) + "\t" + str(rec_int[31]) + "\t" + str(rec_int[32]) + "\t" + str(rec_int[33])\
+                          + "\t" + "D=" + str(rec_int[53]) + "\t" + str(rec_int[46]) + "\t" + str(rec_int[47]) + "\t" + str(rec_int[48])\
+                          + "\t" + "E=" + str(rec_int[68]) + "\t" + str(rec_int[61]) + "\t" + str(rec_int[62]) + "\t" + str(rec_int[63])\
+                          + "\t" + "F=" + str(rec_int[83]) + "\t" + str(rec_int[76]) + "\t" + str(rec_int[77]) + "\t" + str(rec_int[78])\
+                          + "\t" + "G=" + str(rec_int[98]) + "\t" + str(rec_int[91]) + "\t" + str(rec_int[92]) + "\t" + str(rec_int[93])
+
+                elif self.N_MODULES == 8:
+                    MESSAGE = "BMS" + "\t" + "N=8" \
+                          + "\t" + "A=" + str(rec_int[8]) + "\t" + str(rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3]) \
+                          + "\t" + "B=" + str(rec_int[23]) + "\t" + str(rec_int[16]) + "\t" + str(rec_int[17]) + "\t" + str(rec_int[18])\
+                          + "\t" + "C=" + str(rec_int[38]) + "\t" + str(rec_int[31]) + "\t" + str(rec_int[32]) + "\t" + str(rec_int[33])\
+                          + "\t" + "D=" + str(rec_int[53]) + "\t" + str(rec_int[46]) + "\t" + str(rec_int[47]) + "\t" + str(rec_int[48])\
+                          + "\t" + "E=" + str(rec_int[68]) + "\t" + str(rec_int[61]) + "\t" + str(rec_int[62]) + "\t" + str(rec_int[63])\
+                          + "\t" + "F=" + str(rec_int[83]) + "\t" + str(rec_int[76]) + "\t" + str(rec_int[77]) + "\t" + str(rec_int[78])\
+                          + "\t" + "G=" + str(rec_int[98]) + "\t" + str(rec_int[91]) + "\t" + str(rec_int[92]) + "\t" + str(rec_int[93])\
+                          + "\t" + "H=" + str(rec_int[113]) + "\t" + str(rec_int[106]) + "\t" + str(rec_int[107]) + "\t" + str(rec_int[108])
+
 
                 else:
                     sock.close()
@@ -732,7 +790,7 @@ class US2000B_socket_BMS_Thread(threading.Thread):
                 sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
                 sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT2))
                 sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT3))
-                print"Send Package!"
+                #print"Send Package!"
                 time.sleep(5)
         except Exception:
             sock.close()
@@ -744,3 +802,88 @@ class US2000B_socket_BMS_Thread(threading.Thread):
         self._stopevent.set()
         threading.Thread.join(self, timeout)
 
+
+# EMBEDDING ThreadedControl CLASS ----------------------------------------------------
+
+class US2000B_socket_SoC_Thread(threading.Thread):
+
+
+    def __init__(self,group=None,target=None,name=None,verbose=None,N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
+
+        threading.Thread.__init__(self,group=group,target=target,name=name,verbose=verbose)
+
+        self._stopevent =threading.Event()# used to stop the socket loop.
+
+        self.N_MODULES=N_MODULES
+        self.UDP_IP=UDP_IP
+        self.UDP_PORT1=UDP_PORT1
+        self.UDP_PORT2 = UDP_PORT2
+        self.UDP_PORT3 = UDP_PORT3
+
+
+    def run(self):
+        """Main control loop"""
+        BMS = US2000B()
+        BMS.open()
+        self._port = BMS._port
+
+        for i in range(1,10):
+            if BMS.is_connected():
+                break
+            time.sleep(1)
+            if i == 5:
+                BMS.initialise()
+            if i == 10:
+                print "ERROR, no connection could be established!"
+                return
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        try:
+            while not self._stopevent.isSet():
+
+                self._port.write('pwr\r')
+                time.sleep(0.5)
+                rec_str = self._port.read(2200)
+                rec_int = re.findall(r'\d+', rec_str)
+                #Writes values into SOC_array and returns it.
+                if self.N_MODULES == 1:
+                    MESSAGE = "SoC"+"\t"+"N=1"+"\t"+"A="+str(rec_int[8])
+
+                elif self.N_MODULES == 2:
+                    MESSAGE = "SoC"+"\t"+"N=2"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])
+
+                elif self.N_MODULES == 3:
+                    MESSAGE = "SoC"+"\t"+"N=3"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])
+
+                elif self.N_MODULES == 4:
+                    MESSAGE = "SoC"+"\t"+"N=4"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])
+
+                elif self.N_MODULES == 5:
+                    MESSAGE = "SoC"+"\t"+"N=5"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])
+
+                elif self.N_MODULES == 6:
+                    MESSAGE = "SoC"+"\t"+"N=6"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])
+
+                elif self.N_MODULES == 7:
+                    MESSAGE = "SoC"+"\t"+"N=7"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])
+
+                elif self.N_MODULES == 8:
+                    MESSAGE = "SoC"+"\t"+"N=8"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])+"\t"+"H="+str(rec_int[113])
+
+                else:
+                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    sock.close()
+                    return
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT2))
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT3))
+                time.sleep(5)
+        except Exception:
+            sock.close()
+            print"ERROR no communication possible, check if the connection has been opened with open()"
+            return
+
+    def join(self, timeout=None):
+        """Stop the thread"""
+        self._stopevent.set()
+        threading.Thread.join(self, timeout)
