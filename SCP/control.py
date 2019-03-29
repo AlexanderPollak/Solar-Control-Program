@@ -22,36 +22,6 @@ from pylontech_com import *
 from conext_com import *
 from data_log import *
 
-# EMBEDDING ThreadedControl CLASS ----------------------------------------------------
-
-class Socket_BMS_Thread(Thread):
-    def __init__(self):
-        Thread.__init__(self)
-        self._stop = False
-
-    def run(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
-        BMS = US2000B()
-        BMS.open()
-
-        for i in range(1,10):
-            if BMS.is_connected():
-                break
-            time.sleep(1)
-            if i == 5:
-                BMS.initialise()
-            if i == 10:
-                print "ERROR, no connection could be established!"
-                return
-        BMS.socket_BMS(1,UDP_IP,UDP_PORT1,UDP_PORT2,UDP_PORT3)
-
-
-
-
-
-
-
-
-
 
 # EMBEDDING SystemControl CLASS ----------------------------------------------------
 

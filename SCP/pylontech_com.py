@@ -21,7 +21,7 @@ communicate with the Pylontech US2000B Plus BMS.
 
 import serial,time,re,datetime,csv,os
 import numpy as np
-import socket
+import socket,threading
 
 
 # EMBEDDING US2000B CLASS ----------------------------------------------------
@@ -675,3 +675,72 @@ class US2000B(object):
             sock.close()
             print"ERROR no communication possible, check if the connection has been opened with open()"
             return
+
+
+# EMBEDDING ThreadedControl CLASS ----------------------------------------------------
+
+class US2000B_socket_BMS_Thread(threading.Thread):
+
+
+    def __init__(self,group=None,target=None,name=None,verbose=None,N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
+
+        threading.Thread.__init__(self,group=group,target=target,name=name,verbose=verbose)
+
+        self._stopevent =threading.Event()# used to stop the socket loop.
+
+        self.N_MODULES=N_MODULES
+        self.UDP_IP=UDP_IP
+        self.UDP_PORT1=UDP_PORT1
+        self.UDP_PORT2 = UDP_PORT2
+        self.UDP_PORT3 = UDP_PORT3
+
+
+    def run(self):
+        """Main control loop"""
+        BMS = US2000B()
+        BMS.open()
+
+        for i in range(1,10):
+            if BMS.is_connected():
+                break
+            time.sleep(1)
+            if i == 5:
+                BMS.initialise()
+            if i == 10:
+                print "ERROR, no connection could be established!"
+                return
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        try:
+            while not self._stopevent.isSet():
+
+                self.__port.write('pwr\r')
+                time.sleep(0.5)
+                rec_str = self.__port.read(2200)
+                rec_int = re.findall(r'\d+', rec_str)
+                # Writes values into BMS_array and returns it.
+
+                if self.N_MODULES == 1:
+                    MESSAGE = "BMS" + "\t" + "N=1" + "\t" + "A=" + str(rec_int[8]) + "\t" + str(
+                        rec_int[1]) + "\t" + str(rec_int[2]) + "\t" + str(rec_int[3])
+
+                else:
+                    sock.close()
+                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    return
+
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT2))
+                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT3))
+                print"Send Package!"
+                time.sleep(5)
+        except Exception:
+            sock.close()
+            print"ERROR no communication possible, check if the connection has been opened with open()"
+            return
+
+    def join(self, timeout=None):
+        """Stop the thread"""
+        self._stopevent.set()
+        threading.Thread.join(self, timeout)
+
