@@ -29,21 +29,44 @@ from data_log import *
 class Controller_Thread(threading.Thread):
 
 
-    def __init__(self,group=None,target=None,name=None,verbose=None,N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
+    def __init__(self,group=None,target=None,name=None,verbose=None,N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005):
 
         threading.Thread.__init__(self,group=group,target=target,name=name,verbose=verbose)
 
         self._stopevent =threading.Event()# used to stop the socket loop.
-
+        """communication parameter battery"""
         self.N_MODULES=N_MODULES
         self.UDP_IP=UDP_IP
         self.UDP_PORT1=UDP_PORT1
-        self.UDP_PORT2 = UDP_PORT2
-        self.UDP_PORT3 = UDP_PORT3
+        """communication parameter conext"""
+        self._conext_port=0
+
+        """inverter parameter while running the control loop"""
+        self.__low_battery_voltage_operation               =46#Default value for low battery voltage
+        self.__low_battery_voltage_hysteresis_operation    =3  #Default value for low battery voltage hysteresis
+
+
+    def initialise(self):
+        """This function initilises the settings for the control loop"""
+
+        print self._inverter.read_Inverter_Status()
+
+
+        
 
 
     def run(self):
         """Main control loop"""
+
+        inverter = XW()
+        if not inverter.is_connected():
+            return False
+        self._inverter = inverter
+
+
+
+
+
         BMS = US2000B()
         BMS.open()
         self._port = BMS._port

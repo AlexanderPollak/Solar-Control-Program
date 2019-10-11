@@ -27,12 +27,12 @@ class com(object):
     """This class implements the modbusTCP connection functions """
     def __init__(self):
         ''' Constructor for this class. '''
-        self.__port = 0
+        self._port = 0
 
 
     def __del__(self):
         ''' Destructor for this class. '''
-        if self.__port !=0:
+        if self._port !=0:
             self.close()
 
 
@@ -49,12 +49,12 @@ class com(object):
         Returns: Boolean value True or False
 
         """
-        self.__port = ModbusClient(SERVER_HOST,SERVER_PORT,SERVER_UNIT)
-        if not self.__port.is_open():
-            if not self.__port.open():
+        self._port = ModbusClient(SERVER_HOST, SERVER_PORT, SERVER_UNIT)
+        if not self._port.is_open():
+            if not self._port.open():
                 print("unable to connect to " + SERVER_HOST + ":" + str(SERVER_PORT))
 
-        return self.__port.is_open()
+        return self._port.is_open()
 
     def close(self):
         """Closes the modbusTCP connection
@@ -62,8 +62,8 @@ class com(object):
         Returns: Boolean value True or False
 
         """
-        self.__port.close()
-        return not self.__port.is_open()
+        self._port.close()
+        return not self._port.is_open()
 
     def is_connected(self):
         """This function checks if the connection to the Schneider Conext ComBox is established
@@ -74,7 +74,7 @@ class com(object):
 
         return
         """
-        bitstream = self.__port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
+        bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
         if bitstream:
             return True
         else:
@@ -87,12 +87,12 @@ class ComBox():
     """This class implements functions specific to the Schneider ComBox """
     def __init__(self):
         ''' Constructor for this class. '''
-        self.__port = 0
+        self._port = 0
 
 
     def __del__(self):
         ''' Destructor for this class. '''
-        if self.__port !=0:
+        if self._port !=0:
             self.close()
 
     def open (self,SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 201):
@@ -106,12 +106,12 @@ class ComBox():
         Returns: Boolean value True or False
 
         """
-        self.__port = ModbusClient(SERVER_HOST,SERVER_PORT,SERVER_UNIT)
-        if not self.__port.is_open():
-            if not self.__port.open():
+        self._port = ModbusClient(SERVER_HOST, SERVER_PORT, SERVER_UNIT)
+        if not self._port.is_open():
+            if not self._port.open():
                 print("unable to connect to " + SERVER_HOST + ":" + str(SERVER_PORT))
 
-        return self.__port.is_open()
+        return self._port.is_open()
 
     def close(self):
         """Closes the modbusTCP connection
@@ -119,8 +119,8 @@ class ComBox():
         Returns: Boolean value True or False
 
         """
-        self.__port.close()
-        return not self.__port.is_open()
+        self._port.close()
+        return not self._port.is_open()
 
     def is_connected(self):
         """This function checks if the connection to the Schneider Conext ComBox is established
@@ -131,7 +131,7 @@ class ComBox():
 
         return
         """
-        bitstream = self.__port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
+        bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
         if bitstream:
             return True
         else:
@@ -143,7 +143,7 @@ class ComBox():
         Returns: string {firmware version}
 
         """
-        bitstream = self.__port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str20 r
+        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str20 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = decoder.decode_string(14)
         return result
@@ -155,7 +155,7 @@ class ComBox():
         Returns: float {Grid Voltage in Volt}
 
         """
-        bitstream = self.__port.read_holding_registers(0x004C, 2)# 0x004C Grid Voltage uint32 r
+        bitstream = self._port.read_holding_registers(0x004C, 2)# 0x004C Grid Voltage uint32 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result =(decoder.decode_32bit_uint())/1000.0
         return result
@@ -166,7 +166,7 @@ class ComBox():
         Returns: float {Grid Frequency in Hz}
 
         """
-        bitstream = self.__port.read_holding_registers(0x004E, 2)# 0x004E Grid Frequency uint32 r
+        bitstream = self._port.read_holding_registers(0x004E, 2)# 0x004E Grid Frequency uint32 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result =(decoder.decode_32bit_uint())/100.0
         return result
@@ -178,12 +178,12 @@ class XW():
     """This class implements functions specific to the Schneider ComBox """
     def __init__(self):
         ''' Constructor for this class. '''
-        self.__port = 0
+        self._port = 0
 
 
     def __del__(self):
         ''' Destructor for this class. '''
-        if self.__port !=0:
+        if self._port !=0:
             self.close()
 
     def open (self,SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 10):
@@ -197,12 +197,12 @@ class XW():
         Returns: Boolean value True or False
 
         """
-        self.__port = ModbusClient(SERVER_HOST,SERVER_PORT,SERVER_UNIT)
-        if not self.__port.is_open():
-            if not self.__port.open():
+        self._port = ModbusClient(SERVER_HOST, SERVER_PORT, SERVER_UNIT)
+        if not self._port.is_open():
+            if not self._port.open():
                 print("unable to connect to " + SERVER_HOST + ":" + str(SERVER_PORT))
 
-        return self.__port.is_open()
+        return self._port.is_open()
 
     def close(self):
         """Closes the modbusTCP connection
@@ -210,8 +210,8 @@ class XW():
         Returns: Boolean value True or False
 
         """
-        self.__port.close()
-        return not self.__port.is_open()
+        self._port.close()
+        return not self._port.is_open()
 
     def is_connected(self):
         """This function checks if the connection to the Schneider Conext XW+ is established
@@ -222,7 +222,7 @@ class XW():
 
         return
         """
-        bitstream = self.__port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
+        bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
         if bitstream:
             return True
         else:
@@ -234,7 +234,7 @@ class XW():
         Returns: string {firmware version}
 
         """
-        bitstream = self.__port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str20 r
+        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str20 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = decoder.decode_string(14)
         return result
@@ -245,7 +245,7 @@ class XW():
         Returns: float {Grid Voltage in Volt}
 
         """
-        bitstream = self.__port.read_holding_registers(0x0062, 2)  # 0x0062 Grid Voltage uint32 r
+        bitstream = self._port.read_holding_registers(0x0062, 2)  # 0x0062 Grid Voltage uint32 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_32bit_uint()) / 1000.0
         return result
@@ -256,7 +256,7 @@ class XW():
         Returns: float {Grid Frequency in Hz}
 
         """
-        bitstream = self.__port.read_holding_registers(0x0061, 1)  # 0x0061 Grid Frequency uint16 r
+        bitstream = self._port.read_holding_registers(0x0061, 1)  # 0x0061 Grid Frequency uint16 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint()) / 100.0
         return result
@@ -267,7 +267,7 @@ class XW():
         Returns: float {Low Battery Cut Out in Volt}
 
         """
-        bitstream = self.__port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
+        bitstream = self._port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_32bit_uint()) / 1000.0
         return result
@@ -278,7 +278,7 @@ class XW():
         Returns: float {Low Battery Cut Out Delay in Seconds}
 
         """
-        bitstream = self.__port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
+        bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint()) / 100.0
         return result
@@ -289,7 +289,7 @@ class XW():
         Returns: string {status}
 
         """
-        bitstream = self.__port.read_holding_registers(0x007A, 1)  # 0x007A Inverter Status uint16 r
+        bitstream = self._port.read_holding_registers(0x007A, 1)  # 0x007A Inverter Status uint16 r
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint())
         if result == 1024:
@@ -336,11 +336,11 @@ class XW():
         Upper_limit = np.uint16(100 * 60) #upper limit 60 Seconds
         Lower_limit = np.uint16(100 * 1)#Lower limit 1 Seconds
         if delay in range(Lower_limit, Upper_limit):
-            self.__port.write_single_register(0x017E,delay)
+            self._port.write_single_register(0x017E, delay)
         else:
             print ('ERROR: delay value out of range!')
 
-        bitstream = self.__port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
+        bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint()) / 100.0
         return result
@@ -355,11 +355,11 @@ class XW():
         Upper_limit = np.uint32(1000 * 49) #upper limit 60 Seconds
         Lower_limit = np.uint32(1000 * 46)#Lower limit 1 Seconds
         if voltage in range(Lower_limit, Upper_limit):
-            self.__port.write_multiple_registers(0x017C,[voltage,00000])
+            self._port.write_multiple_registers(0x017C, [voltage, 00000])
         else:
             print ('ERROR: delay value out of range!')
 
-        bitstream = self.__port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
+        bitstream = self._port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint()) / 1000.0
         return result
@@ -372,7 +372,7 @@ class XW():
         Returns: str {Load Shave state}
 
         """
-        bitstream = self.__port.read_holding_registers(0x01B2, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
+        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint())
         if result == 0:
@@ -387,13 +387,13 @@ class XW():
 
         """
         if status == 'enable' or status == 'Enable' or status == 'ENABLE':
-            self.__port.write_single_register(0x01B2, 1)
+            self._port.write_single_register(0x01B2, 1)
         elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
-            self.__port.write_single_register(0x01B2, 0)
+            self._port.write_single_register(0x01B2, 0)
         else:
             print ('ERROR: Input Parameter must be: "enable" or "disable"')
 
-        bitstream = self.__port.read_holding_registers(0x01B2, 1)  # 0x01B2 Load Shave uint16 r/w
+        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B2 Load Shave uint16 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint())
         if result == 0:
@@ -409,7 +409,7 @@ class XW():
 
         """
 
-        bitstream = self.__port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
+        bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_32bit_uint()) / 1000.0
         return result
@@ -424,11 +424,11 @@ class XW():
         Upper_limit = np.uint32(1000 * 5) #upper limit 5 Volt
         Lower_limit = np.uint32(1000 * 1)#Lower limit 1 Volt
         if voltage in range(Lower_limit, Upper_limit):
-            self.__port.write_multiple_registers(0x01F2,[voltage,00000])
+            self._port.write_multiple_registers(0x01F2, [voltage, 00000])
         else:
             print ('ERROR: delay value out of range!')
 
-        bitstream = self.__port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
+        bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
         result = (decoder.decode_16bit_uint()) / 1000.0
         return result
