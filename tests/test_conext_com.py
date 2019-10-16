@@ -86,7 +86,7 @@ def test_read_Inverter_Status():
     xw = XW()
     xw.open()
     tmp = xw.read_Inverter_Status()
-    print tmp
+    print (tmp)
     xw.close()
 
 #def test_Low_Battery_Cut_Out_Delay():
@@ -114,7 +114,7 @@ def test_read_Hysteresis():
     xw = XW()
     xw.open()
     tmp = xw.read_Hysteresis()
-    print tmp
+    print (tmp)
     xw.close()
 
 

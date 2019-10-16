@@ -15,5 +15,6 @@ setup(
     author='Dr. Alexander Pollak',
     author_email='Alexander.Pollak.87@gmail.com',
     keywords=['Pylontech','US2000B','Schneider','Conext'],
-    url='https://github.com/AlexanderPollak/Solar-Control-Program'
+    url='https://github.com/AlexanderPollak/Solar-Control-Program',
+    entry_points={'console_scripts': ['SolarControl = SCP.control.SystemControl:main']},
 )

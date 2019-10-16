@@ -158,9 +158,13 @@ class SystemControl():
     def __del__(self):
         ''' Destructor for this class. '''
 
+    def run(self):
+        print ('test')
 
 
+if __name__ == '__main__':
 
+    SystemControl.run()
 
 
 
