@@ -158,7 +158,7 @@ class US2000B(object):
             else:
                 return SoC_array
         except:
-            print"ERROR no communication possible, check if the connection has been opened with open()"
+            print("ERROR no communication possible, check if the connection has been opened with open()")
 
     def read_BMS(self, N_MODULES=1):
         """This function returns the values of the: SoC, Voltage, Current, and Temperature
@@ -376,7 +376,7 @@ class US2000B(object):
             else:
                 return BMS_array
         except:
-            print"ERROR no communication possible, check if the connection has been opened with open()"
+            print("ERROR no communication possible, check if the connection has been opened with open()")
 
     def log_SoC(self, PATH='../Log/', N_MODULES=1):
 
@@ -562,7 +562,7 @@ class US2000B(object):
                     MESSAGE = "SoC"+"\t"+"N=8"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])+"\t"+"H="+str(rec_int[113])
 
                 else:
-                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    print("ERROR number of modules not recognised please specify a number between 1 and 8")
                     sock.close()
                     return
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT1))
@@ -573,7 +573,7 @@ class US2000B(object):
                 sock.close()
                 return
         except Exception:
-            print"ERROR no communication possible, check if the connection has been opened with open()"
+            print("ERROR no communication possible, check if the connection has been opened with open()")
             sock.close()
             return
 
@@ -661,7 +661,7 @@ class US2000B(object):
 
                 else:
                     sock.close()
-                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    print("ERROR number of modules not recognised please specify a number between 1 and 8")
                     return
 
                 sock.sendto(MESSAGE, (UDP_IP, UDP_PORT1))
@@ -673,7 +673,7 @@ class US2000B(object):
             return
         except Exception:
             sock.close()
-            print"ERROR no communication possible, check if the connection has been opened with open()"
+            print("ERROR no communication possible, check if the connection has been opened with open()")
             return
 
 
@@ -708,7 +708,7 @@ class US2000B_socket_BMS_Thread(threading.Thread):
             if i == 5:
                 BMS.initialise()
             if i == 10:
-                print "ERROR, no connection could be established!"
+                print ("ERROR, no connection could be established!")
                 return
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -784,7 +784,7 @@ class US2000B_socket_BMS_Thread(threading.Thread):
 
                 else:
                     sock.close()
-                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    print("ERROR number of modules not recognised please specify a number between 1 and 8")
                     return
 
                 sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
@@ -794,7 +794,7 @@ class US2000B_socket_BMS_Thread(threading.Thread):
                 time.sleep(5)
         except Exception:
             sock.close()
-            print"ERROR no communication possible, check if the connection has been opened with open()"
+            print("ERROR no communication possible, check if the connection has been opened with open()")
             return
 
     def join(self, timeout=None):
@@ -834,7 +834,7 @@ class US2000B_socket_SoC_Thread(threading.Thread):
             if i == 5:
                 BMS.initialise()
             if i == 10:
-                print "ERROR, no connection could be established!"
+                print ("ERROR, no connection could be established!")
                 return
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -871,7 +871,7 @@ class US2000B_socket_SoC_Thread(threading.Thread):
                     MESSAGE = "SoC"+"\t"+"N=8"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])+"\t"+"H="+str(rec_int[113])
 
                 else:
-                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
+                    print("ERROR number of modules not recognised please specify a number between 1 and 8")
                     sock.close()
                     return
                 sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
@@ -880,7 +880,7 @@ class US2000B_socket_SoC_Thread(threading.Thread):
                 time.sleep(5)
         except Exception:
             sock.close()
-            print"ERROR no communication possible, check if the connection has been opened with open()"
+            print("ERROR no communication possible, check if the connection has been opened with open()")
             return
 
     def join(self, timeout=None):

@@ -333,7 +333,7 @@ class XW():
 
         """
         delay = np.uint16(delay * 100)
-        Upper_limit = np.uint16(100 * 60) #upper limit 60 Seconds
+        Upper_limit = np.uint16(100 * 190) #upper limit 60 Seconds
         Lower_limit = np.uint16(100 * 1)#Lower limit 1 Seconds
         if delay in range(Lower_limit, Upper_limit):
             self._port.write_single_register(0x017E, delay)

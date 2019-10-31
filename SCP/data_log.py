@@ -136,7 +136,7 @@ class Log():
                 print('interrupted!')
                 return
             except Exception:
-                print"ERROR no communication possible"
+                print("ERROR no communication possible")
                 sock.close()
                 csvfile.close()
                 return
@@ -265,7 +265,7 @@ class Log():
                 print('interrupted!')
                 return
             except Exception:
-                print"ERROR no communication possible"
+                print("ERROR no communication possible")
                 sock.close()
                 csvfile.close()
                 return

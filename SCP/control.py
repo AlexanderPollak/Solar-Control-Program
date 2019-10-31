@@ -17,124 +17,68 @@ run the control system.
 
 
 """
-from threading import Thread
-from pylontech_com import *
-from conext_com import *
-from data_log import *
+
+import threading
+#from pylontech_com import *
+#from conext_com import *
+#from data_log import *
 
 
 
 # EMBEDDING Controller_Thread CLASS ----------------------------------------------------
 
-class Controller_Thread(threading.Thread):
+import threading
+import time
 
 
-    def __init__(self,group=None,target=None,name=None,verbose=None,N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005):
 
-        threading.Thread.__init__(self,group=group,target=target,name=name,verbose=verbose)
+class dataLogThread (threading.Thread):
 
-        self._stopevent =threading.Event()# used to stop the socket loop.
-        """communication parameter battery"""
-        self.N_MODULES=N_MODULES
-        self.UDP_IP=UDP_IP
-        self.UDP_PORT1=UDP_PORT1
-        """communication parameter conext"""
-        self._conext_port=0
+    def __init__(self, threadID, name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self._stop = threading.Event()
 
-        """inverter parameter while running the control loop"""
-        self.__low_battery_voltage_operation               =46#Default value for low battery voltage
-        self.__low_battery_voltage_hysteresis_operation    =3  #Default value for low battery voltage hysteresis
+    def __del__(self):
+        ''' Destructor for this class. '''
+        self._stop.set()
+        print ("deleted")
 
-
-    def initialise(self):
-        """This function initilises the settings for the control loop"""
-
-        print self._inverter.read_Inverter_Status()
-
-
-        
 
 
     def run(self):
-        """Main control loop"""
-
-        inverter = XW()
-        if not inverter.is_connected():
-            return False
-        self._inverter = inverter
-
-
-
-
-
-        BMS = US2000B()
-        BMS.open()
-        self._port = BMS._port
-
-        for i in range(1,10):
-            if BMS.is_connected():
-                break
-            time.sleep(1)
-            if i == 5:
-                BMS.initialise()
-            if i == 10:
-                print "ERROR, no connection could be established!"
+        print ("Starting " + self.name)
+        while True:
+            if self.stopped():
+                print("Exiting " + self.name)
                 return
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            time.sleep(1)
+            print("%s: %s" % (self.name, time.ctime(time.time())))
 
-        try:
-            while not self._stopevent.isSet():
 
-                self._port.write('pwr\r')
-                time.sleep(0.5)
-                rec_str = self._port.read(2200)
-                rec_int = re.findall(r'\d+', rec_str)
-                #Writes values into SOC_array and returns it.
-                if self.N_MODULES == 1:
-                    MESSAGE = "SoC"+"\t"+"N=1"+"\t"+"A="+str(rec_int[8])
+    def stop(self):
+        self._stop.set()
 
-                elif self.N_MODULES == 2:
-                    MESSAGE = "SoC"+"\t"+"N=2"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])
+    def stopped(self):
+        return self._stop.isSet()
 
-                elif self.N_MODULES == 3:
-                    MESSAGE = "SoC"+"\t"+"N=3"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])
 
-                elif self.N_MODULES == 4:
-                    MESSAGE = "SoC"+"\t"+"N=4"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])
 
-                elif self.N_MODULES == 5:
-                    MESSAGE = "SoC"+"\t"+"N=5"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])
 
-                elif self.N_MODULES == 6:
-                    MESSAGE = "SoC"+"\t"+"N=6"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])
 
-                elif self.N_MODULES == 7:
-                    MESSAGE = "SoC"+"\t"+"N=7"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])
 
-                elif self.N_MODULES == 8:
-                    MESSAGE = "SoC"+"\t"+"N=8"+"\t"+"A="+str(rec_int[8])+"\t"+"B="+str(rec_int[23])+"\t"+"C="+str(rec_int[38])+"\t"+"D="+str(rec_int[53])+"\t"+"E="+str(rec_int[68])+"\t"+"F="+str(rec_int[83])+"\t"+"G="+str(rec_int[98])+"\t"+"H="+str(rec_int[113])
 
-                else:
-                    print"ERROR number of modules not recognised please specify a number between 1 and 8"
-                    sock.close()
-                    return
-                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT1))
-                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT2))
-                sock.sendto(MESSAGE, (self.UDP_IP, self.UDP_PORT3))
-                time.sleep(5)
-        except Exception:
-            sock.close()
-            print"ERROR no communication possible, check if the connection has been opened with open()"
-            return
 
-    def join(self, timeout=None):
-        """Stop the thread"""
-        self._stopevent.set()
-        threading.Thread.join(self, timeout)
+
+
 
 
 
 # EMBEDDING SystemControl CLASS ----------------------------------------------------
+
+
+
 
 class SystemControl():
     """This class implements the serial connection functions """
@@ -151,20 +95,74 @@ class SystemControl():
         self.__low_battery_voltage_default_winter               =47.5  # Default value for low battery voltage
         self.__low_battery_voltage_hysteresis_default_winter    = 3.0  # Default value for low battery voltage hysteresis
 
-        self.__operational_mode_default
+        #self.__operational_mode_default
+
+
+        #Variables to manage logging control
+        self.__dlt_exist=False
+
 
 
 
     def __del__(self):
         ''' Destructor for this class. '''
+        self.__dlt.stop()
 
-    def run(self):
-        print ('test')
+
+
+    def dataLogStart(self):
+
+        if not self.__dlt_exist:
+            self.__dlt=dataLogThread(1, "Log-1")
+            self.__dlt.start()
+            self.__dlt_exist=True
+            print ("Log Started")
+        else:
+            print("Log Already Started")
+
+    def dataLogStop(self):
+
+        if self.__dlt_exist:
+            self.__dlt.stop()
+            self.__dlt_exist = False
+            del self.__dlt
+            print("Log Stopped")
+        else:
+            print("Log Already Stopped")
+
+    def dataLogRestart(self):
+
+        if not self.__dlt_exist:
+            self.__dlt=dataLogThread(1, "Log-1")
+            self.__dlt.start()
+            self.__dlt_exist=True
+            print ("Log Started")
+        elif self.__dlt_exist:
+            self.__dlt.stop()
+            del self.__dlt
+            self.__dlt = dataLogThread(1, "Log-1")
+            self.__dlt.start()
+            print ("Log Restarted")
+        else:
+            print("ERROR Restart Log")
+
+
+    def dataLogStatus(self):
+
+        if self.__dlt_exist:
+            print("Log Running")
+            return self.__dlt.isAlive()
+        else:
+            print("Log Stopped")
+            return False
+
+
 
 
 if __name__ == '__main__':
 
-    SystemControl.run()
+    SystemControl.dataLogStart()
+    print("Exiting Main Thread")
 
 
 
