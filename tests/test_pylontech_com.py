@@ -11,7 +11,6 @@ from  SCP.pylontech_com import *
 
 
 
-
 def test_initialise():
     """Checks if the initialisation of the terminal was
     successful."""

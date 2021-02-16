@@ -289,9 +289,7 @@ class XW():
         Returns: string {status}
 
         """
-        bitstream = self._port.read_holding_registers(0x007A, 1)  # 0x007A Inverter Status uint16 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint())
+        result = self._port.read_holding_registers(0x007A, 1)[0]  # 0x007A Inverter Status uint16 r
         if result == 1024:
             return str('Invert')
         elif result == 1025:
@@ -325,6 +323,41 @@ class XW():
         else:
             return str('UNKNOWN STATE!')
 
+    def read_Grid_Support_Status(self):
+        """This function reads the Grid Support status from the XW+ inverter and returns the state.
+
+        Returns: str {Grid Support state}
+
+        """
+        bitstream = self._port.read_holding_registers(0x01B3, 1)  # 0x01B3 Grid Support uint16 r/w
+        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
+        result = (decoder.decode_16bit_uint())
+        if result == 0:
+            return str('Disable')
+        if result == 1:
+            return str('Enable')
+
+    def write_Grid_Support_Status(self, status):
+        """This function writes the Grid Support to the XW+ inverter and returns the value in the register.
+
+        Returns: str {Grid Support state}
+
+        """
+        if status == 'enable' or status == 'Enable' or status == 'ENABLE':
+            self._port.write_single_register(0x01B3, 1)
+        elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
+            self._port.write_single_register(0x01B3, 0)
+        else:
+            print ('ERROR:Grid Support Input Parameter must be: "enable" or "disable"')
+
+        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B3 Grid Support uint16 r/w
+        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
+        result = (decoder.decode_16bit_uint())
+        if result == 0:
+            return str('Disable')
+        if result == 1:
+            return str('Enable')
+
 
     def write_Low_Battery_Cut_Out_Delay(self, delay=0.1):
         """This function writes the Low Battery Cut Out Delay to the XW+ inverter and returns the value in the register.
@@ -338,7 +371,7 @@ class XW():
         if delay in range(Lower_limit, Upper_limit):
             self._port.write_single_register(0x017E, delay)
         else:
-            print ('ERROR: delay value out of range!')
+            print ('ERROR: Low Battery Delay value out of range!')
 
         bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
@@ -353,11 +386,11 @@ class XW():
         """
         voltage = np.uint32(voltage * 1000)
         Upper_limit = np.uint32(1000 * 49) #upper limit 60 Seconds
-        Lower_limit = np.uint32(1000 * 46)#Lower limit 1 Seconds
+        Lower_limit = np.uint32(1000 * 45)#Lower limit 1 Seconds
         if voltage in range(Lower_limit, Upper_limit):
             self._port.write_multiple_registers(0x017C, [voltage, 00000])
         else:
-            print ('ERROR: delay value out of range!')
+            print ('ERROR: Low Battery Voltage value out of range!')
 
         bitstream = self._port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
@@ -391,7 +424,7 @@ class XW():
         elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
             self._port.write_single_register(0x01B2, 0)
         else:
-            print ('ERROR: Input Parameter must be: "enable" or "disable"')
+            print ('ERROR: Load Shave Input Parameter must be: "enable" or "disable"')
 
         bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B2 Load Shave uint16 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
@@ -426,7 +459,7 @@ class XW():
         if voltage in range(Lower_limit, Upper_limit):
             self._port.write_multiple_registers(0x01F2, [voltage, 00000])
         else:
-            print ('ERROR: delay value out of range!')
+            print ('ERROR: Hysteresis Voltage value out of range!')
 
         bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
         decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
