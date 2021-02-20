@@ -18,8 +18,8 @@ has its own class which includes the device specific functions.
 
 """
 import numpy as np
+from struct import *
 from pyModbusTCP.client import ModbusClient
-from pymodbus.payload import BinaryPayloadDecoder,BinaryPayloadBuilder
 
 # EMBEDDING com CLASS ----------------------------------------------------
 
@@ -143,9 +143,8 @@ class ComBox():
         Returns: string {firmware version}
 
         """
-        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str20 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = decoder.decode_string(14)
+        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str14
+        result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')# combines seven 16bit registers into str14
         return result
 
 
@@ -156,8 +155,7 @@ class ComBox():
 
         """
         bitstream = self._port.read_holding_registers(0x004C, 2)# 0x004C Grid Voltage uint32 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result =(decoder.decode_32bit_uint())/1000.0
+        result = unpack('L',pack('<HH',bitstream[0],bitstream[1]))[0]/1000.0 # combines two 16bit registers into uint32
         return result
 
     def read_Grid_Frequency(self):
@@ -167,8 +165,7 @@ class ComBox():
 
         """
         bitstream = self._port.read_holding_registers(0x004E, 2)# 0x004E Grid Frequency uint32 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result =(decoder.decode_32bit_uint())/100.0
+        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 100.0  # combines two 16bit registers into uint32
         return result
 
 
@@ -234,9 +231,8 @@ class XW():
         Returns: string {firmware version}
 
         """
-        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str20 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = decoder.decode_string(14)
+        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str14 r
+        result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
         return result
 
     def read_Grid_Voltage(self):
@@ -246,8 +242,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x0062, 2)  # 0x0062 Grid Voltage uint32 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_32bit_uint()) / 1000.0
+        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def read_Grid_Frequency(self):
@@ -257,8 +252,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x0061, 1)  # 0x0061 Grid Frequency uint16 r
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint()) / 100.0
+        result = unpack('H', pack('<H', bitstream[0]))[0] / 100.0
         return result
 
     def read_Low_Battery_Cut_Out(self):
@@ -267,9 +261,8 @@ class XW():
         Returns: float {Low Battery Cut Out in Volt}
 
         """
-        bitstream = self._port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_32bit_uint()) / 1000.0
+        bitstream = self._port.read_holding_registers(0x017C, 2) # 0x017C Low Battery Cut Out uint32 r/w
+        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def read_Low_Battery_Cut_Out_Delay(self):
@@ -279,8 +272,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint()) / 100.0
+        result = unpack('H', pack('<H', bitstream[0]))[0] / 100.0
         return result
 
     def read_Inverter_Status(self):
@@ -289,7 +281,8 @@ class XW():
         Returns: string {status}
 
         """
-        result = self._port.read_holding_registers(0x007A, 1)[0]  # 0x007A Inverter Status uint16 r
+        bitstream = self._port.read_holding_registers(0x007A, 1) # 0x007A Inverter Status uint16 r
+        result = unpack('H', pack('<H', bitstream[0]))[0]
         if result == 1024:
             return str('Invert')
         elif result == 1025:
@@ -329,9 +322,8 @@ class XW():
         Returns: str {Grid Support state}
 
         """
-        bitstream = self._port.read_holding_registers(0x01B3, 1)  # 0x01B3 Grid Support uint16 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint())
+        bitstream = self._port.read_holding_registers(0x01B3, 1)  # 0x01B3 Grid Support uint16 r
+        result = unpack('H', pack('<H', bitstream[0]))[0]
         if result == 0:
             return str('Disable')
         if result == 1:
@@ -351,8 +343,7 @@ class XW():
             print ('ERROR:Grid Support Input Parameter must be: "enable" or "disable"')
 
         bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B3 Grid Support uint16 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint())
+        result = unpack('H', pack('<H', bitstream[0]))[0]
         if result == 0:
             return str('Disable')
         if result == 1:
@@ -374,8 +365,7 @@ class XW():
             print ('ERROR: Low Battery Delay value out of range!')
 
         bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint()) / 100.0
+        result = unpack('H', pack('<H', bitstream[0]))[0]/100.0
         return result
 
     def write_Low_Battery_Cut_Out(self, voltage=47):
@@ -392,9 +382,8 @@ class XW():
         else:
             print ('ERROR: Low Battery Voltage value out of range!')
 
-        bitstream = self._port.read_holding_registers(0x017C, 2)  # 0x017C Low Battery Cut Out uint32 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint()) / 1000.0
+        bitstream = self._port.read_holding_registers(0x017C, 2) # 0x017C Low Battery Cut Out uint32 r/w
+        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
 
@@ -406,8 +395,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint())
+        result = unpack('H', pack('<H', bitstream[0]))[0]
         if result == 0:
             return str('Disable')
         if result == 1:
@@ -427,8 +415,7 @@ class XW():
             print ('ERROR: Load Shave Input Parameter must be: "enable" or "disable"')
 
         bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B2 Load Shave uint16 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint())
+        result = unpack('H', pack('<H', bitstream[0]))[0]
         if result == 0:
             return str('Disable')
         if result == 1:
@@ -443,8 +430,7 @@ class XW():
         """
 
         bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_32bit_uint()) / 1000.0
+        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def write_Hysteresis(self, voltage=2.3):
@@ -462,6 +448,5 @@ class XW():
             print ('ERROR: Hysteresis Voltage value out of range!')
 
         bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
-        decoder = BinaryPayloadDecoder.fromRegisters(bitstream)
-        result = (decoder.decode_16bit_uint()) / 1000.0
+        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result

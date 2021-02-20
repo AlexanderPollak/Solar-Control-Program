@@ -9,17 +9,17 @@ serial_interface='/dev/ttyUSB0'
 pylontech = serial.Serial(serial_interface,1200, timeout=0.05)
 pylontech = serial.Serial(serial_interface,1200, timeout=0.05)
 
-pylontech.write('~20014682C0048520FCC3\r')
+pylontech.write(str.encode('~20014682C0048520FCC3\r'))
 
 time.sleep(5)
 
 pylontech = serial.Serial(serial_interface,115200, timeout=0.05)
 
-pylontech.write('\r\n')
-
+pylontech.write(str.encode('\r\n'))
+time.sleep(1)
 temp_str = repr(pylontech.read(1000))
 
-print temp_str== str("'\\n\\rpylon>\\n\\rpylon>'")
+print (temp_str== str("b'\\n\\rpylon>\\n\\rpylon>'"))
 
 #print temp_str
 

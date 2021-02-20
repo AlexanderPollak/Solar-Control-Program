@@ -103,7 +103,7 @@ def test_write_Low_Battery_Cut_Out():
 
     xw = XW()
     xw.open()
-    tmp = xw.write_Low_Battery_Cut_Out(47.5)
+    tmp = xw.read_Low_Battery_Cut_Out()
     print (tmp)
     xw.close()
 
@@ -120,11 +120,11 @@ def test_read_Hysteresis():
 
 if __name__ == "__main__":
 
-    test_read_firmware()
+    #test_read_firmware()
     #test_is_connected()
     #test_read_Grid_Voltage()
     #test_read_Grid_Frequency()
     #test_read_Inverter_Status()
-    test_write_Low_Battery_Cut_Out()
-    #test_read_Hysteresis()
+    #test_write_Low_Battery_Cut_Out()
+    test_read_Hysteresis()
     #test_Low_Battery_Cut_Out_Delay()

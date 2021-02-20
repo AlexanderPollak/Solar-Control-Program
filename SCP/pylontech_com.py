@@ -45,13 +45,13 @@ class US2000B(object):
             port: path to serial port. Default='/dev/ttyUSB0'
         Returns: Boolean value True or False"""
         temp_port = serial.Serial(port,1200, timeout=0.05)
-        temp_port.write('~20014682C0048520FCC3\r')
+        temp_port.write(str.encode('~20014682C0048520FCC3\r'))
         time.sleep(5)
         temp_port = serial.Serial(port,115200, timeout=0.05)
-        temp_port.write('\r\n')
+        temp_port.write(str.encode('\r\n'))
         temp_receive = repr(temp_port.read(1000))
         temp_port.close()
-        return temp_receive == str("'\\n\\rpylon>\\n\\rpylon>'")
+        return temp_receive== str("b'\\n\\rpylon>\\n\\rpylon>'")
 
     def open(self, port='/dev/ttyUSB0', baud=115200):
         """Open serial port for communication
@@ -82,9 +82,9 @@ class US2000B(object):
         Returns: Boolean value True or False
 
         """
-        self._port.write('\r\n')
+        self._port.write(str.encode('\r\n'))
         temp_receive = repr(self._port.read(1000))
-        return temp_receive == str("'\\n\\rpylon>\\n\\rpylon>'")
+        return temp_receive== str("b'\\n\\rpylon>\\n\\rpylon>'")
 
 
     def read_SoC(self, N_MODULES=1):
@@ -98,10 +98,10 @@ class US2000B(object):
         """
         try:
             SoC_array = np.zeros((N_MODULES, 1))
-            self._port.write('pwr\r')
+            self._port.write(str.encode('pwr\r'))
             time.sleep(0.5)
-            rec_str = self._port.read(2200)
-            rec_int = re.findall(r'\d+', rec_str)
+            rec_str = str(self._port.read(2200),'utf-8')
+            rec_int = re.findall(r'\d+',rec_str)
             #Writes values into SOC_array and returns it.
             if N_MODULES == 1:
                 SoC_array[0,0] = str(rec_int[8])
@@ -172,9 +172,9 @@ class US2000B(object):
         """
         try:
             BMS_array = np.zeros((N_MODULES, 4))
-            self._port.write('pwr\r')
+            self._port.write(str.encode('pwr\r'))
             time.sleep(0.5)
-            rec_str = self._port.read(2200)
+            rec_str = str(self._port.read(2200), 'utf-8')
             rec_int = re.findall(r'\d+', rec_str)
             #Writes values into BMS_array and returns it.
             if N_MODULES == 1:
@@ -532,9 +532,9 @@ class US2000B(object):
 
         try:
             while True:
-                self._port.write('pwr\r')
+                self._port.write(str.encode('pwr\r'))
                 time.sleep(0.5)
-                rec_str = self._port.read(2200)
+                rec_str = str(self._port.read(2200), 'utf-8')
                 rec_int = re.findall(r'\d+', rec_str)
                 #Writes values into SOC_array and returns it.
                 if N_MODULES == 1:
@@ -594,9 +594,9 @@ class US2000B(object):
         try:
             while True:
 
-                self._port.write('pwr\r')
+                self._port.write(str.encode('pwr\r'))
                 time.sleep(0.5)
-                rec_str = self._port.read(2200)
+                rec_str = str(self._port.read(2200),'utf-8')
                 rec_int = re.findall(r'\d+', rec_str)
                 #Writes values into BMS_array and returns it.
 
@@ -715,9 +715,9 @@ class US2000B_socket_BMS_Thread(threading.Thread):
         try:
             while not self._stopevent.isSet():
 
-                self._port.write('pwr\r')
+                self._port.write(str.encode('pwr\r'))
                 time.sleep(0.5)
-                rec_str = self._port.read(2200)
+                rec_str = str(self._port.read(2200),'utf-8')
                 rec_int = re.findall(r'\d+', rec_str)
                 # Writes values into BMS_array and returns it.
 
@@ -841,9 +841,9 @@ class US2000B_socket_SoC_Thread(threading.Thread):
         try:
             while not self._stopevent.isSet():
 
-                self._port.write('pwr\r')
+                self._port.write(str.encode('pwr\r'))
                 time.sleep(0.5)
-                rec_str = self._port.read(2200)
+                rec_str = str(self._port.read(2200),'utf-8')
                 rec_int = re.findall(r'\d+', rec_str)
                 #Writes values into SOC_array and returns it.
                 if self.N_MODULES == 1:

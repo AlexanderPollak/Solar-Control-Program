@@ -35,13 +35,13 @@ def test_is_connected():
     assert tmp == True
 
 
-def test_read_SOC():
+def test_read_SoC():
     """Checks if the software can read out a State of Charge value."""
 
     BMS = US2000B()
 
     BMS.open()
-    print BMS.read_SOC(1)
+    print (BMS.read_SoC(1))
 
 
 def test_log_SOC():
@@ -61,4 +61,5 @@ def test_log_SOC():
 
 if __name__ == "__main__":
 
-    test_is_connected()
+    #test_is_connected()
+    test_read_SoC()
