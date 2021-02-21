@@ -15,7 +15,7 @@ def runtime_error(error_counter, error_counter_max):
     return
 
 
-def main(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Control, SoC_high, SoC_low, Battery_low, Battery_hysteresis, Error_counter_max):
+def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Control, SoC_high, SoC_low, Battery_low, Battery_hysteresis, Error_counter_max, Log_file_path):
 
 
 
@@ -69,7 +69,7 @@ def main(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Contr
                 time.sleep(Cadance)
                 if Log:  # Condition to log BMS data into .csv file
                     try:
-                        PYLONTECH.log_BMS(N_MODULES=Battery_Modules)
+                        PYLONTECH.log_BMS(N_MODULES=Battery_Modules,PATH=Log_file_path)
                     except:
                         Error_counter=Error_counter+1
                         runtime_error(Error_counter,Error_counter_max)
