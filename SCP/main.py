@@ -5,6 +5,7 @@ from SCP.control import *
 def main():
     Serial_Port = '/dev/ttyUSB0'  # Serial Port for Communication with Pylontech
     Modbus_Host = '192.168.0.210'  # Modbus Server Address for Communication with Inverter
+    Log_File_Path = '/home/pollak/Solar-Control-Program/Log'
 
     Battery_Modules = 6  # Number of Installed Modules
     Cadance = 30  # Control Loop refresh rate in seconds
@@ -20,7 +21,7 @@ def main():
 
     control(Serial_Port=Serial_Port, Modbus_Host=Modbus_Host, Battery_Modules=Battery_Modules, Cadance=Cadance,\
          Display=Display, Log=Log, Control=Control, SoC_high=SoC_high, SoC_low=SoC_low, Battery_low=Battery_low,\
-         Battery_hysteresis=Battery_hysteresis, Error_counter_max=Max_Com_Error)
+         Battery_hysteresis=Battery_hysteresis, Error_counter_max=Max_Com_Error, Log_file_path=Log_File_Path)
 
 
 if __name__ == '__main__':
