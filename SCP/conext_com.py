@@ -18,6 +18,7 @@ has its own class which includes the device specific functions.
 
 """
 import numpy as np
+import time
 from struct import *
 from pyModbusTCP.client import ModbusClient
 
@@ -80,6 +81,24 @@ class com(object):
         else:
             return False
 
+    def reconnect(self, SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 201):
+        """Reconnects communication with modbus client.
+
+        Args:
+            SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
+            SERVER_PORT: modbus TCP port. Default='502'
+            SERVER_UNIT: modbus address of the ComBox. Default='201'
+
+        Returns: Boolean value True or False
+
+        """
+        if self._port !=0:
+            self.close()
+        self.open(SERVER_HOST=SERVER_HOST, SERVER_PORT=SERVER_PORT, SERVER_UNIT=SERVER_UNIT)
+        time.sleep(1)
+        return self.is_connected()
+
+
 
 # EMBEDDING ComBox CLASS ----------------------------------------------------
 
@@ -136,6 +155,23 @@ class ComBox():
             return True
         else:
             return False
+
+    def reconnect(self, SERVER_HOST="192.168.0.210", SERVER_PORT=502, SERVER_UNIT=201):
+        """Reconnects communication with modbus client.
+
+        Args:
+            SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
+            SERVER_PORT: modbus TCP port. Default='502'
+            SERVER_UNIT: modbus address of the ComBox. Default='201'
+
+        Returns: Boolean value True or False
+
+        """
+        if self._port != 0:
+            self.close()
+        self.open(SERVER_HOST=SERVER_HOST, SERVER_PORT=SERVER_PORT, SERVER_UNIT=SERVER_UNIT)
+        time.sleep(1)
+        return self.is_connected()
 
     def read_firmware(self):
         """This function reads the firmware version of the ComBox and returns it as a string.
@@ -224,6 +260,23 @@ class XW():
             return True
         else:
             return False
+
+    def reconnect(self, SERVER_HOST="192.168.0.210", SERVER_PORT=502, SERVER_UNIT=10):
+        """Reconnects communication with modbus client.
+
+        Args:
+            SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
+            SERVER_PORT: modbus TCP port. Default='502'
+            SERVER_UNIT: modbus address of the ComBox. Default='201'
+
+        Returns: Boolean value True or False
+
+        """
+        if self._port != 0:
+            self.close()
+        self.open(SERVER_HOST=SERVER_HOST, SERVER_PORT=SERVER_PORT, SERVER_UNIT=SERVER_UNIT)
+        time.sleep(1)
+        return self.is_connected()
 
     def read_firmware(self):
         """This function reads the firmware version of the XW+ inverter and returns it as a string.
