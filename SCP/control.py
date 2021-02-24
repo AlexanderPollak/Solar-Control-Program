@@ -7,15 +7,29 @@ from .pylontech_com import *
 import time
 
 
-def runtime_error(error_counter, error_counter_max):
-    print('Communication Error!')
-    if error_counter >=error_counter_max:
+def runtime_error_pylontech(error_counter):
+    print('Communication Error With Pylontech!')
+    if error_counter >=100:
         print('Max Communication retries reached!')
         exit()
     return
 
+def runtime_error_conext(self, error_counter):
+    print('Communication Error With Conext!')
 
-def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Control, SoC_high, SoC_low, Battery_low, Battery_hysteresis, Error_counter_max, Log_file_path):
+
+    if error_counter >=10:
+        print('Reconnect with Conext!')
+        time.sleep(300)
+        if self.reconnect():
+            print('Reconnect with Conext Succesful!')
+            return True
+    if error_counter >=20:
+        exit()
+    return False
+
+
+def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Control, SoC_high, SoC_low, Battery_low, Battery_hysteresis, Log_file_path):
 
 
 
@@ -64,15 +78,16 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
         try:  # Program Loop
             CONEXT.write_Low_Battery_Cut_Out(Battery_low)
             CONEXT.write_Hysteresis(Battery_hysteresis)
-            Error_counter=0
+            error_counter_pylontech=0
+            error_counter_conext = 0
             while True:
                 time.sleep(Cadance)
                 if Log:  # Condition to log BMS data into .csv file
                     try:
                         PYLONTECH.log_BMS(N_MODULES=Battery_Modules,PATH=Log_file_path)
                     except:
-                        Error_counter=Error_counter+1
-                        runtime_error(Error_counter,Error_counter_max)
+                        error_counter_pylontech=error_counter_pylontech+1
+                        runtime_error_pylontech(error_counter_pylontech)
 
                 if Display:  # Condition to print the SoC in terminal
                     try:
@@ -81,8 +96,9 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                               'D:' + str(tmp[3, 0]) + '\t' + 'E:' + str(tmp[4, 0]) + '\t' + 'F:' + str(tmp[5, 0]) + '\t' \
                              +CONEXT.read_Inverter_Status())
                     except:
-                        Error_counter=Error_counter+1
-                        runtime_error(Error_counter,Error_counter_max)
+                        error_counter_conext=error_counter_conext+1
+                        if runtime_error_conext(CONEXT,error_counter_conext):
+                            error_counter_conext=0
 
 
 
@@ -99,8 +115,9 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                                 CONEXT.write_Load_Shave_Status('Disable')
                                 print('Grid Support: OFF')
                     except:
-                        Error_counter=Error_counter+1
-                        runtime_error(Error_counter,Error_counter_max)
+                        error_counter_conext = error_counter_conext + 1
+                        if runtime_error_conext(CONEXT, error_counter_conext):
+                            error_counter_conext=0
 
 
 
