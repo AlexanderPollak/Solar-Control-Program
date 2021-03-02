@@ -35,7 +35,7 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
 
     try:
 
-        print('SolarControl:v2 ')
+        print('SolarControl:0.0.3 ')
 
         # ---------------------------------------------------------------------------#
         # Initialise communication to BMS
