@@ -14,7 +14,7 @@ def main():
     Control = True  # Enable Inverter Control Loop
 
     SoC_high = 80  # Percent
-    SoC_low = 25  # Percent
+    SoC_low = 40  # Percent
     Battery_low = 45.5  # Volt
     Battery_hysteresis = 2.0  # Volt
 
