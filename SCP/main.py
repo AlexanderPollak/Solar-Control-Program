@@ -1,22 +1,51 @@
 #START OF MAIN:
 
+import configparser
 from SCP.control import *
 
+
 def main():
-    Serial_Port = '/dev/ttyUSB0'  # Serial Port for Communication with Pylontech
-    Modbus_Host = '192.168.0.210'  # Modbus Server Address for Communication with Inverter
-    Log_File_Path = '/home/pollak/Solar-Control-Program/Log'
+    
+    config = configparser.ConfigParser()
 
-    Battery_Modules = 6  # Number of Installed Modules
-    Cadance = 30  # Control Loop refresh rate in seconds
-    Display = True  # Enable Terminal SoC Print
-    Log = True  # Enable BMS logging
-    Control = True  # Enable Inverter Control Loop
+    config.read('/usr/local/solar-control-program/etc/scp.cfg') # Location of config file
 
-    SoC_high = 80  # Percent
-    SoC_low = 40  # Percent
-    Battery_low = 45.5  # Volt
-    Battery_hysteresis = 2.0  # Volt
+
+    # Serial_Port = '/dev/ttyUSB0'  # Serial Port for Communication with Pylontech
+    # Modbus_Host = '192.168.0.210'  # Modbus Server Address for Communication with Inverter
+    # Log_File_Path = '/home/pollak/Solar-Control-Program/Log'
+
+    # Battery_Modules = 6  # Number of Installed Modules
+    # Cadance = 30  # Control Loop refresh rate in seconds
+    # Display = True  # Enable Terminal SoC Print
+    # Log = True  # Enable BMS logging
+    # Control = True  # Enable Inverter Control Loop
+
+    # SoC_high = 80  # Percent
+    # SoC_low = 40  # Percent
+    # Battery_low = 45.5  # Volt
+    # Battery_hysteresis = 2.0  # Volt
+
+    Serial_Port = config['COMMUNICATION SETTINGS']['Serial_Port']  # Serial Port for Communication with Pylontech
+    Modbus_Host = config['COMMUNICATION SETTINGS']['Modbus_Host']  # Modbus Server Address for Communication with Inverter
+    
+    Log_File_Path = config['PYLONTECH BATTERY SPECIFIC SETTINGS']['CSV_Log_File_Path']
+    Battery_Modules = config['PYLONTECH BATTERY SPECIFIC SETTINGS']['Battery_Modules']  # Number of Installed Modules
+    
+    Cadance = config['GENERAL CONTROL SETTINGS']['Cadance']  # Control Loop refresh rate in seconds
+    Display = config['GENERAL CONTROL SETTINGS']['Display']  # Enable Terminal SoC Print
+    Log = config['GENERAL CONTROL SETTINGS']['CSV_Log'] # Enable BMS logging
+    Control = config['GENERAL CONTROL SETTINGS']['Control'] # Enable Inverter Control Loop
+
+    SoC_high = config['CONTROL LOOP SPECIFIC SETTINGS']['SoC_high']  # Percent
+    SoC_low = config['CONTROL LOOP SPECIFIC SETTINGS']['SoC_low']  # Percent
+    Battery_low = config['CONTROL LOOP SPECIFIC SETTINGS']['Battery_low']  # Volt
+    Battery_hysteresis = config['CONTROL LOOP SPECIFIC SETTINGS']['Battery_hysteresis']  # Volt
+
+
+
+
+
 
     print('Current Configuration of Control program \n')
     print('Battery Modules: '+str(Battery_Modules))
