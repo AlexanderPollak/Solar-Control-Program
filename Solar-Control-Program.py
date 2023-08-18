@@ -28,10 +28,7 @@ def main():
     Battery_low = config['CONTROL LOOP SPECIFIC SETTINGS']['Battery_low']  # Volt
     Battery_hysteresis = config['CONTROL LOOP SPECIFIC SETTINGS']['Battery_hysteresis']  # Volt
 
-    Serial_Port2 = '/dev/ttyUSB0'  # Serial Port for Communication with Pylontech
 
-    print(Serial_Port2)
-    print(Serial_Port)
 
 
     print('Current Configuration of Control program \n')
