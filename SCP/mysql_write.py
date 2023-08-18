@@ -50,35 +50,29 @@ class Pylontech():
 
         """
         self._port = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database=DATABASE, auth_plugin=AUTH_PLUGIN)
-        if not self._port.is_open():
-            if not self._port.open():
-                print("unable to connect to " + HOST)
+        if not self._port.is_connected():
+            print("unable to connect to " + HOST)
 
-        return self._port.is_open()
+        return self._port.is_connected()
 
     def close(self):
-        """Closes the modbusTCP connection
+        """Closes the connection to the MySQL server
 
         Returns: Boolean value True or False
 
         """
         self._port.close()
-        return not self._port.is_open()
+        return not self._port.is_connected()
 
     def is_connected(self):
-        """This function checks if the connection to the Schneider Conext ComBox is established
-        and if it responds to readout commands. It requests the firmware version of the ComBox
-        and checks for an received bitstream.
+        """This function checks if the connection to the MySQL server is established.
+
 
         Returns: Boolean value True or False
 
-        return
         """
-        bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
-        if bitstream:
-            return True
-        else:
-            return False
+        return self._port.is_connected()
+
 
 
 
