@@ -150,12 +150,13 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
             del CONEXT
         except:
             print('Control Stop!')
-    except:
-        try:
-            CONEXT.write_Hysteresis(2.5)
-            CONEXT.write_Low_Battery_Cut_Out(46.5)
-            CONEXT.write_Load_Shave_Status('disable')
-            del PYLONTECH
-            del CONEXT
-        except:
-            print('Control Stop! test')
+    except Exception as e:
+        print(e)
+#        try:
+#            CONEXT.write_Hysteresis(2.5)
+#            CONEXT.write_Low_Battery_Cut_Out(46.5)
+#            CONEXT.write_Load_Shave_Status('disable')
+#            del PYLONTECH
+#            del CONEXT
+#        except:
+#            print('Control Stop!')
