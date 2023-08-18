@@ -21,16 +21,19 @@
 -- Table structure for table `battery_bms`
 --
 
-DROP TABLE IF EXISTS `battery_bms`;
+DROP TABLE IF EXISTS `pylontech_bms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `battery_bms` (
-  `ts` datetime NOT NULL,
+  `ts` datetime NOT NULL CURRENT_TIMESTAMP,
   `battery` int NOT NULL,
   `soc` float DEFAULT (NULL),
   `voltage` float DEFAULT (NULL),
   `current` float DEFAULT (NULL),
   `temperature` float DEFAULT (NULL),
+  `b_status` varchar(16) DEFAULT (NULL),
+  `v_status` varchar(16) DEFAULT (NULL),
+  `t_status` varchar(16) DEFAULT (NULL),
   PRIMARY KEY (`ts`,`battery`),
   KEY `idx` (`battery`,`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
