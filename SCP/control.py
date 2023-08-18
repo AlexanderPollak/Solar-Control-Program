@@ -2,8 +2,8 @@
 # and read the charge status, voltage, current, and temperature
 # it stores the data in a .csv file with the actual date
 
-from conext_com import *
-from pylontech_com import *
+from .conext_com import *
+from .pylontech_com import *
 import time
 
 
@@ -158,4 +158,4 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
             del PYLONTECH
             del CONEXT
         except:
-            print('Control Stop!')
+            print('Control Stop! test')
