@@ -81,11 +81,6 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
             error_counter_pylontech=0
             error_counter_conext = 0
             while True:
-                print(Log)
-                print(Display)
-                print(Control)
-                print(Cadance)
-                Print
                 time.sleep(Cadance)
                 if Log:  # Condition to log BMS data into .csv file
                     try:
