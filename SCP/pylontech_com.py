@@ -223,7 +223,7 @@ class US2000B(object):
                     BMS_list[x][7] = str(rec_str[(36+(x*21))])#Temperature Status
                 return BMS_list
             else:
-                 print("ERROR: Number of modules must be 1-8. Number parsed:"+N_MODULES)
+                print("ERROR: Number of modules must be 1-8. Number parsed:"+N_MODULES)
                 return BMS_list
         except:
             print("ERROR: no communication possible, check if the connection has been opened with open()")
