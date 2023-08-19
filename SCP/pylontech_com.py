@@ -447,11 +447,6 @@ class US2000B(object):
             print("ERROR no communication possible, check if the connection has been opened with open()")
 
 
-                    BMS_list[x][4] = str(rec_str[(33+(x*21))])#Battery Status
-                    BMS_list[x][5] = str(rec_str[(34+(x*21))])#Voltage Status
-                    BMS_list[x][6] = str(rec_str[(35+(x*21))])#Current Status
-                    BMS_list[x][7] = str(rec_str[(36+(x*21))])#Temperature Status
-
     def log_SoC_v2(self, PATH='../var/BMS_log', SOC_LIST):
         """This function writes the State of Charge (SoC) into a '.csv' file.
         
