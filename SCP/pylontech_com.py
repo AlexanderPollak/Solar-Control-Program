@@ -447,7 +447,7 @@ class US2000B(object):
             print("ERROR no communication possible, check if the connection has been opened with open()")
 
 
-    def log_SoC_v2(self, PATH='../var/BMS_log', SOC_LIST):
+    def log_SoC_v2(self, SOC_LIST, PATH='../var/BMS_log'):
         """This function writes the State of Charge (SoC) into a '.csv' file.
         
         Args:
@@ -515,7 +515,7 @@ class US2000B(object):
         csvfile.close()
         return True
 
-    def log_BMS_v2(self, PATH='../var/BMS_log', BMS_LIST):
+    def log_BMS_v2(self, BMS_LIST, PATH='../var/BMS_log'):
         """This function writes the BMS information into a '.csv' file.
         
         Args:
