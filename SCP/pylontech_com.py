@@ -106,29 +106,29 @@ class US2000B(object):
             if N_MODULES == 1:
                 SoC_array[0,0] = str(rec_int[8])
                 return SoC_array
-            if N_MODULES == 2:
+            elif N_MODULES == 2:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 return SoC_array
-            if N_MODULES == 3:
+            elif N_MODULES == 3:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 SoC_array[2,0] = str(rec_int[38])
                 return SoC_array
-            if N_MODULES == 4:
+            elif N_MODULES == 4:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 SoC_array[2,0] = str(rec_int[38])
                 SoC_array[3,0] = str(rec_int[53])
                 return SoC_array
-            if N_MODULES == 5:
+            elif N_MODULES == 5:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 SoC_array[2,0] = str(rec_int[38])
                 SoC_array[3,0] = str(rec_int[53])
                 SoC_array[4,0] = str(rec_int[68])
                 return SoC_array
-            if N_MODULES == 6:
+            elif N_MODULES == 6:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 SoC_array[2,0] = str(rec_int[38])
@@ -136,7 +136,7 @@ class US2000B(object):
                 SoC_array[4,0] = str(rec_int[68])
                 SoC_array[5,0] = str(rec_int[83])
                 return SoC_array
-            if N_MODULES == 7:
+            elif N_MODULES == 7:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 SoC_array[2,0] = str(rec_int[38])
@@ -145,7 +145,7 @@ class US2000B(object):
                 SoC_array[5,0] = str(rec_int[83])
                 SoC_array[6,0] = str(rec_int[98])
                 return SoC_array
-            if N_MODULES == 8:
+            elif N_MODULES == 8:
                 SoC_array[0,0] = str(rec_int[8])
                 SoC_array[1,0] = str(rec_int[23])
                 SoC_array[2,0] = str(rec_int[38])
@@ -184,7 +184,7 @@ class US2000B(object):
                 BMS_array[0,3] = str(rec_int[3])#Temperature
                 return BMS_array
 
-            if N_MODULES == 2:
+            elif N_MODULES == 2:
                 BMS_array[0,0] = str(rec_int[8])#SOC
                 BMS_array[0,1] = str(rec_int[1])#Voltage
                 BMS_array[0,2] = str(rec_int[2])#Current
@@ -196,7 +196,7 @@ class US2000B(object):
                 BMS_array[1,3] = str(rec_int[18])#Temperature
                 return BMS_array
 
-            if N_MODULES == 3:
+            elif N_MODULES == 3:
                 BMS_array[0, 0] = str(rec_int[8])  # SOC
                 BMS_array[0, 1] = str(rec_int[1])  # Voltage
                 BMS_array[0, 2] = str(rec_int[2])  # Current
@@ -213,7 +213,7 @@ class US2000B(object):
                 BMS_array[2, 3] = str(rec_int[33])  # Temperature
                 return BMS_array
 
-            if N_MODULES == 4:
+            elif N_MODULES == 4:
                 BMS_array[0, 0] = str(rec_int[8])  # SOC
                 BMS_array[0, 1] = str(rec_int[1])  # Voltage
                 BMS_array[0, 2] = str(rec_int[2])  # Current
@@ -235,7 +235,7 @@ class US2000B(object):
                 BMS_array[3, 3] = str(rec_int[48])  # Temperature
                 return BMS_array
 
-            if N_MODULES == 5:
+            elif N_MODULES == 5:
                 BMS_array[0, 0] = str(rec_int[8])  # SOC
                 BMS_array[0, 1] = str(rec_int[1])  # Voltage
                 BMS_array[0, 2] = str(rec_int[2])  # Current
@@ -262,7 +262,7 @@ class US2000B(object):
                 BMS_array[4, 3] = str(rec_int[63])  # Temperature
                 return BMS_array
 
-            if N_MODULES == 6:
+            elif N_MODULES == 6:
                 BMS_array[0, 0] = str(rec_int[8])  # SOC
                 BMS_array[0, 1] = str(rec_int[1])  # Voltage
                 BMS_array[0, 2] = str(rec_int[2])  # Current
@@ -294,7 +294,7 @@ class US2000B(object):
                 BMS_array[5, 3] = str(rec_int[78])  # Temperature
                 return BMS_array
 
-            if N_MODULES == 7:
+            elif N_MODULES == 7:
                 BMS_array[0, 0] = str(rec_int[8])  # SOC
                 BMS_array[0, 1] = str(rec_int[1])  # Voltage
                 BMS_array[0, 2] = str(rec_int[2])  # Current
@@ -331,7 +331,7 @@ class US2000B(object):
                 BMS_array[6, 3] = str(rec_int[93])  # Temperature
                 return BMS_array
 
-            if N_MODULES == 8:
+            elif N_MODULES == 8:
                 BMS_array[0, 0] = str(rec_int[8])  # SOC
                 BMS_array[0, 1] = str(rec_int[1])  # Voltage
                 BMS_array[0, 2] = str(rec_int[2])  # Current
@@ -401,29 +401,29 @@ class US2000B(object):
         if N_MODULES == 1:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_SoC[0,0]})
-        if N_MODULES == 2:
+        elif N_MODULES == 2:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_SoC[0,0],'SoC_2':tmp_SoC[1,0]})
-        if N_MODULES == 3:
+        elif N_MODULES == 3:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0]})
-        if N_MODULES == 4:
+        elif N_MODULES == 4:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0]})
 
-        if N_MODULES == 5:
+        elif N_MODULES == 5:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
                                   'SoC_5': tmp_SoC[4, 0]})
-        if N_MODULES == 6:
+        elif N_MODULES == 6:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
                                   'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0]})
-        if N_MODULES == 7:
+        elif N_MODULES == 7:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
                                   'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0],'SoC_7': tmp_SoC[6, 0]})
-        if N_MODULES == 8:
+        elif N_MODULES == 8:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
                                   'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0],'SoC_7': tmp_SoC[6, 0],'SoC_8': tmp_SoC[7, 0]})
@@ -434,7 +434,7 @@ class US2000B(object):
         csvfile.close()
         return True
 
-    def log_BMS(self, PATH='../Log/', N_MODULES=1):
+    def log_BMS(self, PATH='../Log', N_MODULES=1):
 
         filename = str(PATH) + '/' + str(datetime.date.today()) + '.csv'
         tmp_check_file = os.path.isfile(filename)
@@ -457,29 +457,29 @@ class US2000B(object):
         if N_MODULES == 1:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3]})
-        if N_MODULES == 2:
+        elif N_MODULES == 2:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3]})
-        if N_MODULES == 3:
+        elif N_MODULES == 3:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
                                   'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3]})
-        if N_MODULES == 4:
+        elif N_MODULES == 4:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
                                   'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
                                   'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3]})
-        if N_MODULES == 5:
+        elif N_MODULES == 5:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
                                   'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
                                   'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
                                   'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3]})
-        if N_MODULES == 6:
+        elif N_MODULES == 6:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
@@ -487,7 +487,7 @@ class US2000B(object):
                                   'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
                                   'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
                                   'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3]})
-        if N_MODULES == 7:
+        elif N_MODULES == 7:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
@@ -496,7 +496,7 @@ class US2000B(object):
                                   'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
                                   'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3],
                                   'SoC_7':tmp_BMS[6,0],'Voltage_7':tmp_BMS[6,1],'Current_7':tmp_BMS[6,2],'Temperature_7':tmp_BMS[6,3]})
-        if N_MODULES == 8:
+        elif N_MODULES == 8:
             data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
                                   'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
                                   'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],

@@ -8,14 +8,14 @@ import time
 
 
 def runtime_error_pylontech(error_counter):
-    print('Communication Error With Pylontech!')
+    print('Communication Error With Pylontech! Try:'+error_counter)
     if error_counter >=100:
         print('Max Communication retries reached!')
         exit()
     return
 
 def runtime_error_conext(self, error_counter):
-    print('Communication Error With Conext!')
+    print('Communication Error With Conext! Try:'+error_counter)
 
 
     if error_counter >=10:
@@ -84,8 +84,7 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                 time.sleep(Cadance)
                 if Log:  # Condition to log BMS data into .csv file
                     try:
-                        tmp_p=PYLONTECH.log_BMS(N_MODULES=Battery_Modules,PATH=Log_file_path)
-                        print('pylontech log bms:'+tmp_p)
+                        PYLONTECH.log_BMS(PATH=Log_file_path,N_MODULES=Battery_Modules)
                     except:
                         error_counter_pylontech=error_counter_pylontech+1
                         runtime_error_pylontech(error_counter_pylontech)
