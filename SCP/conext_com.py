@@ -191,7 +191,7 @@ class ComBox():
 
         """
         bitstream = self._port.read_holding_registers(0x004C, 2)# 0x004C Grid Voltage uint32 r
-        result = unpack('L',pack('<HH',bitstream[0],bitstream[1]))[0]/1000.0 # combines two 16bit registers into uint32
+        result = unpack('<L',pack('<HH',bitstream[0],bitstream[1]))[0]/1000.0 # combines two 16bit registers into uint32
         return result
 
     def read_Grid_Frequency(self):
@@ -201,7 +201,7 @@ class ComBox():
 
         """
         bitstream = self._port.read_holding_registers(0x004E, 2)# 0x004E Grid Frequency uint32 r
-        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 100.0  # combines two 16bit registers into uint32
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 100.0  # combines two 16bit registers into uint32
         return result
 
 
@@ -295,7 +295,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x0062, 2)  # 0x0062 Grid Voltage uint32 r
-        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def read_Grid_Frequency(self):
@@ -315,7 +315,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x017C, 2) # 0x017C Low Battery Cut Out uint32 r/w
-        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def read_Low_Battery_Cut_Out_Delay(self):
@@ -436,7 +436,7 @@ class XW():
             print ('ERROR: Low Battery Voltage value out of range!')
 
         bitstream = self._port.read_holding_registers(0x017C, 2) # 0x017C Low Battery Cut Out uint32 r/w
-        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
 
@@ -483,7 +483,7 @@ class XW():
         """
 
         bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
-        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def write_Hysteresis(self, voltage=2.3):
@@ -501,5 +501,5 @@ class XW():
             print ('ERROR: Hysteresis Voltage value out of range!')
 
         bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
-        result = unpack('L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
