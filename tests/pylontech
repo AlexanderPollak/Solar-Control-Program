@@ -1,4 +1,3 @@
-pylon>pwr
 @
 Power Volt   Curr   Tempr  Tlow   Thigh  Vlow   Vhigh  Base.St  Volt.St  Curr.St  Temp.St  Coulomb  Time                 B.V.St   B.T.St  
 1     50180  8561   25000  23000  23000  3343   3347   Charge   Normal   Normal   Normal   66%      2023-08-17 14:30:47  Normal   Normal  
