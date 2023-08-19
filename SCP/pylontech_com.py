@@ -174,7 +174,7 @@ class US2000B(object):
 
         """
         try:
-            SoC_list = [[0 for i in range(8)] for j in range(N_MODULES)]
+            SoC_list = [[0 for i in range(1)] for j in range(N_MODULES)]
             self._port.write(str.encode('pwr\r'))
             time.sleep(0.5)
             rec_content = str(self._port.read(2200), 'utf-8')
@@ -460,14 +460,14 @@ class US2000B(object):
         filename = str(PATH) + '/' + str(datetime.date.today()) + '.csv'
         tmp_check_file = os.path.isfile(filename)
         csvfile = open(filename, mode='a')
-        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1', 'B_Status_1', 'V_Status_1', 'C_Status_1, T_Status_1',
-                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2', 'B_Status_2', 'V_Status_2', 'C_Status_2, T_Status_2',
-                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3', 'B_Status_3', 'V_Status_3', 'C_Status_3, T_Status_3',
-                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4', 'B_Status_4', 'V_Status_4', 'C_Status_4, T_Status_4',
-                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5', 'B_Status_5', 'V_Status_5', 'C_Status_5, T_Status_5',
-                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6', 'B_Status_6', 'V_Status_6', 'C_Status_6, T_Status_6',
-                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7', 'B_Status_7', 'V_Status_7', 'C_Status_7, T_Status_7',
-                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8', 'B_Status_8', 'V_Status_8', 'C_Status_8, T_Status_8'
+        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1', 'B_Status_1', 'V_Status_1', 'C_Status_1', 'T_Status_1',
+                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2', 'B_Status_2', 'V_Status_2', 'C_Status_2', 'T_Status_2',
+                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3', 'B_Status_3', 'V_Status_3', 'C_Status_3', 'T_Status_3',
+                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4', 'B_Status_4', 'V_Status_4', 'C_Status_4', 'T_Status_4',
+                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5', 'B_Status_5', 'V_Status_5', 'C_Status_5', 'T_Status_5',
+                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6', 'B_Status_6', 'V_Status_6', 'C_Status_6', 'T_Status_6',
+                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7', 'B_Status_7', 'V_Status_7', 'C_Status_7', 'T_Status_7',
+                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8', 'B_Status_8', 'V_Status_8', 'C_Status_8', 'T_Status_8'
                 ]
         data_writer = csv.DictWriter(csvfile, fieldnames=name)
         if not tmp_check_file:
@@ -530,14 +530,14 @@ class US2000B(object):
         filename = str(PATH) + '/' + str(datetime.date.today()) + '.csv'
         tmp_check_file = os.path.isfile(filename)
         csvfile = open(filename, mode='a')
-        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1', 'B_Status_1', 'V_Status_1', 'C_Status_1, T_Status_1',
-                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2', 'B_Status_2', 'V_Status_2', 'C_Status_2, T_Status_2',
-                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3', 'B_Status_3', 'V_Status_3', 'C_Status_3, T_Status_3',
-                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4', 'B_Status_4', 'V_Status_4', 'C_Status_4, T_Status_4',
-                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5', 'B_Status_5', 'V_Status_5', 'C_Status_5, T_Status_5',
-                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6', 'B_Status_6', 'V_Status_6', 'C_Status_6, T_Status_6',
-                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7', 'B_Status_7', 'V_Status_7', 'C_Status_7, T_Status_7',
-                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8', 'B_Status_8', 'V_Status_8', 'C_Status_8, T_Status_8'
+        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1', 'B_Status_1', 'V_Status_1', 'C_Status_1', 'T_Status_1',
+                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2', 'B_Status_2', 'V_Status_2', 'C_Status_2', 'T_Status_2',
+                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3', 'B_Status_3', 'V_Status_3', 'C_Status_3', 'T_Status_3',
+                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4', 'B_Status_4', 'V_Status_4', 'C_Status_4', 'T_Status_4',
+                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5', 'B_Status_5', 'V_Status_5', 'C_Status_5', 'T_Status_5',
+                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6', 'B_Status_6', 'V_Status_6', 'C_Status_6', 'T_Status_6',
+                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7', 'B_Status_7', 'V_Status_7', 'C_Status_7', 'T_Status_7',
+                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8', 'B_Status_8', 'V_Status_8', 'C_Status_8', 'T_Status_8'
                 ]
         data_writer = csv.DictWriter(csvfile, fieldnames=name)
         if not tmp_check_file:
