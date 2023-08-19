@@ -1,7 +1,7 @@
 #START OF MAIN:
 
 import configparser
-from SCP.control import *
+from .control import *
 
 
 def main():
