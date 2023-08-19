@@ -11,22 +11,23 @@ def main():
     config.read('/usr/local/solar-control-program/etc/scp.cfg') # Location of config file
 
     # Parse values into the control function.
-    Serial_Port = config['COMMUNICATION SETTINGS']['Serial_Port']  # Serial Port for Communication with Pylontech
-    Modbus_Host = config['COMMUNICATION SETTINGS']['Modbus_Host']  # Modbus Server Address for Communication with Inverter
+    Serial_Port = config.get('COMMUNICATION SETTINGS','Serial_Port')  # Serial Port for Communication with Pylontech
+    Modbus_Host = config.get('COMMUNICATION SETTINGS','Modbus_Host')  # Modbus Server Address for Communication with Inverter
     
-    Log_File_Path = config['PYLONTECH BATTERY SPECIFIC SETTINGS']['CSV_Log_File_Path']
-    Battery_Modules = config['PYLONTECH BATTERY SPECIFIC SETTINGS']['Battery_Modules']  # Number of Installed Modules
+    Log_File_Path = config.get('PYLONTECH BATTERY SPECIFIC SETTINGS','CSV_Log_File_Path')
+    Battery_Modules = config.getint('PYLONTECH BATTERY SPECIFIC SETTINGS','Battery_Modules')  # Number of Installed Modules
     
-    Cadance = config['GENERAL CONTROL SETTINGS']['Cadance']  # Control Loop refresh rate in seconds
-    Display = config['GENERAL CONTROL SETTINGS']['Display']  # Enable Terminal SoC Print
-    Log = config['GENERAL CONTROL SETTINGS']['CSV_Log'] # Enable BMS logging
-    Control = config['GENERAL CONTROL SETTINGS']['Control'] # Enable Inverter Control Loop
 
-    SoC_high = config['CONTROL LOOP SPECIFIC SETTINGS']['SoC_high']  # Percent
-    SoC_low = config['CONTROL LOOP SPECIFIC SETTINGS']['SoC_low']  # Percent
-    Battery_low = config['CONTROL LOOP SPECIFIC SETTINGS']['Battery_low']  # Volt
-    Battery_hysteresis = config['CONTROL LOOP SPECIFIC SETTINGS']['Battery_hysteresis']  # Volt
+    Cadance = config.getint('GENERAL CONTROL SETTINGS','Cadance')  # Control Loop refresh rate in seconds
+    Display = config.getboolean('GENERAL CONTROL SETTINGS','Display') # Enable Terminal SoC Print
+    Log = config.getboolean('GENERAL CONTROL SETTINGS','CSV_Log') # Enable BMS logging
+    Control = config.getboolean('GENERAL CONTROL SETTINGS','Control')# Enable Inverter Control Loop
 
+
+    SoC_high = config.getint('CONTROL LOOP SPECIFIC SETTINGS','SoC_high')  # Percent
+    SoC_low = config.getint('CONTROL LOOP SPECIFIC SETTINGS','SoC_low')  # Percent
+    Battery_low = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_low')  # Volt
+    Battery_hysteresis = getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_hysteresis')   # Volt
 
 
 
