@@ -160,7 +160,7 @@ class US2000B(object):
         except:
             print("ERROR no communication possible, check if the connection has been opened with open()")
 
-def read_BMS_v2(self, N_MODULES=1):
+    def read_BMS_v2(self, N_MODULES=1):
         """This function returns the values of the: SoC, Voltage, Current, Temperature, Battery Status,
         Voltage Status, Current Status, and Temperature Status provided by the Pylontech BMS.
         
