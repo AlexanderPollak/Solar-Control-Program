@@ -27,7 +27,7 @@ def main():
     SoC_high = config.getint('CONTROL LOOP SPECIFIC SETTINGS','SoC_high')  # Percent
     SoC_low = config.getint('CONTROL LOOP SPECIFIC SETTINGS','SoC_low')  # Percent
     Battery_low = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_low')  # Volt
-    Battery_hysteresis = getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_hysteresis')   # Volt
+    Battery_hysteresis = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_hysteresis')   # Volt
 
 
 
