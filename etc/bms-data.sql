@@ -33,6 +33,7 @@ CREATE TABLE `pylontech_bms` (
   `temperature` float DEFAULT (NULL),
   `b_status` varchar(16) DEFAULT (NULL),
   `v_status` varchar(16) DEFAULT (NULL),
+  `c_status` varchar(16) DEFAULT (NULL),
   `t_status` varchar(16) DEFAULT (NULL),
   PRIMARY KEY (`ts`,`battery`),
   KEY `idx` (`battery`,`ts`)
