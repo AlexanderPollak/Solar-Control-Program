@@ -84,7 +84,7 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                 time.sleep(Cadance)
                 if Log:  # Condition to log BMS data into .csv file
                     try:
-                        PYLONTECH.log_BMS(PATH=Log_file_path,N_MODULES=Battery_Modules)
+                        PYLONTECH.log_BMS(PATH=Log_file_path,BMS_LIST=PYLONTECH.read_BMS(N_MODULES=Battery_Modules))
                     except:
                         error_counter_pylontech=error_counter_pylontech+1
                         runtime_error_pylontech(error_counter_pylontech)
@@ -92,8 +92,8 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                 if Display:  # Condition to print the SoC in terminal
                     try:
                         tmp = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
-                        print('A:' + str(tmp[0, 0]) + '\t' + 'B:' + str(tmp[1, 0]) + '\t' + 'C:' + str(tmp[2, 0]) + '\t' + \
-                              'D:' + str(tmp[3, 0]) + '\t' + 'E:' + str(tmp[4, 0]) + '\t' + 'F:' + str(tmp[5, 0]) + '\t' \
+                        print('A:' + str(tmp[0][0]) + '\t' + 'B:' + str(tmp[1][0]) + '\t' + 'C:' + str(tmp[2][0]) + '\t' + \
+                              'D:' + str(tmp[3][0]) + '\t' + 'E:' + str(tmp[4][0]) + '\t' + 'F:' + str(tmp[5][0]) + '\t' \
                              +CONEXT.read_Inverter_Status())
                     except:
                         error_counter_conext=error_counter_conext+1
@@ -105,7 +105,7 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                 if Control:  # Condition to Control Inverter Based on SoC
                     try:
                         Battery_SoC = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
-                        Avg_SoC = int(sum(Battery_SoC) / Battery_Modules)
+                        Avg_SoC = int(Battery_SoC.sum() / Battery_Modules)
                         
                         if Avg_SoC >= SoC_high:  # Condition to enable Inverter Grid Support
                             if CONEXT.read_Load_Shave_Status() == 'Disable':
