@@ -6,26 +6,11 @@ from SCP.control import *
 
 def main():
     
+    # Import SCP gonfiguration values from scp.cfg file in etc directory
     config = configparser.ConfigParser()
+    config.read('../etc/scp.cfg') # Location of config file
 
-    config.read('/usr/local/Solar-Control-Program/etc/scp.cfg') # Location of config file
-
-
-    # Serial_Port = '/dev/ttyUSB0'  # Serial Port for Communication with Pylontech
-    # Modbus_Host = '192.168.0.210'  # Modbus Server Address for Communication with Inverter
-    # Log_File_Path = '/home/pollak/Solar-Control-Program/Log'
-
-    # Battery_Modules = 6  # Number of Installed Modules
-    # Cadance = 30  # Control Loop refresh rate in seconds
-    # Display = True  # Enable Terminal SoC Print
-    # Log = True  # Enable BMS logging
-    # Control = True  # Enable Inverter Control Loop
-
-    # SoC_high = 80  # Percent
-    # SoC_low = 40  # Percent
-    # Battery_low = 45.5  # Volt
-    # Battery_hysteresis = 2.0  # Volt
-
+    # Parse values into the control function.
     Serial_Port = config['COMMUNICATION SETTINGS']['Serial_Port']  # Serial Port for Communication with Pylontech
     Modbus_Host = config['COMMUNICATION SETTINGS']['Modbus_Host']  # Modbus Server Address for Communication with Inverter
     
