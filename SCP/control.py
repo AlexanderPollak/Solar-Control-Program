@@ -2,8 +2,8 @@
 # and read the charge status, voltage, current, and temperature
 # it stores the data in a .csv file with the actual date
 
-from .conext_com import *
-from .pylontech_com import *
+from conext_com import *
+from pylontech_com import *
 import time
 
 
