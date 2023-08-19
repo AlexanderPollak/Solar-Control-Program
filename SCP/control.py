@@ -127,7 +127,8 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                             error_counter_conext=0
 
 
-
+        except Exception as error:
+            print("An error occurred:", error)
 
 
 
