@@ -35,7 +35,7 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
 
     try:
 
-        print('SolarControl:0.0.3 ')
+        print('SolarControl:1.0.3 ')
 
         # ---------------------------------------------------------------------------#
         # Initialise communication to BMS
@@ -81,10 +81,16 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
             error_counter_pylontech=0
             error_counter_conext = 0
             while True:
+                print(Log)
+                print(Display)
+                print(Control)
+                print(Cadance)
+                Print
                 time.sleep(Cadance)
                 if Log:  # Condition to log BMS data into .csv file
                     try:
-                        PYLONTECH.log_BMS(N_MODULES=Battery_Modules,PATH=Log_file_path)
+                        tmp_p=PYLONTECH.log_BMS(N_MODULES=Battery_Modules,PATH=Log_file_path)
+                        print('pylontech log bms:'+tmp_p)
                     except:
                         error_counter_pylontech=error_counter_pylontech+1
                         runtime_error_pylontech(error_counter_pylontech)
@@ -106,6 +112,7 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                     try:
                         Battery_SoC = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
                         Avg_SoC = int(sum(Battery_SoC) / Battery_Modules)
+                        
                         if Avg_SoC >= SoC_high:  # Condition to enable Inverter Grid Support
                             if CONEXT.read_Load_Shave_Status() == 'Disable':
                                 CONEXT.write_Load_Shave_Status('Enable')
