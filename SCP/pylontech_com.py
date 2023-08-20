@@ -113,7 +113,7 @@ class US2000B(object):
                     SoC_list[x][0] = float(rec_int[(8+(x*15))])#SOC
                 return SoC_list
             else:
-                print("ERROR: Number of modules must be 1-8. Number parsed:"+N_MODULES)
+                print("ERROR: Number of modules must be 1-8. Number parsed:"+ str(N_MODULES))
                 return SoC_list
         except:
             print("ERROR no communication possible, check if the connection has been opened with open()")
@@ -151,7 +151,7 @@ class US2000B(object):
                     BMS_list[x][7] = str(rec_str[(36+(x*21))])#Temperature Status
                 return BMS_list
             else:
-                print("ERROR: Number of modules must be 1-8. Number parsed:"+N_MODULES)
+                print("ERROR: Number of modules must be 1-8. Number parsed:"+ str(N_MODULES))
                 return BMS_list
         except:
             print("ERROR: no communication possible, check if the connection has been opened with open()")
@@ -204,7 +204,7 @@ class US2000B(object):
         elif tmp_n_modules == 8:
             data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0],'SoC_7':tmp_SoC[6][0],'SoC_8':tmp_SoC[7][0]})
         else:
-            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + tmp_n_modules)
+            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + str(tmp_n_modules))
             csvfile.flush()
             csvfile.close()
             return False
@@ -298,7 +298,7 @@ class US2000B(object):
                                   'SoC_7':tmp_BMS[6][0],'Voltage_7':tmp_BMS[6][1],'Current_7':tmp_BMS[6][2],'Temperature_7':tmp_BMS[6][3],'B_Status_7':tmp_BMS[6][4],'V_Status_7':tmp_BMS[6][5],'C_Status_7':tmp_BMS[6][6],'T_Status_7':tmp_BMS[6][7],
                                   'SoC_8':tmp_BMS[7][0],'Voltage_8':tmp_BMS[7][1],'Current_8':tmp_BMS[7][2],'Temperature_8':tmp_BMS[7][3],'B_Status_8':tmp_BMS[7][4],'V_Status_8':tmp_BMS[7][5],'C_Status_8':tmp_BMS[7][6],'T_Status_8':tmp_BMS[7][7]})
         else:
-            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + tmp_n_modules)
+            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + str(tmp_n_modules))
             csvfile.flush()
             csvfile.close()
             return False

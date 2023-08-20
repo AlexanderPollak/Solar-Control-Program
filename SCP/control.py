@@ -9,14 +9,14 @@ import time
 
 
 def runtime_error_pylontech(error_counter):
-    print('Communication Error With Pylontech! Try:'+error_counter)
+    print('Communication Error With Pylontech! Try:'+str(error_counter))
     if error_counter >=100:
         print('Max Communication retries reached!')
         exit()
     return
 
 def runtime_error_conext(self, error_counter):
-    print('Communication Error With Conext! Try:'+error_counter)
+    print('Communication Error With Conext! Try:'+str(error_counter))
 
 
     if error_counter >=10:

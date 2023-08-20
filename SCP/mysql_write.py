@@ -51,7 +51,7 @@ class MySQL_com():
         """
         self._port = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database=DATABASE, auth_plugin=AUTH_PLUGIN)
         if not self._port.is_connected():
-            print("unable to connect to " + HOST)
+            print("Unable to connect to " + str(HOST))
 
         return self._port.is_connected()
 
@@ -174,7 +174,7 @@ class MySQL_com():
                         (tmp_time,8,tmp_BMS[7][0],tmp_BMS[7][1],tmp_BMS[7][2],tmp_BMS[7][3],tmp_BMS[7][4],tmp_BMS[7][5],tmp_BMS[7][6],tmp_BMS[7][7])] 
 
         else:
-            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + tmp_n_modules)
+            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + str(tmp_n_modules))
             return False
         try:
             # Executing the SQL command
