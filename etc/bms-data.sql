@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `pylontech_bms`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pylontech_bms` (
   `ts` datetime NOT NULL,
-  `battery` int NOT NULL,
+  `battery` varchar(16) DEFAULT (NULL),
   `soc` float DEFAULT (NULL),
   `voltage` float DEFAULT (NULL),
   `current` float DEFAULT (NULL),

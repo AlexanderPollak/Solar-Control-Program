@@ -88,18 +88,18 @@ class MySQL_com():
         DROP TABLE IF EXISTS `pylontech_bms`;
         CREATE TABLE `pylontech_bms` (
             `ts` datetime NOT NULL,
-            `battery` int NOT NULL,
+            `battery` varchar(16) DEFAULT (NULL),
             `soc` float DEFAULT (NULL),
             `voltage` float DEFAULT (NULL),
             `current` float DEFAULT (NULL),
             `temperature` float DEFAULT (NULL),
-            `b_status` float DEFAULT (NULL),
-            `v_status` float DEFAULT (NULL),
-            `c_status` float DEFAULT (NULL),
-            `t_status` float DEFAULT (NULL),
+            `b_status` varchar(16) DEFAULT (NULL),
+            `v_status` varchar(16) DEFAULT (NULL),
+            `c_status` varchar(16) DEFAULT (NULL),
+            `t_status` varchar(16) DEFAULT (NULL),
             PRIMARY KEY (`ts`,`battery`),
             KEY `idx` (`battery`,`ts`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+        ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
     
 
         Returns: Boolean value True or False
@@ -115,63 +115,63 @@ class MySQL_com():
         # Preparing SQL query to INSERT a record into the database.
         if tmp_n_modules == 1:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [(tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7])]
+            tmp_val = [(tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7])]
 
         elif tmp_n_modules == 2:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7])]
         
         elif tmp_n_modules == 3:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
-                        (tmp_time,3,tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
+                        (tmp_time,'Battery: 3',tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7])]
 
         elif tmp_n_modules == 4:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
-                        (tmp_time,3,tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
-                        (tmp_time,4,tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
+                        (tmp_time,'Battery: 3',tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
+                        (tmp_time,'Battery: 4',tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7])]
 
         elif tmp_n_modules == 5:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
-                        (tmp_time,3,tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
-                        (tmp_time,4,tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
-                        (tmp_time,5,tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
+                        (tmp_time,'Battery: 3',tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
+                        (tmp_time,'Battery: 4',tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
+                        (tmp_time,'Battery: 5',tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7])]
 
         elif tmp_n_modules == 6:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
-                        (tmp_time,3,tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
-                        (tmp_time,4,tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
-                        (tmp_time,5,tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7]),\
-                        (tmp_time,6,tmp_BMS[5][0],tmp_BMS[5][1],tmp_BMS[5][2],tmp_BMS[5][3],tmp_BMS[5][4],tmp_BMS[5][5],tmp_BMS[5][6],tmp_BMS[5][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
+                        (tmp_time,'Battery: 3',tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
+                        (tmp_time,'Battery: 4',tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
+                        (tmp_time,'Battery: 5',tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7]),\
+                        (tmp_time,'Battery: 6',tmp_BMS[5][0],tmp_BMS[5][1],tmp_BMS[5][2],tmp_BMS[5][3],tmp_BMS[5][4],tmp_BMS[5][5],tmp_BMS[5][6],tmp_BMS[5][7])]
 
         elif tmp_n_modules == 7:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
-                        (tmp_time,3,tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
-                        (tmp_time,4,tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
-                        (tmp_time,5,tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7]),\
-                        (tmp_time,6,tmp_BMS[5][0],tmp_BMS[5][1],tmp_BMS[5][2],tmp_BMS[5][3],tmp_BMS[5][4],tmp_BMS[5][5],tmp_BMS[5][6],tmp_BMS[5][7]),\
-                        (tmp_time,7,tmp_BMS[6][0],tmp_BMS[6][1],tmp_BMS[6][2],tmp_BMS[6][3],tmp_BMS[6][4],tmp_BMS[6][5],tmp_BMS[6][6],tmp_BMS[6][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
+                        (tmp_time,'Battery: 3',tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
+                        (tmp_time,'Battery: 4',tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
+                        (tmp_time,'Battery: 5',tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7]),\
+                        (tmp_time,'Battery: 6',tmp_BMS[5][0],tmp_BMS[5][1],tmp_BMS[5][2],tmp_BMS[5][3],tmp_BMS[5][4],tmp_BMS[5][5],tmp_BMS[5][6],tmp_BMS[5][7]),\
+                        (tmp_time,'Battery: 7',tmp_BMS[6][0],tmp_BMS[6][1],tmp_BMS[6][2],tmp_BMS[6][3],tmp_BMS[6][4],tmp_BMS[6][5],tmp_BMS[6][6],tmp_BMS[6][7])]
 
         elif tmp_n_modules == 8:
             tmp_sql = "INSERT INTO pylontech_bms (ts,battery,soc,voltage,current,temperature,b_status,v_status,c_status,t_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            tmp_val = [ (tmp_time,1,tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
-                        (tmp_time,2,tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
-                        (tmp_time,3,tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
-                        (tmp_time,4,tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
-                        (tmp_time,5,tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7]),\
-                        (tmp_time,6,tmp_BMS[5][0],tmp_BMS[5][1],tmp_BMS[5][2],tmp_BMS[5][3],tmp_BMS[5][4],tmp_BMS[5][5],tmp_BMS[5][6],tmp_BMS[5][7]),\
-                        (tmp_time,7,tmp_BMS[6][0],tmp_BMS[6][1],tmp_BMS[6][2],tmp_BMS[6][3],tmp_BMS[6][4],tmp_BMS[6][5],tmp_BMS[6][6],tmp_BMS[6][7]),\
-                        (tmp_time,8,tmp_BMS[7][0],tmp_BMS[7][1],tmp_BMS[7][2],tmp_BMS[7][3],tmp_BMS[7][4],tmp_BMS[7][5],tmp_BMS[7][6],tmp_BMS[7][7])]
+            tmp_val = [ (tmp_time,'Battery: 1',tmp_BMS[0][0],tmp_BMS[0][1],tmp_BMS[0][2],tmp_BMS[0][3],tmp_BMS[0][4],tmp_BMS[0][5],tmp_BMS[0][6],tmp_BMS[0][7]),\
+                        (tmp_time,'Battery: 2',tmp_BMS[1][0],tmp_BMS[1][1],tmp_BMS[1][2],tmp_BMS[1][3],tmp_BMS[1][4],tmp_BMS[1][5],tmp_BMS[1][6],tmp_BMS[1][7]),\
+                        (tmp_time,'Battery: 3',tmp_BMS[2][0],tmp_BMS[2][1],tmp_BMS[2][2],tmp_BMS[2][3],tmp_BMS[2][4],tmp_BMS[2][5],tmp_BMS[2][6],tmp_BMS[2][7]),\
+                        (tmp_time,'Battery: 4',tmp_BMS[3][0],tmp_BMS[3][1],tmp_BMS[3][2],tmp_BMS[3][3],tmp_BMS[3][4],tmp_BMS[3][5],tmp_BMS[3][6],tmp_BMS[3][7]),\
+                        (tmp_time,'Battery: 5',tmp_BMS[4][0],tmp_BMS[4][1],tmp_BMS[4][2],tmp_BMS[4][3],tmp_BMS[4][4],tmp_BMS[4][5],tmp_BMS[4][6],tmp_BMS[4][7]),\
+                        (tmp_time,'Battery: 6',tmp_BMS[5][0],tmp_BMS[5][1],tmp_BMS[5][2],tmp_BMS[5][3],tmp_BMS[5][4],tmp_BMS[5][5],tmp_BMS[5][6],tmp_BMS[5][7]),\
+                        (tmp_time,'Battery: 7',tmp_BMS[6][0],tmp_BMS[6][1],tmp_BMS[6][2],tmp_BMS[6][3],tmp_BMS[6][4],tmp_BMS[6][5],tmp_BMS[6][6],tmp_BMS[6][7]),\
+                        (tmp_time,'Battery: 8',tmp_BMS[7][0],tmp_BMS[7][1],tmp_BMS[7][2],tmp_BMS[7][3],tmp_BMS[7][4],tmp_BMS[7][5],tmp_BMS[7][6],tmp_BMS[7][7])]
 
         else:
             print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + str(tmp_n_modules))
