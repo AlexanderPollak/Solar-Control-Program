@@ -106,11 +106,7 @@ class MySQL_com():
 
         """
         tmp_n_modules = len(BMS_LIST)
-        tmp_time ="{:02d}:{:02d}:{:02d}".format(datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
-
-
-         str(datetime.datetime.now().date()) + ' ' + str(datetime.datetime.now().hour) + ':' + str(
-            datetime.datetime.now().minute) + ':' + str(datetime.datetime.now().second)
+        tmp_time ="{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
 
         cursor = self._port.cursor()
         
