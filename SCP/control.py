@@ -105,7 +105,10 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
                 if Control:  # Condition to Control Inverter Based on SoC
                     try:
                         Battery_SoC = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
-                        Avg_SoC = int(Battery_SoC.sum() / Battery_Modules)
+                        Avg_SoC = 0
+                        for i in range(len(Battery_SoC)) :
+                            Avg_SoC=Avg_SoC+Battery_SoC[i][0]
+                        Avg_SoC = round(Avg_SoC / Battery_Modules)
                         
                         if Avg_SoC >= SoC_high:  # Condition to enable Inverter Grid Support
                             if CONEXT.read_Load_Shave_Status() == 'Disable':
