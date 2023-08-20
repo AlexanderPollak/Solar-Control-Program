@@ -179,15 +179,15 @@ class MySQL_com():
         try:
             # Executing the SQL command
             cursor.executemany(tmp_sql, tmp_val)
-            print(cursor.rowcount, "records inserted.")
+            #print(cursor.rowcount, "records inserted.")
             # Commit your changes in the database
             self._port.commit()
-            print("successfully send data to database")
+            #print("successfully send data to database")
             return True
         except:
             # Rolling back in case of error
             self._port.rollback()
-            print("failed to send data to database")
+            print("Failed to send data to database")
             return False
 
 
