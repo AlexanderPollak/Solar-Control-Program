@@ -76,7 +76,7 @@ class MySQL_com():
 
 
 
-    def write_bms(self,BMS_LIST):
+    def write_BMS(self,BMS_LIST):
         """This function writes the parsed data into the mysql database table for pylontech_bms and returns a boolean value
         if the write process was sucessful.
 
@@ -106,7 +106,10 @@ class MySQL_com():
 
         """
         tmp_n_modules = len(BMS_LIST)
-        tmp_time = str(datetime.datetime.now().date()) + ' ' + str(datetime.datetime.now().hour) + ':' + str(
+        tmp_time ="{:02d}:{:02d}:{:02d}".format(datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
+
+
+         str(datetime.datetime.now().date()) + ' ' + str(datetime.datetime.now().hour) + ':' + str(
             datetime.datetime.now().minute) + ':' + str(datetime.datetime.now().second)
 
         cursor = self._port.cursor()

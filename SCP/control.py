@@ -4,6 +4,7 @@
 
 from conext_com import *
 from pylontech_com import *
+from mysql_write import *
 import time
 
 
@@ -29,13 +30,13 @@ def runtime_error_conext(self, error_counter):
     return False
 
 
-def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Control, SoC_high, SoC_low, Battery_low, Battery_hysteresis, Log_file_path):
+def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, CSV_Log, SQL_Log, Control, SoC_high, SoC_low, Battery_low, Battery_hysteresis, Log_file_path, SQL_Host, SQL_Auth, SQL_User, SQL_Password, SQL_Database):
 
 
 
     try:
 
-        print('SolarControl:1.0.3 ')
+        print('SolarControl:1.0.5 ')
 
         # ---------------------------------------------------------------------------#
         # Initialise communication to BMS
@@ -61,12 +62,27 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
         print('INVERTER Connection Established:' + str(tmp_c))
         # ---------------------------------------------------------------------------#
 
+
+        # ---------------------------------------------------------------------------#
+        # Connect to MySQL Server
+        SQL= MySQL_com()
+        SQL.open(HOST=SQL_Host,USER =SQL_User,PASSWORD=SQL_Password,DATABASE=SQL_Database,AUTH_PLUGIN=SQL_Auth)
+        time.sleep(1)
+        tmp_s = SQL.is_connected()
+        print('SQL Server Connection Established:' + str(tmp_s))
+        # ---------------------------------------------------------------------------#
+
+
+
         # ---------------------------------------------------------------------------#
         if not (tmp_b):  # Stopps program if connection has not been established.
             print ('ERROR: No Connection to BMS!')
             exit()
         if not (tmp_c):  # Stopps program if connection has not been established.
             print ('ERROR: No Connection to INVERTER!')
+            exit()
+        if not (tmp_s):  # Stopps program if connection has not been established.
+            print ('ERROR: No Connection to SQL Server!')
             exit()
         # ---------------------------------------------------------------------------#
 
@@ -82,12 +98,17 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, Log, Co
             error_counter_conext = 0
             while True:
                 time.sleep(Cadance)
-                if Log:  # Condition to log BMS data into .csv file
+                if CSV_Log or SQL_Log:  # Condition to log BMS data into .csv file or SQL Database.
                     try:
-                        PYLONTECH.log_BMS(PATH=Log_file_path,BMS_LIST=PYLONTECH.read_BMS(N_MODULES=Battery_Modules))
+                        tmp_bms_log = PYLONTECH.read_BMS(N_MODULES=Battery_Modules)
+                        if CSV_Log:
+                            PYLONTECH.log_BMS(PATH=Log_file_path,BMS_LIST=tmp_bms_log)
+                        if SQL_Log:
+                            SQL.write_BMS(BMS_LIST=tmp_bms_log)
                     except:
                         error_counter_pylontech=error_counter_pylontech+1
                         runtime_error_pylontech(error_counter_pylontech)
+
 
                 if Display:  # Condition to print the SoC in terminal
                     try:

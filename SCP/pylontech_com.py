@@ -183,7 +183,7 @@ class US2000B(object):
         if not tmp_check_file:
             data_writer.writeheader()
 
-        tmp_time = str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute) + ':' + str(datetime.datetime.now().second)
+        tmp_time = "{:02d}:{:02d}:{:02d}".format(datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
         tmp_n_modules = len(SOC_LIST)
         tmp_SoC = SOC_LIST
 
@@ -241,7 +241,7 @@ class US2000B(object):
         if not tmp_check_file:
             data_writer.writeheader()
 
-        tmp_time = str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute) + ':' + str(datetime.datetime.now().second)
+        tmp_time = "{:02d}:{:02d}:{:02d}".format(datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
         tmp_n_modules = len(BMS_LIST)
         tmp_BMS = BMS_LIST
 
