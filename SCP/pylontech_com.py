@@ -183,38 +183,26 @@ class US2000B(object):
         if not tmp_check_file:
             data_writer.writeheader()
 
+        tmp_time = str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute) + ':' + str(datetime.datetime.now().second)
         tmp_n_modules = len(SOC_LIST)
         tmp_SoC = SOC_LIST
 
         if tmp_n_modules == 1:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_SoC[0][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0]})
         elif tmp_n_modules == 2:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0]})
         elif tmp_n_modules == 3:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0][0], 'SoC_2': tmp_SoC[1][0], 'SoC_3': tmp_SoC[2][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0]})
         elif tmp_n_modules == 4:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0][0], 'SoC_2': tmp_SoC[1][0], 'SoC_3': tmp_SoC[2][0], 'SoC_4': tmp_SoC[3][0]})
-
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0]})
         elif tmp_n_modules == 5:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0][0], 'SoC_2': tmp_SoC[1][0], 'SoC_3': tmp_SoC[2][0], 'SoC_4': tmp_SoC[3][0],
-                                  'SoC_5': tmp_SoC[4][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0]})
         elif tmp_n_modules == 6:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0][0], 'SoC_2': tmp_SoC[1][0], 'SoC_3': tmp_SoC[2][0], 'SoC_4': tmp_SoC[3][0],
-                                  'SoC_5': tmp_SoC[4][0],'SoC_6': tmp_SoC[5][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0]})
         elif tmp_n_modules == 7:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0][0], 'SoC_2': tmp_SoC[1][0], 'SoC_3': tmp_SoC[2][0], 'SoC_4': tmp_SoC[3][0],
-                                  'SoC_5': tmp_SoC[4][0],'SoC_6': tmp_SoC[5][0],'SoC_7': tmp_SoC[6][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0],'SoC_7':tmp_SoC[6][0]})
         elif tmp_n_modules == 8:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0][0], 'SoC_2': tmp_SoC[1][0], 'SoC_3': tmp_SoC[2][0], 'SoC_4': tmp_SoC[3][0],
-                                  'SoC_5': tmp_SoC[4][0],'SoC_6': tmp_SoC[5][0],'SoC_7': tmp_SoC[6][0],'SoC_8': tmp_SoC[7][0]})
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0],'SoC_7':tmp_SoC[6][0],'SoC_8':tmp_SoC[7][0]})
         else:
             print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + tmp_n_modules)
             csvfile.flush()
@@ -253,36 +241,37 @@ class US2000B(object):
         if not tmp_check_file:
             data_writer.writeheader()
 
+        tmp_time = str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute) + ':' + str(datetime.datetime.now().second)
         tmp_n_modules = len(BMS_LIST)
         tmp_BMS = BMS_LIST
 
         if tmp_n_modules == 1:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7]})
         elif tmp_n_modules == 2:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7]})
         elif tmp_n_modules == 3:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
                                   'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7]})
         elif tmp_n_modules == 4:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
                                   'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
                                   'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7]})
         elif tmp_n_modules == 5:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
                                   'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
                                   'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7],
                                   'SoC_5':tmp_BMS[4][0],'Voltage_5':tmp_BMS[4][1],'Current_5':tmp_BMS[4][2],'Temperature_5':tmp_BMS[4][3],'B_Status_5':tmp_BMS[4][4],'V_Status_5':tmp_BMS[4][5],'C_Status_5':tmp_BMS[4][6],'T_Status_5':tmp_BMS[4][7]})
         elif tmp_n_modules == 6:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
                                   'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
@@ -290,7 +279,7 @@ class US2000B(object):
                                   'SoC_5':tmp_BMS[4][0],'Voltage_5':tmp_BMS[4][1],'Current_5':tmp_BMS[4][2],'Temperature_5':tmp_BMS[4][3],'B_Status_5':tmp_BMS[4][4],'V_Status_5':tmp_BMS[4][5],'C_Status_5':tmp_BMS[4][6],'T_Status_5':tmp_BMS[4][7],
                                   'SoC_6':tmp_BMS[5][0],'Voltage_6':tmp_BMS[5][1],'Current_6':tmp_BMS[5][2],'Temperature_6':tmp_BMS[5][3],'B_Status_6':tmp_BMS[5][4],'V_Status_6':tmp_BMS[5][5],'C_Status_6':tmp_BMS[5][6],'T_Status_6':tmp_BMS[5][7]})
         elif tmp_n_modules == 7:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
                                   'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
@@ -299,7 +288,7 @@ class US2000B(object):
                                   'SoC_6':tmp_BMS[5][0],'Voltage_6':tmp_BMS[5][1],'Current_6':tmp_BMS[5][2],'Temperature_6':tmp_BMS[5][3],'B_Status_6':tmp_BMS[5][4],'V_Status_6':tmp_BMS[5][5],'C_Status_6':tmp_BMS[5][6],'T_Status_6':tmp_BMS[5][7],
                                   'SoC_7':tmp_BMS[6][0],'Voltage_7':tmp_BMS[6][1],'Current_7':tmp_BMS[6][2],'Temperature_7':tmp_BMS[6][3],'B_Status_7':tmp_BMS[6][4],'V_Status_7':tmp_BMS[6][5],'C_Status_7':tmp_BMS[6][6],'T_Status_7':tmp_BMS[6][7]})
         elif tmp_n_modules == 8:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
+            data_writer.writerow({'Time':tmp_time,
                                   'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
                                   'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
                                   'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
