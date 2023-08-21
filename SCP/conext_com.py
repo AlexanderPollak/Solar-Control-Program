@@ -288,45 +288,185 @@ class XW():
         result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
         return result
 
+    ###################################################################################################
+    # Grid AC Read Functions
+    ###################################################################################################
     def read_Grid_Voltage(self):
-        """This function reads the Grid Voltage from the XW+ inverter and returns Volt.
+        """This function reads the Grid AC Input Voltage from the XW+ inverter and returns the Voltage in [Volt].
 
-        Returns: float {Grid Voltage in Volt}
+        Returns: float {Grid AC Voltage in Volt}
 
         """
         bitstream = self._port.read_holding_registers(0x0062, 2)  # 0x0062 Grid Voltage uint32 r
         result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
-    def read_Grid_Frequency(self):
-        """This function reads the Grid Frequency from the XW+ inverter and returns it in Hz.
+    def read_Grid_Current(self):
+        """This function reads the Grid AC Current from the XW+ inverter and returns the Current in [Ampere].
 
-        Returns: float {Grid Frequency in Hz}
+        Returns: float {Grid AC Current in Ampere}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0064, 2)  # 0x0064 Grid AC Current sint32 r
+        result = unpack('<l', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into sint32
+        return result
+
+    def read_Grid_Power(self):
+        """This function reads the Grid AC Power from the XW+ inverter and returns the Power in [Watt].
+
+        Returns: float {Grid AC Power in Watt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0066, 2)  # 0x0066 Grid AC Power sint32 r
+        result = unpack('<l', pack('<HH', bitstream[0], bitstream[1]))[0] / 1.0  # combines two 16bit registers into sint32
+        return result
+
+
+    def read_Grid_Frequency(self):
+        """This function reads the Grid AC Frequency from the XW+ inverter and returns it in Hz.
+
+        Returns: float {Grid AC Frequency in Hz}
 
         """
         bitstream = self._port.read_holding_registers(0x0061, 1)  # 0x0061 Grid Frequency uint16 r
-        result = unpack('H', pack('<H', bitstream[0]))[0] / 100.0
+        result = unpack('<H', pack('<H', bitstream[0]))[0] / 100.0
         return result
 
-    def read_Low_Battery_Cut_Out(self):
-        """This function reads the Low_Battery_Cut_Out Voltage from the XW+ inverter and returns it in Volt.
 
-        Returns: float {Low Battery Cut Out in Volt}
+    ###################################################################################################
+    # Load AC Read Functions
+    ###################################################################################################
+    def read_Load_Voltage(self):
+        """This function reads the Load AC Voltage from the XW+ inverter and returns the Voltage in [Volt].
+
+        Returns: float {Load AC Voltage in Volt}
 
         """
-        bitstream = self._port.read_holding_registers(0x017C, 2) # 0x017C Low Battery Cut Out uint32 r/w
+        bitstream = self._port.read_holding_registers(0x008C, 2)  # 0x008C Load Voltage uint32 r
         result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
-    def read_Low_Battery_Cut_Out_Delay(self):
-        """This function reads the Low Battery Cut Out Delay from the XW+ inverter and returns it in Seconds.
+    def read_Load_Current(self):
+        """This function reads the Load AC Current from the XW+ inverter and returns the Current in [Ampere].
 
-        Returns: float {Low Battery Cut Out Delay in Seconds}
+        Returns: float {Load AC Current in Ampere}
 
         """
-        bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
-        result = unpack('H', pack('<H', bitstream[0]))[0] / 100.0
+        bitstream = self._port.read_holding_registers(0x0096, 2)  # 0x0096 Load AC Current uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
+
+    def read_Load_Power(self):
+        """This function reads the Load AC Power from the XW+ inverter and returns the Power in [Watt].
+
+        Returns: float {Load AC Power in Watt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x009A, 2)  # 0x009A Load AC Power uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1.0  # combines two 16bit registers into uint32
+        return result
+
+
+    def read_Load_Frequency(self):
+        """This function reads the Load AC Frequency from the XW+ inverter and returns it in Hz.
+
+        Returns: float {Load AC Frequency in Hz}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0098, 1)  # 0x0098 Load Frequency uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0] / 100.0
+        return result
+
+    ###################################################################################################
+    # Inverter DC Read Functions
+    ###################################################################################################
+    def read_Invert_DC_Current(self):
+        """This function reads the Inverter DC Current from the XW+ inverter and returns the Current in [Ampere].
+
+        Returns: float {Inverter DC Current in Ampere}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0058, 2)  # 0x0058 Invert DC Current uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_Invert_DC_Power(self):
+        """This function reads the Inverter DC Power from the XW+ inverter and returns the Power in [Watt].
+
+        Returns: float {Inverter DC Power in Watt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x005A, 2)  # 0x005A Invert DC Power uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1.0  # combines two 16bit registers into uint32
+        return result
+
+    
+    ###################################################################################################
+    # Inverter Energy Read Functions
+    ###################################################################################################
+    def read_Energy_Grid_Month(self):
+        """This function reads the energy input from the grid in the current month from the XW+ inverter and returns the Energy in [kWh].
+
+        Returns: float {Energy from Grid in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x010C, 2)  # 0x010C Grid Input Energy This Month uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_Energy_Load_Month(self):
+        """This function reads the energy output to the load in the current month from the XW+ inverter and returns the Energy in [kWh].
+
+        Returns: float {Energy to Load in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x013C, 2)  # 0x013C Load Output Energy This Month uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_Energy_Battery_Month(self):
+        """This function reads the energy output from the battery in the current month from the XW+ inverter and returns the Energy in [kWh].
+
+        Returns: float {Energy from Battery in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x00DC, 2)  # 0x013C Energy From Battery This Month uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+
+    ###################################################################################################
+    # Inverter Status, Error, and Warning Flags
+    ###################################################################################################
+    def read_Inverter_Active Warning(self):
+        """This function reads the Active Warning Flag from the XW+ inverter and returns the warning status as a string.
+
+        Returns: string {Waring Status}
+
+        """
+        bitstream = self._port.read_holding_registers(0x004C, 1) # 0x007A Inverter Active Warnings Flag uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('No Warnings')
+        elif result == 1:
+            return str('Active Warnings')
+        else:
+            return str('UNKNOWN STATE!')
+
+    def read_Inverter_Active Fault(self):
+        """This function reads the Active Fault Flag from the XW+ inverter and returns the fault status as a string.
+
+        Returns: string {Fault Status}
+
+        """
+        bitstream = self._port.read_holding_registers(0x004B, 1) # 0x007A Inverter Active Faults Flag uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('No Faults')
+        elif result == 1:
+            return str('Active Faults')
+        else:
+            return str('UNKNOWN STATE!')
 
     def read_Inverter_Status(self):
         """This function reads the Inverter Status from the XW+ inverter and returns the status as a string.
@@ -335,7 +475,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x007A, 1) # 0x007A Inverter Status uint16 r
-        result = unpack('H', pack('<H', bitstream[0]))[0]
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
         if result == 1024:
             return str('Invert')
         elif result == 1025:
@@ -369,56 +509,18 @@ class XW():
         else:
             return str('UNKNOWN STATE!')
 
-    def read_Grid_Support_Status(self):
-        """This function reads the Grid Support status from the XW+ inverter and returns the state.
 
-        Returns: str {Grid Support state}
+    ###################################################################################################
+    # Inverter Battery Related Functions
+    ###################################################################################################
+    def read_Low_Battery_Cut_Out(self):
+        """This function reads the Low_Battery_Cut_Out Voltage from the XW+ inverter and returns it in Volt.
 
-        """
-        bitstream = self._port.read_holding_registers(0x01B3, 1)  # 0x01B3 Grid Support uint16 r
-        result = unpack('H', pack('<H', bitstream[0]))[0]
-        if result == 0:
-            return str('Disable')
-        if result == 1:
-            return str('Enable')
-
-    def write_Grid_Support_Status(self, status):
-        """This function writes the Grid Support to the XW+ inverter and returns the value in the register.
-
-        Returns: str {Grid Support state}
+        Returns: float {Low Battery Cut Out in Volt}
 
         """
-        if status == 'enable' or status == 'Enable' or status == 'ENABLE':
-            self._port.write_single_register(0x01B3, 1)
-        elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
-            self._port.write_single_register(0x01B3, 0)
-        else:
-            print ('ERROR:Grid Support Input Parameter must be: "enable" or "disable"')
-
-        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B3 Grid Support uint16 r/w
-        result = unpack('H', pack('<H', bitstream[0]))[0]
-        if result == 0:
-            return str('Disable')
-        if result == 1:
-            return str('Enable')
-
-
-    def write_Low_Battery_Cut_Out_Delay(self, delay=0.1):
-        """This function writes the Low Battery Cut Out Delay to the XW+ inverter and returns the value in the register.
-
-        Returns: float {Low Battery Cut Out Delay in Seconds}
-
-        """
-        delay = np.uint16(delay * 100)
-        Upper_limit = np.uint16(100 * 190) #upper limit 60 Seconds
-        Lower_limit = np.uint16(100 * 1)#Lower limit 1 Seconds
-        if delay in range(Lower_limit, Upper_limit):
-            self._port.write_single_register(0x017E, delay)
-        else:
-            print ('ERROR: Low Battery Delay value out of range!')
-
-        bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
-        result = unpack('H', pack('<H', bitstream[0]))[0]/100.0
+        bitstream = self._port.read_holding_registers(0x017C, 2) # 0x017C Low Battery Cut Out uint32 r/w
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
     def write_Low_Battery_Cut_Out(self, voltage=47):
@@ -440,39 +542,33 @@ class XW():
         return result
 
 
+    def read_Low_Battery_Cut_Out_Delay(self):
+        """This function reads the Low Battery Cut Out Delay from the XW+ inverter and returns it in Seconds.
 
-    def read_Load_Shave_Status(self):
-        """This function reads the Load Shave status from the XW+ inverter and returns the state.
-
-        Returns: str {Load Shave state}
-
-        """
-        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
-        result = unpack('H', pack('<H', bitstream[0]))[0]
-        if result == 0:
-            return str('Disable')
-        if result == 1:
-            return str('Enable')
-
-    def write_Load_Shave_Status(self, status):
-        """This function writes the Load Shave to the XW+ inverter and returns the value in the register.
-
-        Returns: str {Load Shave state}
+        Returns: float {Low Battery Cut Out Delay in Seconds}
 
         """
-        if status == 'enable' or status == 'Enable' or status == 'ENABLE':
-            self._port.write_single_register(0x01B2, 1)
-        elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
-            self._port.write_single_register(0x01B2, 0)
+        bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
+        result = unpack('<H', pack('<H', bitstream[0]))[0] / 100.0
+        return result
+
+    def write_Low_Battery_Cut_Out_Delay(self, delay=0.1):
+        """This function writes the Low Battery Cut Out Delay to the XW+ inverter and returns the value in the register.
+
+        Returns: float {Low Battery Cut Out Delay in Seconds}
+
+        """
+        delay = np.uint16(delay * 100)
+        Upper_limit = np.uint16(100 * 190) #upper limit 60 Seconds
+        Lower_limit = np.uint16(100 * 1)#Lower limit 1 Seconds
+        if delay in range(Lower_limit, Upper_limit):
+            self._port.write_single_register(0x017E, delay)
         else:
-            print ('ERROR: Load Shave Input Parameter must be: "enable" or "disable"')
+            print ('ERROR: Low Battery Delay value out of range!')
 
-        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B2 Load Shave uint16 r/w
-        result = unpack('H', pack('<H', bitstream[0]))[0]
-        if result == 0:
-            return str('Disable')
-        if result == 1:
-            return str('Enable')
+        bitstream = self._port.read_holding_registers(0x017E, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
+        result = unpack('<H', pack('<H', bitstream[0]))[0]/100.0
+        return result    
 
 
     def read_Hysteresis(self):
@@ -503,3 +599,77 @@ class XW():
         bitstream = self._port.read_holding_registers(0x01F2, 2)  # 0x017C Low Battery Cut Out Hysteresis uint32 r/w
         result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
+
+
+    ###################################################################################################
+    # Inverter Control Functions
+    ###################################################################################################
+    def read_Grid_Support_Status(self):
+        """This function reads the Grid Support status from the XW+ inverter and returns the state.
+
+        Returns: str {Grid Support state}
+
+        """
+        bitstream = self._port.read_holding_registers(0x01B3, 1)  # 0x01B3 Grid Support uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('Disable')
+        if result == 1:
+            return str('Enable')
+
+    def write_Grid_Support_Status(self, status):
+        """This function writes the Grid Support to the XW+ inverter and returns the value in the register.
+
+        Returns: str {Grid Support state}
+
+        """
+        if status == 'enable' or status == 'Enable' or status == 'ENABLE':
+            self._port.write_single_register(0x01B3, 1)
+        elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
+            self._port.write_single_register(0x01B3, 0)
+        else:
+            print ('ERROR:Grid Support Input Parameter must be: "enable" or "disable"')
+
+        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B3 Grid Support uint16 r/w
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('Disable')
+        if result == 1:
+            return str('Enable')
+
+
+    def read_Load_Shave_Status(self):
+        """This function reads the Load Shave status from the XW+ inverter and returns the state.
+
+        Returns: str {Load Shave state}
+
+        """
+        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x017E Low Battery Cut Out Delay uint16 r/w
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('Disable')
+        if result == 1:
+            return str('Enable')
+
+    def write_Load_Shave_Status(self, status):
+        """This function writes the Load Shave to the XW+ inverter and returns the value in the register.
+
+        Returns: str {Load Shave state}
+
+        """
+        if status == 'enable' or status == 'Enable' or status == 'ENABLE':
+            self._port.write_single_register(0x01B2, 1)
+        elif status == 'disable' or status == 'Disable' or status == 'DISABLE':
+            self._port.write_single_register(0x01B2, 0)
+        else:
+            print ('ERROR: Load Shave Input Parameter must be: "enable" or "disable"')
+
+        bitstream = self._port.read_holding_registers(0x01B2, 1)  # 0x01B2 Load Shave uint16 r/w
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('Disable')
+        if result == 1:
+            return str('Enable')
+
+
+
