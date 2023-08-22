@@ -380,7 +380,7 @@ class XW():
     ###################################################################################################
     # Inverter DC Read Functions
     ###################################################################################################
-    def read_Invert_DC_Current(self):
+    def read_Inverter_DC_Current(self):
         """This function reads the Inverter DC Current from the XW+ inverter and returns the Current in [Ampere].
 
         Returns: float {Inverter DC Current in Ampere}
@@ -390,7 +390,7 @@ class XW():
         result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
         return result
 
-    def read_Invert_DC_Power(self):
+    def read_Inverter_DC_Power(self):
         """This function reads the Inverter DC Power from the XW+ inverter and returns the Power in [Watt].
 
         Returns: float {Inverter DC Power in Watt}
@@ -703,8 +703,8 @@ class XW():
             XW_list[0][6] = self.read_Load_Current()
             XW_list[0][7] = self.read_Load_Power()
             XW_list[0][8] = self.read_Load_Frequency()
-            XW_list[0][9] = self.read_Invert_DC_Current()
-            XW_list[0][10] = self.read_Invert_DC_Power()
+            XW_list[0][9] = self.read_Inverter_DC_Current()
+            XW_list[0][10] = self.read_Inverter_DC_Power()
             XW_list[0][11] = self.read_Energy_Grid_Month()
             XW_list[0][12] = self.read_Energy_Load_Month()
             XW_list[0][13] = self.read_Energy_Battery_Month()

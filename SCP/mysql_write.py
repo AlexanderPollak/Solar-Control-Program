@@ -191,7 +191,7 @@ class MySQL_com():
             return False
 
 
-def write_XW(self,XW_LIST):
+    def write_XW(self,XW_LIST):
         """This function writes the parsed data into the mysql database table for Conext XW+ inverter and returns a boolean value
         if the write process was sucessful.
 
