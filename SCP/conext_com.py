@@ -691,7 +691,7 @@ class XW():
 
 
         """
-        XW_list = [[0 for i in range(8)] for j in range(22)]
+        XW_list = [[0 for i in range(22)] for j in range(1)]
         try:
             
             XW_list[0][0] = "Inverter: 1"
