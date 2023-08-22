@@ -191,6 +191,78 @@ class MySQL_com():
             return False
 
 
+def write_XW(self,XW_LIST):
+        """This function writes the parsed data into the mysql database table for Conext XW+ inverter and returns a boolean value
+        if the write process was sucessful.
+
+        Args:
+            XW_list: list of length [1] containing:
+            [inverter, grid_voltage, grid_current, grid_power, grid_frequency, load_voltage, load_current, load_power, load_frequency,
+            inverter_dc_current, inverter_dc_power, energy_grid_month, energy_load_month, energy_battery_month, battery_low_voltage,
+            battery_low_voltage_delay, battery_hysteresis, inverter_status, inverter_active_warnings_status, inverter_active_faults_status,
+            inverter_grid_support_status, inverter_load_shave_status]
+            dtype=float and dtype=str.
+
+
+        DROP TABLE IF EXISTS `conext_xw`;
+        CREATE TABLE `conext_xw` (
+            `ts` datetime NOT NULL,
+            `inverter` varchar(16) DEFAULT (NULL),
+            `grid_voltage` float DEFAULT (NULL),
+            `grid_current` float DEFAULT (NULL),
+            `grid_power` float DEFAULT (NULL),
+            `grid_frequency` float DEFAULT (NULL),
+            `load_voltage` float DEFAULT (NULL),
+            `load_current` float DEFAULT (NULL),
+            `load_power` float DEFAULT (NULL),
+            `load_frequency` float DEFAULT (NULL),
+            `inverter_dc_current` float DEFAULT (NULL),
+            `inverter_dc_power` float DEFAULT (NULL),
+            `energy_grid_month` float DEFAULT (NULL),
+            `energy_load_month` float DEFAULT (NULL),
+            `energy_battery_month` float DEFAULT (NULL),
+            `battery_low_voltage` float DEFAULT (NULL),
+            `battery_low_voltage_delay` float DEFAULT (NULL),
+            `battery_hysteresis` float DEFAULT (NULL),
+            `inverter_status` varchar(16) DEFAULT (NULL),
+            `inverter_active_warnings_status` varchar(16) DEFAULT (NULL),
+            `inverter_active_faults_status` varchar(16) DEFAULT (NULL),
+            `inverter_grid_support_status` varchar(16) DEFAULT (NULL),
+            `inverter_load_shave_status` varchar(16) DEFAULT (NULL),
+            PRIMARY KEY (`ts`,`inverter`),
+            KEY `idx` (`inverter`,`ts`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+        Returns: Boolean value True or False
+
+        """
+        tmp_n_modules = len(BMS_LIST)
+        tmp_time ="{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
+
+        cursor = self._port.cursor()
+        
+        tmp_list = XW_LIST
+
+        # Preparing SQL query to INSERT a record into the database.
+        
+        tmp_sql = "INSERT INTO conext_xw (ts,inverter,grid_voltage,grid_current,grid_power,grid_frequency,load_voltage,load_current,load_power,load_frequency,inverter_dc_current,inverter_dc_power,energy_grid_month,energy_load_month,energy_battery_month,battery_low_voltage,battery_low_voltage_delay,battery_hysteresis,inverter_status,inverter_active_warnings_status,inverter_active_faults_status,inverter_grid_support_status,inverter_load_shave_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        tmp_val = [(tmp_time,tmp_list[0][0],tmp_list[0][1],tmp_list[0][2],tmp_list[0][3],tmp_list[0][4],tmp_list[0][5],tmp_list[0][6],tmp_list[0][7],tmp_list[0][8],tmp_list[0][9],tmp_list[0][10],tmp_list[0][11],tmp_list[0][12],tmp_list[0][13],tmp_list[0][14],tmp_list[0][15],tmp_list[0][16],tmp_list[0][17],tmp_list[0][18],tmp_list[0][19],tmp_list[0][20],tmp_list[0][21],tmp_list[0][22])]
+
+        
+        try:
+            # Executing the SQL command
+            cursor.executemany(tmp_sql, tmp_val)
+            print(cursor.rowcount, "records inserted.")
+            # Commit your changes in the database
+            self._port.commit()
+            print("successfully send data to database")
+            return True
+        except:
+            # Rolling back in case of error
+            self._port.rollback()
+            print("Failed to send data to database")
+            return False
 
 
 

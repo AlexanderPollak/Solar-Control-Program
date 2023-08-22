@@ -438,7 +438,7 @@ class XW():
     ###################################################################################################
     # Inverter Status, Error, and Warning Flags
     ###################################################################################################
-    def read_Inverter_Active Warning(self):
+    def read_Inverter_Active_Warning(self):
         """This function reads the Active Warning Flag from the XW+ inverter and returns the warning status as a string.
 
         Returns: string {Waring Status}
@@ -453,7 +453,7 @@ class XW():
         else:
             return str('UNKNOWN STATE!')
 
-    def read_Inverter_Active Fault(self):
+    def read_Inverter_Active_Fault(self):
         """This function reads the Active Fault Flag from the XW+ inverter and returns the fault status as a string.
 
         Returns: string {Fault Status}
@@ -670,6 +670,65 @@ class XW():
             return str('Disable')
         if result == 1:
             return str('Enable')
+
+    ###################################################################################################
+    # Inverter Read All for SQL Query
+    ###################################################################################################
+
+
+    def read_Inverter_All(self):
+        """This function reads all inverter XW+ specific values and returns a list with the aquired values.
+
+        Args:
+            NONE
+
+        Returns: XW_list: list of length [1] containing:
+            [inverter, grid_voltage, grid_current, grid_power, grid_frequency, load_voltage, load_current, load_power, load_frequency,
+            inverter_dc_current, inverter_dc_power, energy_grid_month, energy_load_month, energy_battery_month, battery_low_voltage,
+            battery_low_voltage_delay, battery_hysteresis, inverter_status, inverter_active_warnings_status, inverter_active_faults_status,
+            inverter_grid_support_status, inverter_load_shave_status]
+            dtype=float and dtype=str.
+
+
+        """
+        XW_list = [[0 for i in range(8)] for j in range(22)]
+        try:
+            
+            BMS_list[0][0] = "Inverter: 1"
+            BMS_list[1][0] = self.read_Grid_Voltage()
+            BMS_list[2][0] = self.read_Grid_Current()
+            BMS_list[3][0] = self.read_Grid_Power()
+            BMS_list[4][0] = self.read_Grid_Frequency()
+            BMS_list[5][0] = self.read_Load_Voltage()
+            BMS_list[6][0] = self.read_Load_Current()
+            BMS_list[7][0] = self.read_Load_Power()
+            BMS_list[8][0] = self.read_Load_Frequency()
+            BMS_list[9][0] = self.read_Invert_DC_Current()
+            BMS_list[10][0] = self.read_Invert_DC_Power()
+            BMS_list[11][0] = self.read_Energy_Grid_Month()
+            BMS_list[12][0] = self.read_Energy_Load_Month()
+            BMS_list[13][0] = self.read_Energy_Battery_Month()
+            BMS_list[14][0] = self.read_Low_Battery_Cut_Out()
+            BMS_list[15][0] = self.read_Low_Battery_Cut_Out_Delay()
+            BMS_list[16][0] = self.read_Hysteresis()
+            BMS_list[17][0] = self.read_Inverter_Status()
+            BMS_list[18][0] = self.read_Inverter_Active_Warning()
+            BMS_list[19][0] = self.read_Inverter_Active_Fault()
+            BMS_list[20][0] = self.read_Grid_Support_Status()
+            BMS_list[21][0] = self.read_Load_Shave_Status()
+
+            return XW_list
+
+        except Exception as error:
+            print("ERROR: could not read all information from XW+ inverter.:", error)
+            return XW_list
+
+
+
+
+
+
+
 
 
 
