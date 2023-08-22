@@ -247,7 +247,7 @@ def write_XW(self,XW_LIST):
         # Preparing SQL query to INSERT a record into the database.
         
         tmp_sql = "INSERT INTO conext_xw (ts,inverter,grid_voltage,grid_current,grid_power,grid_frequency,load_voltage,load_current,load_power,load_frequency,inverter_dc_current,inverter_dc_power,energy_grid_month,energy_load_month,energy_battery_month,battery_low_voltage,battery_low_voltage_delay,battery_hysteresis,inverter_status,inverter_active_warnings_status,inverter_active_faults_status,inverter_grid_support_status,inverter_load_shave_status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        tmp_val = [(tmp_time,tmp_list[0][0],tmp_list[0][1],tmp_list[0][2],tmp_list[0][3],tmp_list[0][4],tmp_list[0][5],tmp_list[0][6],tmp_list[0][7],tmp_list[0][8],tmp_list[0][9],tmp_list[0][10],tmp_list[0][11],tmp_list[0][12],tmp_list[0][13],tmp_list[0][14],tmp_list[0][15],tmp_list[0][16],tmp_list[0][17],tmp_list[0][18],tmp_list[0][19],tmp_list[0][20],tmp_list[0][21],tmp_list[0][22])]
+        tmp_val = [(tmp_time,tmp_list[0][0],tmp_list[0][1],tmp_list[0][2],tmp_list[0][3],tmp_list[0][4],tmp_list[0][5],tmp_list[0][6],tmp_list[0][7],tmp_list[0][8],tmp_list[0][9],tmp_list[0][10],tmp_list[0][11],tmp_list[0][12],tmp_list[0][13],tmp_list[0][14],tmp_list[0][15],tmp_list[0][16],tmp_list[0][17],tmp_list[0][18],tmp_list[0][19],tmp_list[0][20],tmp_list[0][21])]
 
         
         try:
