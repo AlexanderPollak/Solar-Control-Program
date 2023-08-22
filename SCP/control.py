@@ -101,10 +101,12 @@ def control(Serial_Port, Modbus_Host, Battery_Modules, Cadance, Display, CSV_Log
                 if CSV_Log or SQL_Log:  # Condition to log BMS data into .csv file or SQL Database.
                     try:
                         tmp_bms_log = PYLONTECH.read_BMS(N_MODULES=Battery_Modules)
+                        tmp_xw_log = CONEXT.read_Inverter_All()
                         if CSV_Log:
                             PYLONTECH.log_BMS(PATH=Log_file_path,BMS_LIST=tmp_bms_log)
                         if SQL_Log:
                             SQL.write_BMS(BMS_LIST=tmp_bms_log)
+                            SQL.write_XW(XW_LIST=tmp_xw_log)
                     except:
                         error_counter_pylontech=error_counter_pylontech+1
                         runtime_error_pylontech(error_counter_pylontech)
