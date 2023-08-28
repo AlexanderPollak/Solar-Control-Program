@@ -962,7 +962,7 @@ class MPPT60():
         else:
             return str('UNKNOWN STATE!')
 
-def read_MPPT_Status(self):
+    def read_MPPT_Status(self):
         """This function reads the MPPT 60 150 Charge Controller Status and returns the status as a string.
 
         Returns: string {status}
@@ -987,7 +987,7 @@ def read_MPPT_Status(self):
         else:
             return str('UNKNOWN STATE!')
 
-def read_MPPT_Charger_Status(self):
+    def read_MPPT_Charger_Status(self):
         """This function reads the MPPT 60 150 Charge Controller Charger Status and returns the status as a string.
 
         Returns: string {status}
