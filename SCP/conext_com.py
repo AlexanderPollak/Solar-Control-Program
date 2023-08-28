@@ -295,7 +295,7 @@ class XW():
 
         """
         bitstream = self._port.read_holding_registers(0x0000, 8)# 0x0000 Device Name str16 r
-        result = str(unpack('%ds' % 16, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines seven 16bit registers into str14
+        result = str(unpack('%ds' % 16, pack('<HHHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines seven 16bit registers into str14
         return result
 
     ###################################################################################################
@@ -825,7 +825,7 @@ class MPPT60():
 
         """
         bitstream = self._port.read_holding_registers(0x0000, 8)# 0x0000 Device Name str16 rw
-        result = str(unpack('%ds' % 16, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines eight 16bit registers into str16
+        result = str(unpack('%ds' % 16, pack('<HHHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines eight 16bit registers into str16
         return result
 
     ###################################################################################################
