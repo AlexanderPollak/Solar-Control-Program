@@ -35,8 +35,8 @@ CREATE TABLE `pylontech_bms` (
   `v_status` varchar(16) DEFAULT (NULL),
   `c_status` varchar(16) DEFAULT (NULL),
   `t_status` varchar(16) DEFAULT (NULL),
-  PRIMARY KEY (`ts`,`battery`),
-  KEY `idx` (`battery`,`ts`)
+  PRIMARY KEY (`ts`,`device_name`),
+  KEY `idx` (`device_name`,`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
