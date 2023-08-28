@@ -791,13 +791,13 @@ class MPPT60():
         else:
             return False
 
-    def reconnect(self, SERVER_HOST="192.168.0.210", SERVER_PORT=502, SERVER_UNIT=10):
+    def reconnect(self, SERVER_HOST="192.168.0.210", SERVER_PORT=502, SERVER_UNIT=30):
         """Reconnects communication with modbus client.
 
         Args:
             SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
             SERVER_PORT: modbus TCP port. Default='502'
-            SERVER_UNIT: modbus address of the MPPT 60 150 Charge Controller. Default='10'
+            SERVER_UNIT: modbus address of the MPPT 60 150 Charge Controller. Default='30'
 
         Returns: Boolean value True or False
 

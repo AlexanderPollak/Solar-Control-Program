@@ -58,10 +58,10 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
         # ---------------------------------------------------------------------------#
         # Establish communication to Inverter
-        XW = XW()
-        XW.open(SERVER_HOST=Modbus_Host, SERVER_UNIT=Modbus_Address_XW)
+        Inv = XW()
+        Inv.open(SERVER_HOST=Modbus_Host, SERVER_UNIT=Modbus_Address_XW)
         time.sleep(1)
-        tmp_c = XW.is_connected()
+        tmp_c = Inv.is_connected()
         print('INVERTER Connection Established:' + str(tmp_c))
         # ---------------------------------------------------------------------------#
 
@@ -119,8 +119,8 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
         # ---------------------------------------------------------------------------#
         try:  # Program Loop
-            XW.write_Low_Battery_Cut_Out(Battery_low)
-            XW.write_Hysteresis(Battery_hysteresis)
+            Inv.write_Low_Battery_Cut_Out(Battery_low)
+            Inv.write_Hysteresis(Battery_hysteresis)
             error_counter_pylontech=0
             error_counter_conext = 0
             while True:
@@ -133,10 +133,10 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                         runtime_error_pylontech(error_counter_pylontech)
                     
                     try:
-                        tmp_xw_log = XW.read_Inverter_All()
+                        tmp_xw_log = Inv.read_Inverter_All()
                     except:
                         error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(XW, error_counter_conext):
+                        if runtime_error_conext(Inv, error_counter_conext):
                             error_counter_conext=0                        
                         
                     try:
@@ -173,10 +173,10 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                         tmp = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
                         print('A:' + str(tmp[0][0]) + '\t' + 'B:' + str(tmp[1][0]) + '\t' + 'C:' + str(tmp[2][0]) + '\t' + \
                               'D:' + str(tmp[3][0]) + '\t' + 'E:' + str(tmp[4][0]) + '\t' + 'F:' + str(tmp[5][0]) + '\t' \
-                             +XW.read_Inverter_Status())
+                             +Inv.read_Inverter_Status())
                     except:
                         error_counter_conext=error_counter_conext+1
-                        if runtime_error_conext(XW,error_counter_conext):
+                        if runtime_error_conext(Inv,error_counter_conext):
                             error_counter_conext=0
 
 
@@ -190,16 +190,16 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                         Avg_SoC = round(Avg_SoC / Battery_Modules)
                         
                         if Avg_SoC >= SoC_high:  # Condition to enable Inverter Grid Support
-                            if XW.read_Load_Shave_Status() == 'Disable':
-                                XW.write_Load_Shave_Status('Enable')
+                            if Inv.read_Load_Shave_Status() == 'Disable':
+                                Inv.write_Load_Shave_Status('Enable')
                                 print('Grid Support: ON')
                         if Avg_SoC <= SoC_low:  # Condition to disable Inverter Grid Support
-                            if XW.read_Load_Shave_Status() == 'Enable':
-                                XW.write_Load_Shave_Status('Disable')
+                            if Inv.read_Load_Shave_Status() == 'Enable':
+                                Inv.write_Load_Shave_Status('Disable')
                                 print('Grid Support: OFF')
                     except:
                         error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(XW, error_counter_conext):
+                        if runtime_error_conext(Inv, error_counter_conext):
                             error_counter_conext=0
 
 
@@ -211,11 +211,11 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
         except KeyboardInterrupt:
             try:
-                XW.write_Hysteresis(Default_battery_hysteresis)
-                XW.write_Low_Battery_Cut_Out(Default_battery_low)
-                XW.write_Load_Shave_Status('disable')
+                Inv.write_Hysteresis(Default_battery_hysteresis)
+                Inv.write_Low_Battery_Cut_Out(Default_battery_low)
+                Inv.write_Load_Shave_Status('disable')
                 del PYLONTECH
-                del XW
+                del Inv
                 del MPPT_West
                 del MPPT_East
                 del SQL
@@ -232,11 +232,11 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
     except KeyboardInterrupt:
         try:
-            XW.write_Hysteresis(Default_battery_hysteresis)
-            XW.write_Low_Battery_Cut_Out(Default_battery_low)
-            XW.write_Load_Shave_Status('disable')
+            Inv.write_Hysteresis(Default_battery_hysteresis)
+            Inv.write_Low_Battery_Cut_Out(Default_battery_low)
+            Inv.write_Load_Shave_Status('disable')
             del PYLONTECH
-            del XW
+            del Inv
             del MPPT_West
             del MPPT_East
             del SQL
@@ -244,11 +244,11 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
             print('Control Stop!')
     except Exception as tmp_exeption:
         try:
-            XW.write_Hysteresis(Default_battery_hysteresis)
-            XW.write_Low_Battery_Cut_Out(Default_battery_low)
-            XW.write_Load_Shave_Status('disable')
+            Inv.write_Hysteresis(Default_battery_hysteresis)
+            Inv.write_Low_Battery_Cut_Out(Default_battery_low)
+            Inv.write_Load_Shave_Status('disable')
             del PYLONTECH
-            del XW
+            del Inv
             del MPPT_West
             del MPPT_East
             del SQL
