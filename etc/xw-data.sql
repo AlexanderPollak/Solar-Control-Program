@@ -48,8 +48,8 @@ CREATE TABLE `conext_xw` (
   `inverter_active_faults_status` varchar(16) DEFAULT (NULL),
   `inverter_grid_support_status` varchar(16) DEFAULT (NULL),
   `inverter_load_shave_status` varchar(16) DEFAULT (NULL),
-  PRIMARY KEY (`ts`,`inverter`),
-  KEY `idx` (`inverter`,`ts`)
+  PRIMARY KEY (`ts`,`device_name`),
+  KEY `idx` (`device_name`,`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
