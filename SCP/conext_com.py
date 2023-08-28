@@ -286,8 +286,7 @@ class XW():
         """
         bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str14 r
         result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
-        result.rstrip('\x00')
-        return result
+        return result.rstrip('\x00')
 
     def read_device_name(self):
         """This function reads the device name of the XW+ inverter and returns it as a string.
@@ -297,8 +296,7 @@ class XW():
         """
         bitstream = self._port.read_holding_registers(0x0000, 8)# 0x0000 Device Name str16 r
         result = str(unpack('%ds' % 16, pack('<HHHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines seven 16bit registers into str14
-        result.rstrip('\x00')
-        return result
+        return result.rstrip('\x00')
 
     ###################################################################################################
     # Grid AC Read Functions
@@ -818,8 +816,7 @@ class MPPT60():
         """
         bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str14 r
         result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
-        result.rstrip('\x00')
-        return result
+        return result.rstrip('\x00')
 
     def read_device_name(self):
         """This function reads the device name of the MPPT 60 150 Charge Controller and returns it as a string.
@@ -829,8 +826,7 @@ class MPPT60():
         """
         bitstream = self._port.read_holding_registers(0x0000, 8)# 0x0000 Device Name str16 rw
         result = str(unpack('%ds' % 16, pack('<HHHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines eight 16bit registers into str16
-        result.rstrip('\x00')
-        return result
+        return result.rstrip('\x00')
 
     ###################################################################################################
     # MPPT Energy Read Functions
