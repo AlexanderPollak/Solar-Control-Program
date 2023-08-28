@@ -35,6 +35,8 @@ def main():
     SoC_low = config.getint('CONTROL LOOP SPECIFIC SETTINGS','SoC_low')  # Percent
     Battery_low = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_low')  # Volt
     Battery_hysteresis = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Battery_hysteresis')   # Volt
+    Default_battery_low = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Default_battery_low')  # Volt
+    Default_battery_hysteresis = config.getfloat('CONTROL LOOP SPECIFIC SETTINGS','Default_battery_hysteresis')   # Volt
 
     # Specific variables for the SQL database writer
 
@@ -69,7 +71,8 @@ def main():
     control(Serial_Port=Serial_Port, Modbus_Host=Modbus_Host, Modbus_Address_XW=Modbus_Address_XW, Modbus_Address_MPPT_West=Modbus_Address_MPPT_West,\
          Modbus_Address_MPPT_East=Modbus_Address_MPPT_East, Battery_Modules=Battery_Modules, Cadance=Cadance,\
          Display=Display, CSV_Log=CSV_Log,SQL_Log=SQL_Log, Control=Control, SoC_high=SoC_high, SoC_low=SoC_low,\
-         Battery_low=Battery_low, Battery_hysteresis=Battery_hysteresis, Log_file_path=Log_File_Path,\
+         Battery_low=Battery_low, Battery_hysteresis=Battery_hysteresis,Default_battery_low=Default_battery_low,\
+         Default_battery_hysteresis=Default_battery_hysteresis, Log_file_path=Log_File_Path,\
          SQL_Host=SQL_Host,SQL_Auth=SQL_Auth, SQL_User=SQL_User,SQL_Password=SQL_Password,SQL_Database=SQL_Database)
 
 

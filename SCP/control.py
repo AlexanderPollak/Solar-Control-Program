@@ -32,8 +32,8 @@ def runtime_error_conext(self, error_counter):
 
 def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_West,\
             Modbus_Address_MPPT_East, Battery_Modules, Cadance, Display, CSV_Log, SQL_Log, Control,\
-            SoC_high, SoC_low, Battery_low, Battery_hysteresis, Log_file_path, SQL_Host, SQL_Auth,\
-            SQL_User, SQL_Password, SQL_Database):
+            SoC_high, SoC_low, Battery_low, Battery_hysteresis, Default_battery_low, Default_battery_hysteresis,\
+            Log_file_path, SQL_Host, SQL_Auth, SQL_User, SQL_Password, SQL_Database):
 
 
 
@@ -211,8 +211,8 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
         except KeyboardInterrupt:
             try:
-                XW.write_Hysteresis(2.5)
-                XW.write_Low_Battery_Cut_Out(46.5)
+                XW.write_Hysteresis(Default_battery_hysteresis)
+                XW.write_Low_Battery_Cut_Out(Default_battery_low)
                 XW.write_Load_Shave_Status('disable')
                 del PYLONTECH
                 del XW
@@ -232,8 +232,8 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
     except KeyboardInterrupt:
         try:
-            XW.write_Hysteresis(2.5)
-            XW.write_Low_Battery_Cut_Out(46.5)
+            XW.write_Hysteresis(Default_battery_hysteresis)
+            XW.write_Low_Battery_Cut_Out(Default_battery_low)
             XW.write_Load_Shave_Status('disable')
             del PYLONTECH
             del XW
@@ -244,8 +244,8 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
             print('Control Stop!')
     except Exception as tmp_exeption:
         try:
-            XW.write_Hysteresis(2.5)
-            XW.write_Low_Battery_Cut_Out(46.5)
+            XW.write_Hysteresis(Default_battery_hysteresis)
+            XW.write_Low_Battery_Cut_Out(Default_battery_low)
             XW.write_Load_Shave_Status('disable')
             del PYLONTECH
             del XW
