@@ -208,7 +208,7 @@ class ComBox():
 # EMBEDDING XW CLASS ----------------------------------------------------
 
 class XW():
-    """This class implements functions specific to the Schneider ComBox """
+    """This class implements functions specific to the Schneider XW+ 8548E Inverter """
     def __init__(self):
         ''' Constructor for this class. '''
         self._port = 0
@@ -225,7 +225,7 @@ class XW():
         Args:
             SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
             SERVER_PORT: modbus TCP port. Default='502'
-            SERVER_UNIT: modbus address of the ComBox. Default='201'
+            SERVER_UNIT: modbus address of the XW+ Inverter. Default='10'
 
         Returns: Boolean value True or False
 
@@ -267,7 +267,7 @@ class XW():
         Args:
             SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
             SERVER_PORT: modbus TCP port. Default='502'
-            SERVER_UNIT: modbus address of the ComBox. Default='201'
+            SERVER_UNIT: modbus address of the XW+ Inverter. Default='10'
 
         Returns: Boolean value True or False
 
@@ -725,7 +725,373 @@ class XW():
 
 
 
+# EMBEDDING MPPT 60 150 CLASS ----------------------------------------------------
 
+class MPPT60():
+    """This class implements functions specific to the Schneider MPPT 60 150 Charge Controller"""
+    def __init__(self):
+        ''' Constructor for this class. '''
+        self._port = 0
+
+
+    def __del__(self):
+        ''' Destructor for this class. '''
+        if self._port !=0:
+            self.close()
+
+    def open (self,SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 30):
+        """Open modbus connection to the MPPT 60 150
+
+        Args:
+            SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
+            SERVER_PORT: modbus TCP port. Default='502'
+            SERVER_UNIT: modbus address of the MPPT 60 150 Charge Controller. Default='30'
+
+        Returns: Boolean value True or False
+
+        """
+        self._port = ModbusClient(SERVER_HOST, SERVER_PORT, SERVER_UNIT)
+        if not self._port.is_open():
+            if not self._port.open():
+                print("unable to connect to " + SERVER_HOST + ":" + str(SERVER_PORT))
+
+        return self._port.is_open()
+
+    def close(self):
+        """Closes the modbusTCP connection
+
+        Returns: Boolean value True or False
+
+        """
+        self._port.close()
+        return not self._port.is_open()
+
+    def is_connected(self):
+        """This function checks if the connection to the Schneider Conext MPPT 60 150 is established
+        and if it responds to readout commands. It requests the firmware version of the device
+        and checks for an received bitstream.
+
+        Returns: Boolean value True or False
+
+        return
+        """
+        bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
+        if bitstream:
+            return True
+        else:
+            return False
+
+    def reconnect(self, SERVER_HOST="192.168.0.210", SERVER_PORT=502, SERVER_UNIT=10):
+        """Reconnects communication with modbus client.
+
+        Args:
+            SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
+            SERVER_PORT: modbus TCP port. Default='502'
+            SERVER_UNIT: modbus address of the MPPT 60 150 Charge Controller. Default='10'
+
+        Returns: Boolean value True or False
+
+        """
+        if self._port != 0:
+            self.close()
+        self.open(SERVER_HOST=SERVER_HOST, SERVER_PORT=SERVER_PORT, SERVER_UNIT=SERVER_UNIT)
+        time.sleep(1)
+        return self.is_connected()
+
+    def read_firmware(self):
+        """This function reads the firmware version of the MPPT 60 150 Charge Controller and returns it as a string.
+
+        Returns: string {firmware version}
+
+        """
+        bitstream = self._port.read_holding_registers(0x001E, 7)# 0x001E Firmware Version str14 r
+        result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
+        return result
+
+
+    ###################################################################################################
+    # MPPT Energy Read Functions
+    ###################################################################################################
+    def read_Energy_PV_Day(self):
+        """This function reads the energy input from the PV in the current day from the MPPT 60 150 Charge Controller and returns the Energy in [kWh].
+
+        Returns: float {Energy from PV in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x006A, 2)  # 0x006A Energy from PV this day uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_Energy_PV_Week(self):
+        """This function reads the energy input from the PV in the current week from the MPPT 60 150 Charge Controller and returns the Energy in [kWh].
+
+        Returns: float {Energy from PV in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x006E, 2)  # 0x006E Energy from PV this week uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_Energy_PV_Month(self):
+        """This function reads the energy input from the PV in the current month from the MPPT 60 150 Charge Controller and returns the Energy in [kWh].
+
+        Returns: float {Energy from PV in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0072, 2)  # 0x0072 Energy from PV this Month uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_Energy_PV_Year(self):
+        """This function reads the energy input from the PV in the current year from the MPPT 60 150 Charge Controller and returns the Energy in [kWh].
+
+        Returns: float {Energy from PV in kWh}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0076, 2)  # 0x0076 Energy from PV this Year uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+
+    ###################################################################################################
+    # MPPT DC Input Read Functions
+    ###################################################################################################
+    def read_DC_Input_Voltage(self):
+        """This function reads the MPPT DC Input Voltage and returns the value in [Volt].
+
+        Returns: float {MPPP DC Input Voltage in Volt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x004C, 2)  # 0x004C Input DC Voltage uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_DC_Input_Current(self):
+        """This function reads the MPPT DC Input Current and returns the value in [Ampere].
+
+        Returns: float {MPPT DC Input Current in Ampere}
+
+        """
+        bitstream = self._port.read_holding_registers(0x004E, 2)  # 0x004E Input DC Current uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_DC_Input_Power(self):
+        """This function reads the MPPT DC Input Power and returns the value in [Watt].
+
+        Returns: float {MPPT DC Input Power in Watt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0050, 2)  # 0x0050 Input DC Power uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1.0  # combines two 16bit registers into uint32
+        return result
+
+    ###################################################################################################
+    # MPPT DC Output Read Functions
+    ###################################################################################################
+    def read_DC_Output_Voltage(self):
+        """This function reads the MPPT DC Output Voltage and returns the value in [Volt].
+
+        Returns: float {MPPP DC Output Voltage in Volt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0058, 2)  # 0x0058 Output DC Voltage sint32 r
+        result = unpack('<l', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into sint32
+        return result
+
+    def read_DC_Output_Current(self):
+        """This function reads the MPPT DC Output Current and returns the value in [Ampere].
+
+        Returns: float {MPPT DC Output Current in Ampere}
+
+        """
+        bitstream = self._port.read_holding_registers(0x005A, 2)  # 0x005A Output DC Current sint32 r
+        result = unpack('<l', pack('<HH', bitstream[0], bitstream[1]))[0] / 1000.0  # combines two 16bit registers into sint32
+        return result
+
+    def read_DC_Output_Power(self):
+        """This function reads the MPPT DC Output Power and returns the value in [Watt].
+
+        Returns: float {MPPT DC Output Power in Watt}
+
+        """
+        bitstream = self._port.read_holding_registers(0x005C, 2)  # 0x005C Output DC Power uint32 r
+        result = unpack('<L', pack('<HH', bitstream[0], bitstream[1]))[0] / 1.0  # combines two 16bit registers into uint32
+        return result
+
+    def read_DC_Output_Power_Percentage(self):
+        """This function reads the MPPT DC Output Power Percentage and returns the value in [%].
+
+        Returns: float {MPPT DC Output Power Percentage in %}
+
+        """
+        bitstream = self._port.read_holding_registers(0x005E, 2)  # 0x005E Output DC Power Percentage uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0] / 1.0  # unpacks the 16bit bitstream into uint16
+        return result
+
+    ###################################################################################################
+    # MPPT Status, Error, and Warning Flags
+    ###################################################################################################
+    def read_MPPT_Active_Warning(self):
+        """This function reads the Active Warning Flag from the MPPT 60 150 Charge Controller and returns the warning status as a string.
+
+        Returns: string {Waring Status}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0045, 1) # 0x0045 Active Warnings Flag uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('No Warnings')
+        elif result == 1:
+            return str('Active Warnings')
+        else:
+            return str('UNKNOWN STATE!')
+
+    def read_MPPT_Active_Fault(self):
+        """This function reads the Active Fault Flag from the MPPT 60 150 Charge Controller and returns the fault status as a string.
+
+        Returns: string {Fault Status}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0044, 1) # 0x0044 Active Faults Flag uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('No Faults')
+        elif result == 1:
+            return str('Active Faults')
+        else:
+            return str('UNKNOWN STATE!')
+
+def read_MPPT_Status(self):
+        """This function reads the MPPT 60 150 Charge Controller Status and returns the status as a string.
+
+        Returns: string {status}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0040, 1) # 0x0040 Device Status uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 0:
+            return str('Hibernate')
+        elif result == 1:
+            return str('Power Save')
+        elif result == 2:
+            return str('Safe Mode')
+        elif result == 3:
+            return str('Operating')
+        elif result == 4:
+            return str('Diagnostic Mode')
+        elif result == 5:
+            return str('Remote Power Off')
+        elif result == 255:
+            return str('Data Not Available')
+        else:
+            return str('UNKNOWN STATE!')
+
+def read_MPPT_Charger_Status(self):
+        """This function reads the MPPT 60 150 Charge Controller Charger Status and returns the status as a string.
+
+        Returns: string {status}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0049, 1) # 0x0049 Charger Status uint16 r
+        result = unpack('<H', pack('<H', bitstream[0]))[0]
+        if result == 768:
+            return str('Not Charging')
+        elif result == 769:
+            return str('Bulk')
+        elif result == 770:
+            return str('Absorption')
+        elif result == 771:
+            return str('Overcharge')
+        elif result == 772:
+            return str('Equalize')
+        elif result == 773:
+            return str('Float')
+        elif result == 774:
+            return str('No Float')
+        elif result == 775:
+            return str('Constant VI')
+        elif result == 776:
+            return str('Charger Disabled')
+        elif result == 777:
+            return str('Qualifying AC')
+        elif result == 778:
+            return str('Qualifying APS')
+        elif result == 779:
+            return str('Engaging Charger')
+        elif result == 780:
+            return str('Charge Fault')
+        elif result == 781:
+            return str('Charger Suspend')
+        elif result == 782:
+            return str('AC Good')
+        elif result == 783:
+            return str('APS Good')
+        elif result == 784:
+            return str('AC Fault')
+        elif result == 785:
+            return str('Charge')
+        elif result == 786:
+            return str('Absorption Exit Pending')
+        elif result == 787:
+            return str('Ground Fault')
+        elif result == 788:
+            return str('AC Good Pending')
+        else:
+            return str('UNKNOWN STATE!')
+
+
+    ###################################################################################################
+    # MPPT Read All for SQL Query
+    ###################################################################################################
+
+
+    def read_MPPT_All(self):
+        """This function reads all inverter XW+ specific values and returns a list with the aquired values.
+
+        Args:
+            NONE
+
+        Returns: XW_list: list of length [1] containing:
+            [inverter, grid_voltage, grid_current, grid_power, grid_frequency, load_voltage, load_current, load_power, load_frequency,
+            inverter_dc_current, inverter_dc_power, energy_grid_month, energy_load_month, energy_battery_month, battery_low_voltage,
+            battery_low_voltage_delay, battery_hysteresis, inverter_status, inverter_active_warnings_status, inverter_active_faults_status,
+            inverter_grid_support_status, inverter_load_shave_status]
+            dtype=float and dtype=str.
+
+
+        """
+        XW_list = [[0 for i in range(22)] for j in range(1)]
+        try:
+            
+            XW_list[0][0] = "Inverter: 1"
+            XW_list[0][1] = self.read_Grid_Voltage()
+            XW_list[0][2] = self.read_Grid_Current()
+            XW_list[0][3] = self.read_Grid_Power()
+            XW_list[0][4] = self.read_Grid_Frequency()
+            XW_list[0][5] = self.read_Load_Voltage()
+            XW_list[0][6] = self.read_Load_Current()
+            XW_list[0][7] = self.read_Load_Power()
+            XW_list[0][8] = self.read_Load_Frequency()
+            XW_list[0][9] = self.read_Inverter_DC_Current()
+            XW_list[0][10] = self.read_Inverter_DC_Power()
+            XW_list[0][11] = self.read_Energy_Grid_Month()
+            XW_list[0][12] = self.read_Energy_Load_Month()
+            XW_list[0][13] = self.read_Energy_Battery_Month()
+            XW_list[0][14] = self.read_Low_Battery_Cut_Out()
+            XW_list[0][15] = self.read_Low_Battery_Cut_Out_Delay()
+            XW_list[0][16] = self.read_Hysteresis()
+            XW_list[0][17] = self.read_Inverter_Status()
+            XW_list[0][18] = self.read_Inverter_Active_Warning()
+            XW_list[0][19] = self.read_Inverter_Active_Fault()
+            XW_list[0][20] = self.read_Grid_Support_Status()
+            XW_list[0][21] = self.read_Load_Shave_Status()
+
+            return XW_list
+
+        except Exception as error:
+            print("ERROR: could not read all information from MPPT 60 150 Charge Controller.:", error)
+            return XW_list
 
 
 
