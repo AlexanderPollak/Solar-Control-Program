@@ -15,7 +15,10 @@ def main():
     # Communication settings to connect to the Pylontech BMS and the Conext Modbus.
     Serial_Port = config.get('COMMUNICATION SETTINGS','Serial_Port')  # Serial Port for Communication with Pylontech
     Modbus_Host = config.get('COMMUNICATION SETTINGS','Modbus_Host')  # Modbus Server Address for Communication with Inverter
-    
+    Modbus_Address_XW = config.getint('COMMUNICATION SETTINGS','Modbus_Address_XW') # Modbus Address for XW+ 8548 Inverter
+    Modbus_Address_MPPT_West = config.getint('COMMUNICATION SETTINGS','Modbus_Address_MPPT_West') # Modbus Address for MPPT 60 15 Charge Controller on West Roof
+    Modbus_Address_MPPT_East = config.getint('COMMUNICATION SETTINGS','Modbus_Address_MPPT_East') # Modbus Address for MPPT 60 15 Charge Controller on East Roof
+
     # Location fo the .csv BMS logfile and the number of batteries installed (1-8).
     Log_File_Path = config.get('PYLONTECH BATTERY SPECIFIC SETTINGS','CSV_Log_File_Path')
     Battery_Modules = config.getint('PYLONTECH BATTERY SPECIFIC SETTINGS','Battery_Modules')  # Number of Installed Modules
@@ -63,7 +66,8 @@ def main():
 
 
 
-    control(Serial_Port=Serial_Port, Modbus_Host=Modbus_Host, Battery_Modules=Battery_Modules, Cadance=Cadance,\
+    control(Serial_Port=Serial_Port, Modbus_Host=Modbus_Host, Modbus_Address_XW=Modbus_Address_XW, Modbus_Address_MPPT_West=Modbus_Address_MPPT_West,\
+         Modbus_Address_MPPT_East=Modbus_Address_MPPT_East, Battery_Modules=Battery_Modules, Cadance=Cadance,\
          Display=Display, CSV_Log=CSV_Log,SQL_Log=SQL_Log, Control=Control, SoC_high=SoC_high, SoC_low=SoC_low,\
          Battery_low=Battery_low, Battery_hysteresis=Battery_hysteresis, Log_file_path=Log_File_Path,\
          SQL_Host=SQL_Host,SQL_Auth=SQL_Auth, SQL_User=SQL_User,SQL_Password=SQL_Password,SQL_Database=SQL_Database)

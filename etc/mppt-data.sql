@@ -18,25 +18,32 @@
 
 
 --
--- Table structure for table `pylontech_bms`
+-- Table structure for table `conext_mppt`
 --
 
-DROP TABLE IF EXISTS `pylontech_bms`;
+DROP TABLE IF EXISTS `conext_mppt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `pylontech_bms` (
+CREATE TABLE `conext_mppt` (
   `ts` datetime NOT NULL,
   `device_name` varchar(16) DEFAULT (NULL),
-  `soc` float DEFAULT (NULL),
-  `voltage` float DEFAULT (NULL),
-  `current` float DEFAULT (NULL),
-  `temperature` float DEFAULT (NULL),
-  `b_status` varchar(16) DEFAULT (NULL),
-  `v_status` varchar(16) DEFAULT (NULL),
-  `c_status` varchar(16) DEFAULT (NULL),
-  `t_status` varchar(16) DEFAULT (NULL),
-  PRIMARY KEY (`ts`,`battery`),
-  KEY `idx` (`battery`,`ts`)
+  `dc_input_voltage` float DEFAULT (NULL),
+  `dc_input_current` float DEFAULT (NULL),
+  `dc_input_power` float DEFAULT (NULL),
+  `dc_output_voltage` float DEFAULT (NULL),
+  `dc_output_current` float DEFAULT (NULL),
+  `dc_output_power` float DEFAULT (NULL),
+  `dc_output_power_percentage` float DEFAULT (NULL),
+  `energy_pv_day` float DEFAULT (NULL),
+  `energy_pv_week` float DEFAULT (NULL),
+  `energy_pv_month` float DEFAULT (NULL),
+  `energy_pv_year` float DEFAULT (NULL),
+  `mppt_status` varchar(16) DEFAULT (NULL),
+  `mppt_charger_status` varchar(16) DEFAULT (NULL),
+  `mppt_active_warnings_status` varchar(16) DEFAULT (NULL),
+  `mppt_active_faults_status` varchar(16) DEFAULT (NULL),
+  PRIMARY KEY (`ts`,`device_name`),
+  KEY `idx` (`device_name`,`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

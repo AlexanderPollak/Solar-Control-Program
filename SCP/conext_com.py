@@ -288,6 +288,16 @@ class XW():
         result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
         return result
 
+    def read_device_name(self):
+        """This function reads the device name of the XW+ inverter and returns it as a string.
+
+        Returns: string {device name}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0000, 8)# 0x0000 Device Name str16 r
+        result = str(unpack('%ds' % 16, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines seven 16bit registers into str14
+        return result
+
     ###################################################################################################
     # Grid AC Read Functions
     ###################################################################################################
@@ -694,7 +704,7 @@ class XW():
         XW_list = [[0 for i in range(22)] for j in range(1)]
         try:
             
-            XW_list[0][0] = "Inverter: 1"
+            XW_list[0][0] = self.read_device_name()
             XW_list[0][1] = self.read_Grid_Voltage()
             XW_list[0][2] = self.read_Grid_Current()
             XW_list[0][3] = self.read_Grid_Power()
@@ -808,6 +818,15 @@ class MPPT60():
         result = str(unpack('%ds' % 14, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6]))[0], 'utf-8')  # combines seven 16bit registers into str14
         return result
 
+    def read_device_name(self):
+        """This function reads the device name of the MPPT 60 150 Charge Controller and returns it as a string.
+
+        Returns: string {device name}
+
+        """
+        bitstream = self._port.read_holding_registers(0x0000, 8)# 0x0000 Device Name str16 rw
+        result = str(unpack('%ds' % 16, pack('<HHHHHHH', bitstream[0], bitstream[1], bitstream[2], bitstream[3], bitstream[4], bitstream[5], bitstream[6], bitstream[7]))[0], 'utf-8')  # combines eight 16bit registers into str16
+        return result
 
     ###################################################################################################
     # MPPT Energy Read Functions
@@ -1052,46 +1071,38 @@ class MPPT60():
         Args:
             NONE
 
-        Returns: XW_list: list of length [1] containing:
-            [inverter, grid_voltage, grid_current, grid_power, grid_frequency, load_voltage, load_current, load_power, load_frequency,
-            inverter_dc_current, inverter_dc_power, energy_grid_month, energy_load_month, energy_battery_month, battery_low_voltage,
-            battery_low_voltage_delay, battery_hysteresis, inverter_status, inverter_active_warnings_status, inverter_active_faults_status,
-            inverter_grid_support_status, inverter_load_shave_status]
+        Returns: MPPT_list: list of length [1] containing:
+            [device_name,dc_input_voltage,dc_input_current,dc_input_power,dc_output_voltage,dc_output_current,dc_output_power,
+            dc_output_power_percentage,energy_pv_day,energy_pv_week,energy_pv_month,energy_pv_year,mppt_status,
+            mppt_charger_status,mppt_active_warnings_status,mppt_active_faults_status]
             dtype=float and dtype=str.
 
 
         """
-        XW_list = [[0 for i in range(22)] for j in range(1)]
+        MPPT_list = [[0 for i in range(16)] for j in range(1)]
         try:
             
-            XW_list[0][0] = "Inverter: 1"
-            XW_list[0][1] = self.read_Grid_Voltage()
-            XW_list[0][2] = self.read_Grid_Current()
-            XW_list[0][3] = self.read_Grid_Power()
-            XW_list[0][4] = self.read_Grid_Frequency()
-            XW_list[0][5] = self.read_Load_Voltage()
-            XW_list[0][6] = self.read_Load_Current()
-            XW_list[0][7] = self.read_Load_Power()
-            XW_list[0][8] = self.read_Load_Frequency()
-            XW_list[0][9] = self.read_Inverter_DC_Current()
-            XW_list[0][10] = self.read_Inverter_DC_Power()
-            XW_list[0][11] = self.read_Energy_Grid_Month()
-            XW_list[0][12] = self.read_Energy_Load_Month()
-            XW_list[0][13] = self.read_Energy_Battery_Month()
-            XW_list[0][14] = self.read_Low_Battery_Cut_Out()
-            XW_list[0][15] = self.read_Low_Battery_Cut_Out_Delay()
-            XW_list[0][16] = self.read_Hysteresis()
-            XW_list[0][17] = self.read_Inverter_Status()
-            XW_list[0][18] = self.read_Inverter_Active_Warning()
-            XW_list[0][19] = self.read_Inverter_Active_Fault()
-            XW_list[0][20] = self.read_Grid_Support_Status()
-            XW_list[0][21] = self.read_Load_Shave_Status()
-
-            return XW_list
+            MPPT_list[0][0] = self.read_device_name()
+            MPPT_list[0][1] = self.read_DC_Input_Voltage()
+            MPPT_list[0][2] = self.read_DC_Input_Current()
+            MPPT_list[0][3] = self.read_DC_Input_Power()
+            MPPT_list[0][4] = self.read_DC_Output_Voltage()
+            MPPT_list[0][5] = self.read_DC_Output_Current()
+            MPPT_list[0][6] = self.read_DC_Output_Power()
+            MPPT_list[0][7] = self.read_DC_Output_Power_Percentage()
+            MPPT_list[0][8] = self.read_Energy_PV_Day()
+            MPPT_list[0][9] = self.read_Energy_PV_Week()
+            MPPT_list[0][10] = self.read_Energy_PV_Month()
+            MPPT_list[0][11] = self.read_Energy_PV_Year()
+            MPPT_list[0][12] = self.read_MPPT_Status()
+            MPPT_list[0][13] = self.read_MPPT_Charger_Status()
+            MPPT_list[0][14] = self.read_MPPT_Active_Warning()
+            MPPT_list[0][15] = self.read_MPPT_Active_Fault()
+            return MPPT_list
 
         except Exception as error:
             print("ERROR: could not read all information from MPPT 60 150 Charge Controller.:", error)
-            return XW_list
+            return MPPT_list
 
 
 

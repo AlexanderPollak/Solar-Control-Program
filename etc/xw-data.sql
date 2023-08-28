@@ -18,7 +18,7 @@
 
 
 --
--- Table structure for table `pylontech_bms`
+-- Table structure for table `conext_xw`
 --
 
 DROP TABLE IF EXISTS `conext_xw`;
@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `conext_xw`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `conext_xw` (
   `ts` datetime NOT NULL,
-  `inverter` varchar(16) DEFAULT (NULL),
+  `device_name` varchar(16) DEFAULT (NULL),
   `grid_voltage` float DEFAULT (NULL),
   `grid_current` float DEFAULT (NULL),
   `grid_power` float DEFAULT (NULL),
