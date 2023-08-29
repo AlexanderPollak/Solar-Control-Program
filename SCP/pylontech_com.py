@@ -14,6 +14,10 @@
         2. Voltage
         3. Current
         4. Temperature
+        5. Battery Status
+        6. Voltage Status
+        7. Current Status
+        8. Temperature Status
 The main class in this module (``US2000B``) allows the user to
 communicate with the Pylontech US2000B Plus BMS.
 
@@ -87,431 +91,222 @@ class US2000B(object):
         return temp_receive== str("b'\\n\\rpylon>\\n\\rpylon>'")
 
 
+
     def read_SoC(self, N_MODULES=1):
-        """This function returns the State of Charge value of the
-        Pylontech Batteries.
+        """This function returns the State of Charge value of the Pylontech Batteries.
+        
         Args:
             N_MODULES: number of modules to be read. Default=1
 
-        Returns: list of length n_modules containing numpy arrays with the [SOC] dtype=float64.
+        Returns: SoC_list: list of length [n_modules] containing: [SoC] dtype=float.
 
         """
         try:
-            SoC_array = np.zeros((N_MODULES, 1))
+            SoC_list = [[0 for i in range(1)] for j in range(N_MODULES)]
             self._port.write(str.encode('pwr\r'))
             time.sleep(0.5)
-            rec_str = str(self._port.read(2200),'utf-8')
-            rec_int = re.findall(r'\d+',rec_str)
+            rec_content = str(self._port.read(2200), 'utf-8')
+            rec_int = re.findall(r'\d+',rec_content)
             #Writes values into SOC_array and returns it.
-            if N_MODULES == 1:
-                SoC_array[0,0] = str(rec_int[8])
-                return SoC_array
-            if N_MODULES == 2:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                return SoC_array
-            if N_MODULES == 3:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                SoC_array[2,0] = str(rec_int[38])
-                return SoC_array
-            if N_MODULES == 4:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                SoC_array[2,0] = str(rec_int[38])
-                SoC_array[3,0] = str(rec_int[53])
-                return SoC_array
-            if N_MODULES == 5:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                SoC_array[2,0] = str(rec_int[38])
-                SoC_array[3,0] = str(rec_int[53])
-                SoC_array[4,0] = str(rec_int[68])
-                return SoC_array
-            if N_MODULES == 6:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                SoC_array[2,0] = str(rec_int[38])
-                SoC_array[3,0] = str(rec_int[53])
-                SoC_array[4,0] = str(rec_int[68])
-                SoC_array[5,0] = str(rec_int[83])
-                return SoC_array
-            if N_MODULES == 7:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                SoC_array[2,0] = str(rec_int[38])
-                SoC_array[3,0] = str(rec_int[53])
-                SoC_array[4,0] = str(rec_int[68])
-                SoC_array[5,0] = str(rec_int[83])
-                SoC_array[6,0] = str(rec_int[98])
-                return SoC_array
-            if N_MODULES == 8:
-                SoC_array[0,0] = str(rec_int[8])
-                SoC_array[1,0] = str(rec_int[23])
-                SoC_array[2,0] = str(rec_int[38])
-                SoC_array[3,0] = str(rec_int[53])
-                SoC_array[4,0] = str(rec_int[68])
-                SoC_array[5,0] = str(rec_int[83])
-                SoC_array[6,0] = str(rec_int[98])
-                SoC_array[7,0] = str(rec_int[113])
-                return SoC_array
+            if 1 <= N_MODULES <= 8:
+                for x in range(N_MODULES):
+                    SoC_list[x][0] = float(rec_int[(8+(x*15))])#SOC
+                return SoC_list
             else:
-                return SoC_array
+                print("ERROR: Number of modules must be 1-8. Number parsed:"+ str(N_MODULES))
+                return SoC_list
         except:
             print("ERROR no communication possible, check if the connection has been opened with open()")
 
     def read_BMS(self, N_MODULES=1):
-        """This function returns the values of the: SoC, Voltage, Current, and Temperature
-        provided by the Pylontech BMS.
+        """This function returns the values of the: SoC, Voltage, Current, Temperature, Battery Status,
+        Voltage Status, Current Status, and Temperature Status provided by the Pylontech BMS.
+        
         Args:
             N_MODULES: number of modules to be read. Default=1
 
-        Returns: list of length n_modules containing numpy arrays with the:
-        [SoC, Voltage, Current, Temperature] dtype=float64.
+        Returns: BMS_list: list of length [n_modules] containing:
+            [SoC, Voltage, Current, Temperature, Battery Status, Voltage Status, Current Status, Temperature Status]
+            dtype=float and dtype=str.
+
 
         """
         try:
-            BMS_array = np.zeros((N_MODULES, 4))
+            BMS_list = [[0 for i in range(8)] for j in range(N_MODULES)]
             self._port.write(str.encode('pwr\r'))
             time.sleep(0.5)
-            rec_str = str(self._port.read(2200), 'utf-8')
-            rec_int = re.findall(r'\d+', rec_str)
-            #Writes values into BMS_array and returns it.
-            if N_MODULES == 1:
-                BMS_array[0,0] = str(rec_int[8])#SOC
-                BMS_array[0,1] = str(rec_int[1])#Voltage
-                BMS_array[0,2] = str(rec_int[2])#Current
-                BMS_array[0,3] = str(rec_int[3])#Temperature
-                return BMS_array
-
-            if N_MODULES == 2:
-                BMS_array[0,0] = str(rec_int[8])#SOC
-                BMS_array[0,1] = str(rec_int[1])#Voltage
-                BMS_array[0,2] = str(rec_int[2])#Current
-                BMS_array[0,3] = str(rec_int[3])#Temperature
-
-                BMS_array[1,0] = str(rec_int[23])#SOC
-                BMS_array[1,1] = str(rec_int[16])#Voltage
-                BMS_array[1,2] = str(rec_int[17])#Current
-                BMS_array[1,3] = str(rec_int[18])#Temperature
-                return BMS_array
-
-            if N_MODULES == 3:
-                BMS_array[0, 0] = str(rec_int[8])  # SOC
-                BMS_array[0, 1] = str(rec_int[1])  # Voltage
-                BMS_array[0, 2] = str(rec_int[2])  # Current
-                BMS_array[0, 3] = str(rec_int[3])  # Temperature
-
-                BMS_array[1, 0] = str(rec_int[23])  # SOC
-                BMS_array[1, 1] = str(rec_int[16])  # Voltage
-                BMS_array[1, 2] = str(rec_int[17])  # Current
-                BMS_array[1, 3] = str(rec_int[18])  # Temperature
-
-                BMS_array[2, 0] = str(rec_int[38])  # SOC
-                BMS_array[2, 1] = str(rec_int[31])  # Voltage
-                BMS_array[2, 2] = str(rec_int[32])  # Current
-                BMS_array[2, 3] = str(rec_int[33])  # Temperature
-                return BMS_array
-
-            if N_MODULES == 4:
-                BMS_array[0, 0] = str(rec_int[8])  # SOC
-                BMS_array[0, 1] = str(rec_int[1])  # Voltage
-                BMS_array[0, 2] = str(rec_int[2])  # Current
-                BMS_array[0, 3] = str(rec_int[3])  # Temperature
-
-                BMS_array[1, 0] = str(rec_int[23])  # SOC
-                BMS_array[1, 1] = str(rec_int[16])  # Voltage
-                BMS_array[1, 2] = str(rec_int[17])  # Current
-                BMS_array[1, 3] = str(rec_int[18])  # Temperature
-
-                BMS_array[2, 0] = str(rec_int[38])  # SOC
-                BMS_array[2, 1] = str(rec_int[31])  # Voltage
-                BMS_array[2, 2] = str(rec_int[32])  # Current
-                BMS_array[2, 3] = str(rec_int[33])  # Temperature
-
-                BMS_array[3, 0] = str(rec_int[53])  # SOC
-                BMS_array[3, 1] = str(rec_int[46])  # Voltage
-                BMS_array[3, 2] = str(rec_int[47])  # Current
-                BMS_array[3, 3] = str(rec_int[48])  # Temperature
-                return BMS_array
-
-            if N_MODULES == 5:
-                BMS_array[0, 0] = str(rec_int[8])  # SOC
-                BMS_array[0, 1] = str(rec_int[1])  # Voltage
-                BMS_array[0, 2] = str(rec_int[2])  # Current
-                BMS_array[0, 3] = str(rec_int[3])  # Temperature
-
-                BMS_array[1, 0] = str(rec_int[23])  # SOC
-                BMS_array[1, 1] = str(rec_int[16])  # Voltage
-                BMS_array[1, 2] = str(rec_int[17])  # Current
-                BMS_array[1, 3] = str(rec_int[18])  # Temperature
-
-                BMS_array[2, 0] = str(rec_int[38])  # SOC
-                BMS_array[2, 1] = str(rec_int[31])  # Voltage
-                BMS_array[2, 2] = str(rec_int[32])  # Current
-                BMS_array[2, 3] = str(rec_int[33])  # Temperature
-
-                BMS_array[3, 0] = str(rec_int[53])  # SOC
-                BMS_array[3, 1] = str(rec_int[46])  # Voltage
-                BMS_array[3, 2] = str(rec_int[47])  # Current
-                BMS_array[3, 3] = str(rec_int[48])  # Temperature
-
-                BMS_array[4, 0] = str(rec_int[68])  # SOC
-                BMS_array[4, 1] = str(rec_int[61])  # Voltage
-                BMS_array[4, 2] = str(rec_int[62])  # Current
-                BMS_array[4, 3] = str(rec_int[63])  # Temperature
-                return BMS_array
-
-            if N_MODULES == 6:
-                BMS_array[0, 0] = str(rec_int[8])  # SOC
-                BMS_array[0, 1] = str(rec_int[1])  # Voltage
-                BMS_array[0, 2] = str(rec_int[2])  # Current
-                BMS_array[0, 3] = str(rec_int[3])  # Temperature
-
-                BMS_array[1, 0] = str(rec_int[23])  # SOC
-                BMS_array[1, 1] = str(rec_int[16])  # Voltage
-                BMS_array[1, 2] = str(rec_int[17])  # Current
-                BMS_array[1, 3] = str(rec_int[18])  # Temperature
-
-                BMS_array[2, 0] = str(rec_int[38])  # SOC
-                BMS_array[2, 1] = str(rec_int[31])  # Voltage
-                BMS_array[2, 2] = str(rec_int[32])  # Current
-                BMS_array[2, 3] = str(rec_int[33])  # Temperature
-
-                BMS_array[3, 0] = str(rec_int[53])  # SOC
-                BMS_array[3, 1] = str(rec_int[46])  # Voltage
-                BMS_array[3, 2] = str(rec_int[47])  # Current
-                BMS_array[3, 3] = str(rec_int[48])  # Temperature
-
-                BMS_array[4, 0] = str(rec_int[68])  # SOC
-                BMS_array[4, 1] = str(rec_int[61])  # Voltage
-                BMS_array[4, 2] = str(rec_int[62])  # Current
-                BMS_array[4, 3] = str(rec_int[63])  # Temperature
-
-                BMS_array[5, 0] = str(rec_int[83])  # SOC
-                BMS_array[5, 1] = str(rec_int[76])  # Voltage
-                BMS_array[5, 2] = str(rec_int[77])  # Current
-                BMS_array[5, 3] = str(rec_int[78])  # Temperature
-                return BMS_array
-
-            if N_MODULES == 7:
-                BMS_array[0, 0] = str(rec_int[8])  # SOC
-                BMS_array[0, 1] = str(rec_int[1])  # Voltage
-                BMS_array[0, 2] = str(rec_int[2])  # Current
-                BMS_array[0, 3] = str(rec_int[3])  # Temperature
-
-                BMS_array[1, 0] = str(rec_int[23])  # SOC
-                BMS_array[1, 1] = str(rec_int[16])  # Voltage
-                BMS_array[1, 2] = str(rec_int[17])  # Current
-                BMS_array[1, 3] = str(rec_int[18])  # Temperature
-
-                BMS_array[2, 0] = str(rec_int[38])  # SOC
-                BMS_array[2, 1] = str(rec_int[31])  # Voltage
-                BMS_array[2, 2] = str(rec_int[32])  # Current
-                BMS_array[2, 3] = str(rec_int[33])  # Temperature
-
-                BMS_array[3, 0] = str(rec_int[53])  # SOC
-                BMS_array[3, 1] = str(rec_int[46])  # Voltage
-                BMS_array[3, 2] = str(rec_int[47])  # Current
-                BMS_array[3, 3] = str(rec_int[48])  # Temperature
-
-                BMS_array[4, 0] = str(rec_int[68])  # SOC
-                BMS_array[4, 1] = str(rec_int[61])  # Voltage
-                BMS_array[4, 2] = str(rec_int[62])  # Current
-                BMS_array[4, 3] = str(rec_int[63])  # Temperature
-
-                BMS_array[5, 0] = str(rec_int[83])  # SOC
-                BMS_array[5, 1] = str(rec_int[76])  # Voltage
-                BMS_array[5, 2] = str(rec_int[77])  # Current
-                BMS_array[5, 3] = str(rec_int[78])  # Temperature
-
-                BMS_array[6, 0] = str(rec_int[98])  # SOC
-                BMS_array[6, 1] = str(rec_int[91])  # Voltage
-                BMS_array[6, 2] = str(rec_int[92])  # Current
-                BMS_array[6, 3] = str(rec_int[93])  # Temperature
-                return BMS_array
-
-            if N_MODULES == 8:
-                BMS_array[0, 0] = str(rec_int[8])  # SOC
-                BMS_array[0, 1] = str(rec_int[1])  # Voltage
-                BMS_array[0, 2] = str(rec_int[2])  # Current
-                BMS_array[0, 3] = str(rec_int[3])  # Temperature
-
-                BMS_array[1, 0] = str(rec_int[23])  # SOC
-                BMS_array[1, 1] = str(rec_int[16])  # Voltage
-                BMS_array[1, 2] = str(rec_int[17])  # Current
-                BMS_array[1, 3] = str(rec_int[18])  # Temperature
-
-                BMS_array[2, 0] = str(rec_int[38])  # SOC
-                BMS_array[2, 1] = str(rec_int[31])  # Voltage
-                BMS_array[2, 2] = str(rec_int[32])  # Current
-                BMS_array[2, 3] = str(rec_int[33])  # Temperature
-
-                BMS_array[3, 0] = str(rec_int[53])  # SOC
-                BMS_array[3, 1] = str(rec_int[46])  # Voltage
-                BMS_array[3, 2] = str(rec_int[47])  # Current
-                BMS_array[3, 3] = str(rec_int[48])  # Temperature
-
-                BMS_array[4, 0] = str(rec_int[68])  # SOC
-                BMS_array[4, 1] = str(rec_int[61])  # Voltage
-                BMS_array[4, 2] = str(rec_int[62])  # Current
-                BMS_array[4, 3] = str(rec_int[63])  # Temperature
-
-                BMS_array[5, 0] = str(rec_int[83])  # SOC
-                BMS_array[5, 1] = str(rec_int[76])  # Voltage
-                BMS_array[5, 2] = str(rec_int[77])  # Current
-                BMS_array[5, 3] = str(rec_int[78])  # Temperature
-
-                BMS_array[6, 0] = str(rec_int[98])  # SOC
-                BMS_array[6, 1] = str(rec_int[91])  # Voltage
-                BMS_array[6, 2] = str(rec_int[92])  # Current
-                BMS_array[6, 3] = str(rec_int[93])  # Temperature
-
-                BMS_array[7, 0] = str(rec_int[113])  # SOC
-                BMS_array[7, 1] = str(rec_int[106])  # Voltage
-                BMS_array[7, 2] = str(rec_int[107])  # Current
-                BMS_array[7, 3] = str(rec_int[108])  # Temperature
-                return BMS_array
-
+            rec_content = str(self._port.read(2200), 'utf-8')
+            rec_str = re.findall(r'\w+', rec_content)
+            #Writes values into BMS_list and returns it.
+            #Note that 21 is the offset between each value index for the individual batteries.
+            if 1 <= N_MODULES <= 8:
+                for x in range(N_MODULES):
+                    BMS_list[x][0] = float(rec_str[(37+(x*21))])#SOC
+                    BMS_list[x][1] = float(rec_str[(26+(x*21))])/1000.0 #Voltage
+                    BMS_list[x][2] = float(rec_str[(27+(x*21))])/1000.0 #Current
+                    BMS_list[x][3] = float(rec_str[(28+(x*21))])/1000.0 #Temperature
+                    BMS_list[x][4] = str(rec_str[(33+(x*21))])#Battery Status
+                    BMS_list[x][5] = str(rec_str[(34+(x*21))])#Voltage Status
+                    BMS_list[x][6] = str(rec_str[(35+(x*21))])#Current Status
+                    BMS_list[x][7] = str(rec_str[(36+(x*21))])#Temperature Status
+                return BMS_list
             else:
-                return BMS_array
+                print("ERROR: Number of modules must be 1-8. Number parsed:"+ str(N_MODULES))
+                return BMS_list
         except:
-            print("ERROR no communication possible, check if the connection has been opened with open()")
+            print("ERROR: no communication possible, check if the connection has been opened with open()")
 
-    def log_SoC(self, PATH='../Log/', N_MODULES=1):
 
+    def log_SoC(self, SOC_LIST, PATH='../var/BMS_log'):
+        """This function writes the State of Charge (SoC) into a '.csv' file.
+        
+        Args:
+            PATH: path to the directory where the .csv file will be saved.
+            SOC_LIST: list of length [n_modules] containing: [SoC] dtype=float.
+
+        Returns: Boolean value True or False
+
+        """
         filename = str(PATH) + '/' + str(datetime.date.today()) + '.csv'
         tmp_check_file = os.path.isfile(filename)
         csvfile = open(filename, mode='a')
-        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
-                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
-                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
-                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4',
-                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5',
-                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6',
-                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7',
-                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
+        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1', 'B_Status_1', 'V_Status_1', 'C_Status_1', 'T_Status_1',
+                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2', 'B_Status_2', 'V_Status_2', 'C_Status_2', 'T_Status_2',
+                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3', 'B_Status_3', 'V_Status_3', 'C_Status_3', 'T_Status_3',
+                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4', 'B_Status_4', 'V_Status_4', 'C_Status_4', 'T_Status_4',
+                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5', 'B_Status_5', 'V_Status_5', 'C_Status_5', 'T_Status_5',
+                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6', 'B_Status_6', 'V_Status_6', 'C_Status_6', 'T_Status_6',
+                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7', 'B_Status_7', 'V_Status_7', 'C_Status_7', 'T_Status_7',
+                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8', 'B_Status_8', 'V_Status_8', 'C_Status_8', 'T_Status_8'
                 ]
         data_writer = csv.DictWriter(csvfile, fieldnames=name)
         if not tmp_check_file:
             data_writer.writeheader()
 
-        tmp_SoC = self.read_SoC(N_MODULES)
+        tmp_time = "{:02d}:{:02d}:{:02d}".format(datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
+        tmp_n_modules = len(SOC_LIST)
+        tmp_SoC = SOC_LIST
 
-        if N_MODULES == 1:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_SoC[0,0]})
-        if N_MODULES == 2:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_SoC[0,0],'SoC_2':tmp_SoC[1,0]})
-        if N_MODULES == 3:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0]})
-        if N_MODULES == 4:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0]})
-
-        if N_MODULES == 5:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
-                                  'SoC_5': tmp_SoC[4, 0]})
-        if N_MODULES == 6:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
-                                  'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0]})
-        if N_MODULES == 7:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
-                                  'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0],'SoC_7': tmp_SoC[6, 0]})
-        if N_MODULES == 8:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1': tmp_SoC[0, 0], 'SoC_2': tmp_SoC[1, 0], 'SoC_3': tmp_SoC[2, 0], 'SoC_4': tmp_SoC[3, 0],
-                                  'SoC_5': tmp_SoC[4, 0],'SoC_6': tmp_SoC[5, 0],'SoC_7': tmp_SoC[6, 0],'SoC_8': tmp_SoC[7, 0]})
+        if tmp_n_modules == 1:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0]})
+        elif tmp_n_modules == 2:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0]})
+        elif tmp_n_modules == 3:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0]})
+        elif tmp_n_modules == 4:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0]})
+        elif tmp_n_modules == 5:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0]})
+        elif tmp_n_modules == 6:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0]})
+        elif tmp_n_modules == 7:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0],'SoC_7':tmp_SoC[6][0]})
+        elif tmp_n_modules == 8:
+            data_writer.writerow({'Time':tmp_time,'SoC_1':tmp_SoC[0][0],'SoC_2':tmp_SoC[1][0],'SoC_3':tmp_SoC[2][0],'SoC_4':tmp_SoC[3][0],'SoC_5':tmp_SoC[4][0],'SoC_6':tmp_SoC[5][0],'SoC_7':tmp_SoC[6][0],'SoC_8':tmp_SoC[7][0]})
         else:
+            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + str(tmp_n_modules))
+            csvfile.flush()
+            csvfile.close()
             return False
 
         csvfile.flush()
         csvfile.close()
         return True
 
-    def log_BMS(self, PATH='../Log/', N_MODULES=1):
+    def log_BMS(self, BMS_LIST, PATH='../var/BMS_log'):
+        """This function writes the BMS information into a '.csv' file.
+        
+        Args:
+            PATH: path to the directory where the .csv file will be saved.
+            SOC_LIST: list of length [n_modules] containing:
+            [SoC, Voltage, Current, Temperature, Battery Status, Voltage Status, Current Status, Temperature Status]
+            dtype=float and dtype=str.
 
+        Returns: Boolean value True or False
+
+        """
         filename = str(PATH) + '/' + str(datetime.date.today()) + '.csv'
         tmp_check_file = os.path.isfile(filename)
         csvfile = open(filename, mode='a')
-        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1',
-                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2',
-                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3',
-                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4',
-                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5',
-                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6',
-                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7',
-                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8',
+        name = ['Time','SoC_1', 'Voltage_1', 'Current_1','Temperature_1', 'B_Status_1', 'V_Status_1', 'C_Status_1', 'T_Status_1',
+                'SoC_2', 'Voltage_2', 'Current_2', 'Temperature_2', 'B_Status_2', 'V_Status_2', 'C_Status_2', 'T_Status_2',
+                'SoC_3', 'Voltage_3', 'Current_3', 'Temperature_3', 'B_Status_3', 'V_Status_3', 'C_Status_3', 'T_Status_3',
+                'SoC_4', 'Voltage_4', 'Current_4', 'Temperature_4', 'B_Status_4', 'V_Status_4', 'C_Status_4', 'T_Status_4',
+                'SoC_5', 'Voltage_5', 'Current_5', 'Temperature_5', 'B_Status_5', 'V_Status_5', 'C_Status_5', 'T_Status_5',
+                'SoC_6', 'Voltage_6', 'Current_6', 'Temperature_6', 'B_Status_6', 'V_Status_6', 'C_Status_6', 'T_Status_6',
+                'SoC_7', 'Voltage_7', 'Current_7', 'Temperature_7', 'B_Status_7', 'V_Status_7', 'C_Status_7', 'T_Status_7',
+                'SoC_8', 'Voltage_8', 'Current_8', 'Temperature_8', 'B_Status_8', 'V_Status_8', 'C_Status_8', 'T_Status_8'
                 ]
         data_writer = csv.DictWriter(csvfile, fieldnames=name)
         if not tmp_check_file:
             data_writer.writeheader()
 
-        tmp_BMS = self.read_BMS(N_MODULES)
+        tmp_time = "{:02d}:{:02d}:{:02d}".format(datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second)
+        tmp_n_modules = len(BMS_LIST)
+        tmp_BMS = BMS_LIST
 
-        if N_MODULES == 1:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3]})
-        if N_MODULES == 2:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour)+':'+str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3]})
-        if N_MODULES == 3:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                                  'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3]})
-        if N_MODULES == 4:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                                  'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                                  'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3]})
-        if N_MODULES == 5:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                                  'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                                  'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                                  'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3]})
-        if N_MODULES == 6:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                                  'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                                  'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                                  'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
-                                  'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3]})
-        if N_MODULES == 7:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                                  'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                                  'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                                  'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
-                                  'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3],
-                                  'SoC_7':tmp_BMS[6,0],'Voltage_7':tmp_BMS[6,1],'Current_7':tmp_BMS[6,2],'Temperature_7':tmp_BMS[6,3]})
-        if N_MODULES == 8:
-            data_writer.writerow({'Time': str(datetime.datetime.now().hour) + ':' + str(datetime.datetime.now().minute),
-                                  'SoC_1':tmp_BMS[0,0],'Voltage_1':tmp_BMS[0,1],'Current_1':tmp_BMS[0,2],'Temperature_1':tmp_BMS[0,3],
-                                  'SoC_2':tmp_BMS[1,0],'Voltage_2':tmp_BMS[1,1],'Current_2':tmp_BMS[1,2],'Temperature_2':tmp_BMS[1,3],
-                                  'SoC_3':tmp_BMS[2,0],'Voltage_3':tmp_BMS[2,1],'Current_3':tmp_BMS[2,2],'Temperature_3':tmp_BMS[2,3],
-                                  'SoC_4':tmp_BMS[3,0],'Voltage_4':tmp_BMS[3,1],'Current_4':tmp_BMS[3,2],'Temperature_4':tmp_BMS[3,3],
-                                  'SoC_5':tmp_BMS[4,0],'Voltage_5':tmp_BMS[4,1],'Current_5':tmp_BMS[4,2],'Temperature_5':tmp_BMS[4,3],
-                                  'SoC_6':tmp_BMS[5,0],'Voltage_6':tmp_BMS[5,1],'Current_6':tmp_BMS[5,2],'Temperature_6':tmp_BMS[5,3],
-                                  'SoC_7':tmp_BMS[6,0],'Voltage_7':tmp_BMS[6,1],'Current_7':tmp_BMS[6,2],'Temperature_7':tmp_BMS[6,3],
-                                  'SoC_8':tmp_BMS[7,0],'Voltage_8':tmp_BMS[7,1],'Current_8':tmp_BMS[7,2],'Temperature_8':tmp_BMS[7,3]})
+        if tmp_n_modules == 1:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7]})
+        elif tmp_n_modules == 2:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7]})
+        elif tmp_n_modules == 3:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
+                                  'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7]})
+        elif tmp_n_modules == 4:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
+                                  'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
+                                  'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7]})
+        elif tmp_n_modules == 5:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
+                                  'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
+                                  'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7],
+                                  'SoC_5':tmp_BMS[4][0],'Voltage_5':tmp_BMS[4][1],'Current_5':tmp_BMS[4][2],'Temperature_5':tmp_BMS[4][3],'B_Status_5':tmp_BMS[4][4],'V_Status_5':tmp_BMS[4][5],'C_Status_5':tmp_BMS[4][6],'T_Status_5':tmp_BMS[4][7]})
+        elif tmp_n_modules == 6:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
+                                  'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
+                                  'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7],
+                                  'SoC_5':tmp_BMS[4][0],'Voltage_5':tmp_BMS[4][1],'Current_5':tmp_BMS[4][2],'Temperature_5':tmp_BMS[4][3],'B_Status_5':tmp_BMS[4][4],'V_Status_5':tmp_BMS[4][5],'C_Status_5':tmp_BMS[4][6],'T_Status_5':tmp_BMS[4][7],
+                                  'SoC_6':tmp_BMS[5][0],'Voltage_6':tmp_BMS[5][1],'Current_6':tmp_BMS[5][2],'Temperature_6':tmp_BMS[5][3],'B_Status_6':tmp_BMS[5][4],'V_Status_6':tmp_BMS[5][5],'C_Status_6':tmp_BMS[5][6],'T_Status_6':tmp_BMS[5][7]})
+        elif tmp_n_modules == 7:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
+                                  'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
+                                  'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7],
+                                  'SoC_5':tmp_BMS[4][0],'Voltage_5':tmp_BMS[4][1],'Current_5':tmp_BMS[4][2],'Temperature_5':tmp_BMS[4][3],'B_Status_5':tmp_BMS[4][4],'V_Status_5':tmp_BMS[4][5],'C_Status_5':tmp_BMS[4][6],'T_Status_5':tmp_BMS[4][7],
+                                  'SoC_6':tmp_BMS[5][0],'Voltage_6':tmp_BMS[5][1],'Current_6':tmp_BMS[5][2],'Temperature_6':tmp_BMS[5][3],'B_Status_6':tmp_BMS[5][4],'V_Status_6':tmp_BMS[5][5],'C_Status_6':tmp_BMS[5][6],'T_Status_6':tmp_BMS[5][7],
+                                  'SoC_7':tmp_BMS[6][0],'Voltage_7':tmp_BMS[6][1],'Current_7':tmp_BMS[6][2],'Temperature_7':tmp_BMS[6][3],'B_Status_7':tmp_BMS[6][4],'V_Status_7':tmp_BMS[6][5],'C_Status_7':tmp_BMS[6][6],'T_Status_7':tmp_BMS[6][7]})
+        elif tmp_n_modules == 8:
+            data_writer.writerow({'Time':tmp_time,
+                                  'SoC_1':tmp_BMS[0][0],'Voltage_1':tmp_BMS[0][1],'Current_1':tmp_BMS[0][2],'Temperature_1':tmp_BMS[0][3],'B_Status_1':tmp_BMS[0][4],'V_Status_1':tmp_BMS[0][5],'C_Status_1':tmp_BMS[0][6],'T_Status_1':tmp_BMS[0][7],
+                                  'SoC_2':tmp_BMS[1][0],'Voltage_2':tmp_BMS[1][1],'Current_2':tmp_BMS[1][2],'Temperature_2':tmp_BMS[1][3],'B_Status_2':tmp_BMS[1][4],'V_Status_2':tmp_BMS[1][5],'C_Status_2':tmp_BMS[1][6],'T_Status_2':tmp_BMS[1][7],
+                                  'SoC_3':tmp_BMS[2][0],'Voltage_3':tmp_BMS[2][1],'Current_3':tmp_BMS[2][2],'Temperature_3':tmp_BMS[2][3],'B_Status_3':tmp_BMS[2][4],'V_Status_3':tmp_BMS[2][5],'C_Status_3':tmp_BMS[2][6],'T_Status_3':tmp_BMS[2][7],
+                                  'SoC_4':tmp_BMS[3][0],'Voltage_4':tmp_BMS[3][1],'Current_4':tmp_BMS[3][2],'Temperature_4':tmp_BMS[3][3],'B_Status_4':tmp_BMS[3][4],'V_Status_4':tmp_BMS[3][5],'C_Status_4':tmp_BMS[3][6],'T_Status_4':tmp_BMS[3][7],
+                                  'SoC_5':tmp_BMS[4][0],'Voltage_5':tmp_BMS[4][1],'Current_5':tmp_BMS[4][2],'Temperature_5':tmp_BMS[4][3],'B_Status_5':tmp_BMS[4][4],'V_Status_5':tmp_BMS[4][5],'C_Status_5':tmp_BMS[4][6],'T_Status_5':tmp_BMS[4][7],
+                                  'SoC_6':tmp_BMS[5][0],'Voltage_6':tmp_BMS[5][1],'Current_6':tmp_BMS[5][2],'Temperature_6':tmp_BMS[5][3],'B_Status_6':tmp_BMS[5][4],'V_Status_6':tmp_BMS[5][5],'C_Status_6':tmp_BMS[5][6],'T_Status_6':tmp_BMS[5][7],
+                                  'SoC_7':tmp_BMS[6][0],'Voltage_7':tmp_BMS[6][1],'Current_7':tmp_BMS[6][2],'Temperature_7':tmp_BMS[6][3],'B_Status_7':tmp_BMS[6][4],'V_Status_7':tmp_BMS[6][5],'C_Status_7':tmp_BMS[6][6],'T_Status_7':tmp_BMS[6][7],
+                                  'SoC_8':tmp_BMS[7][0],'Voltage_8':tmp_BMS[7][1],'Current_8':tmp_BMS[7][2],'Temperature_8':tmp_BMS[7][3],'B_Status_8':tmp_BMS[7][4],'V_Status_8':tmp_BMS[7][5],'C_Status_8':tmp_BMS[7][6],'T_Status_8':tmp_BMS[7][7]})
         else:
+            print("Unsuported number of battery modules. Only 1-8 modules are supported. The module number parsed is:" + str(tmp_n_modules))
+            csvfile.flush()
+            csvfile.close()
             return False
 
         csvfile.flush()
         csvfile.close()
         return True
+
 
 
     def socket_SoC(self, N_MODULES=1, UDP_IP ="127.0.0.1", UDP_PORT1 = 5005, UDP_PORT2 = 5006, UDP_PORT3 = 5007):
