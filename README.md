@@ -5,12 +5,12 @@ This program controls a solar and battery storgae installation using Pylontech U
 # Supported Devices
 ```
 Schneider Conext Devices:
-	    1. Schneider ComBox
+        1. Schneider ComBox
         2. Schneider MPPT60 150
         3. Schneider XW+ 8548E
 
 Pylontech Battery:
-		1. US2000B Plus
+        1. US2000B Plus
 ```
 
 # Communication

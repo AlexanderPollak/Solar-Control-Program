@@ -15,17 +15,17 @@ def runtime_error_pylontech(error_counter):
         exit()
     return
 
-def runtime_error_conext(self, error_counter):
-    print('Communication Error With Conext! Try:'+str(error_counter))
+def runtime_error_conext(self, ERROR_COUNTER, MODBUS_ADDRESS):
+    print('Communication Error With Conext Device Modbus Address:'+str(MODBUS_ADDRESS)+'. Try:'+str(ERROR_COUNTER))
 
 
-    if error_counter >=10:
-        print('Reconnect with Conext!')
+    if error_counter >=5:
+        print('Reconnect with Conext Device Modbus Address:'+str(MODBUS_ADDRESS))
         time.sleep(300)
-        if self.reconnect():
+        if self.reconnect(SERVER_UNIT=MODBUS_ADDRESS):
             print('Reconnect with Conext Succesful!')
             return True
-    if error_counter >=60:
+    if ERROR_COUNTER >=60:
         exit()
     return False
 
@@ -136,21 +136,21 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                         tmp_xw_log = Inv.read_Inverter_All()
                     except:
                         error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(Inv, error_counter_conext):
+                        if runtime_error_conext(Inv, ERROR_COUNTER=error_counter_conext, MODBUS_ADDRESS=Modbus_Address_XW):
                             error_counter_conext=0                        
                         
                     try:
                         tmp_mppt_west_log = MPPT_West.read_MPPT_All()
                     except:
                         error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(MPPT_West, error_counter_conext):
+                        if runtime_error_conext(MPPT_West, ERROR_COUNTER=error_counter_conext, MODBUS_ADDRESS=Modbus_Address_MPPT_West):
                             error_counter_conext=0     
 
                     try:
                         tmp_mppt_east_log = MPPT_East.read_MPPT_All()
                     except:
                         error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(MPPT_East, error_counter_conext):
+                        if runtime_error_conext(MPPT_East, ERROR_COUNTER=error_counter_conext, MODBUS_ADDRESS=Modbus_Address_MPPT_East):
                             error_counter_conext=0   
 
                         
@@ -162,10 +162,12 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                             error_counter_pylontech=error_counter_pylontech+1
                             runtime_error_pylontech(error_counter_pylontech)
                     if SQL_Log:
-                        SQL.write_BMS(BMS_LIST=tmp_bms_log)
-                        SQL.write_XW(XW_LIST=tmp_xw_log)
-                        SQL.write_MPPT(MPPT_LIST=tmp_mppt_log)
-
+                        try:
+                            SQL.write_BMS(BMS_LIST=tmp_bms_log)
+                            SQL.write_XW(XW_LIST=tmp_xw_log)
+                            SQL.write_MPPT(MPPT_LIST=tmp_mppt_log)
+                        except Exception as error:
+                            print("SQL_Log error:", error)
 
 
                 if Display:  # Condition to print the SoC in terminal

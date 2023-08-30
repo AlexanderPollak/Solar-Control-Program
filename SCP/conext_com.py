@@ -702,36 +702,34 @@ class XW():
 
         """
         XW_list = [[0 for i in range(22)] for j in range(1)]
-        try:
+
             
-            XW_list[0][0] = self.read_device_name()
-            XW_list[0][1] = self.read_Grid_Voltage()
-            XW_list[0][2] = self.read_Grid_Current()
-            XW_list[0][3] = self.read_Grid_Power()
-            XW_list[0][4] = self.read_Grid_Frequency()
-            XW_list[0][5] = self.read_Load_Voltage()
-            XW_list[0][6] = self.read_Load_Current()
-            XW_list[0][7] = self.read_Load_Power()
-            XW_list[0][8] = self.read_Load_Frequency()
-            XW_list[0][9] = self.read_Inverter_DC_Current()
-            XW_list[0][10] = self.read_Inverter_DC_Power()
-            XW_list[0][11] = self.read_Energy_Grid_Month()
-            XW_list[0][12] = self.read_Energy_Load_Month()
-            XW_list[0][13] = self.read_Energy_Battery_Month()
-            XW_list[0][14] = self.read_Low_Battery_Cut_Out()
-            XW_list[0][15] = self.read_Low_Battery_Cut_Out_Delay()
-            XW_list[0][16] = self.read_Hysteresis()
-            XW_list[0][17] = self.read_Inverter_Status()
-            XW_list[0][18] = self.read_Inverter_Active_Warning()
-            XW_list[0][19] = self.read_Inverter_Active_Fault()
-            XW_list[0][20] = self.read_Grid_Support_Status()
-            XW_list[0][21] = self.read_Load_Shave_Status()
+        XW_list[0][0] = self.read_device_name()
+        XW_list[0][1] = self.read_Grid_Voltage()
+        XW_list[0][2] = self.read_Grid_Current()
+        XW_list[0][3] = self.read_Grid_Power()
+        XW_list[0][4] = self.read_Grid_Frequency()
+        XW_list[0][5] = self.read_Load_Voltage()
+        XW_list[0][6] = self.read_Load_Current()
+        XW_list[0][7] = self.read_Load_Power()
+        XW_list[0][8] = self.read_Load_Frequency()
+        XW_list[0][9] = self.read_Inverter_DC_Current()
+        XW_list[0][10] = self.read_Inverter_DC_Power()
+        XW_list[0][11] = self.read_Energy_Grid_Month()
+        XW_list[0][12] = self.read_Energy_Load_Month()
+        XW_list[0][13] = self.read_Energy_Battery_Month()
+        XW_list[0][14] = self.read_Low_Battery_Cut_Out()
+        XW_list[0][15] = self.read_Low_Battery_Cut_Out_Delay()
+        XW_list[0][16] = self.read_Hysteresis()
+        XW_list[0][17] = self.read_Inverter_Status()
+        XW_list[0][18] = self.read_Inverter_Active_Warning()
+        XW_list[0][19] = self.read_Inverter_Active_Fault()
+        XW_list[0][20] = self.read_Grid_Support_Status()
+        XW_list[0][21] = self.read_Load_Shave_Status()
 
-            return XW_list
+        return XW_list
 
-        except Exception as error:
-            print("ERROR: could not read all information from XW+ inverter.:", error)
-            return XW_list
+
 
 
 
@@ -1080,29 +1078,26 @@ class MPPT60():
 
         """
         MPPT_list = [[0 for i in range(16)] for j in range(1)]
-        try:
             
-            MPPT_list[0][0] = self.read_device_name()
-            MPPT_list[0][1] = self.read_DC_Input_Voltage()
-            MPPT_list[0][2] = self.read_DC_Input_Current()
-            MPPT_list[0][3] = self.read_DC_Input_Power()
-            MPPT_list[0][4] = self.read_DC_Output_Voltage()
-            MPPT_list[0][5] = self.read_DC_Output_Current()
-            MPPT_list[0][6] = self.read_DC_Output_Power()
-            MPPT_list[0][7] = self.read_DC_Output_Power_Percentage()
-            MPPT_list[0][8] = self.read_Energy_PV_Day()
-            MPPT_list[0][9] = self.read_Energy_PV_Week()
-            MPPT_list[0][10] = self.read_Energy_PV_Month()
-            MPPT_list[0][11] = self.read_Energy_PV_Year()
-            MPPT_list[0][12] = self.read_MPPT_Status()
-            MPPT_list[0][13] = self.read_MPPT_Charger_Status()
-            MPPT_list[0][14] = self.read_MPPT_Active_Warning()
-            MPPT_list[0][15] = self.read_MPPT_Active_Fault()
-            return MPPT_list
+        MPPT_list[0][0] = self.read_device_name()
+        MPPT_list[0][1] = self.read_DC_Input_Voltage()
+        MPPT_list[0][2] = self.read_DC_Input_Current()
+        MPPT_list[0][3] = self.read_DC_Input_Power()
+        MPPT_list[0][4] = self.read_DC_Output_Voltage()
+        MPPT_list[0][5] = self.read_DC_Output_Current()
+        MPPT_list[0][6] = self.read_DC_Output_Power()
+        MPPT_list[0][7] = self.read_DC_Output_Power_Percentage()
+        MPPT_list[0][8] = self.read_Energy_PV_Day()
+        MPPT_list[0][9] = self.read_Energy_PV_Week()
+        MPPT_list[0][10] = self.read_Energy_PV_Month()
+        MPPT_list[0][11] = self.read_Energy_PV_Year()
+        MPPT_list[0][12] = self.read_MPPT_Status()
+        MPPT_list[0][13] = self.read_MPPT_Charger_Status()
+        MPPT_list[0][14] = self.read_MPPT_Active_Warning()
+        MPPT_list[0][15] = self.read_MPPT_Active_Fault()
+    
+        return MPPT_list
 
-        except Exception as error:
-            print("ERROR: could not read all information from MPPT 60 150 Charge Controller.:", error)
-            return MPPT_list
 
 
 
