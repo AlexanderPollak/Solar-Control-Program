@@ -8,9 +8,9 @@ from mysql_write import *
 import time
 
 
-def runtime_error_pylontech(error_counter):
-    print('Communication Error With Pylontech! Try:'+str(error_counter))
-    if error_counter >=100:
+def runtime_error_pylontech(ERROR_COUNTER):
+    print('Communication Error With Pylontech! Try:'+str(ERROR_COUNTER))
+    if ERROR_COUNTER >=100:
         print('Max Communication retries reached!')
         exit()
     return
@@ -19,13 +19,13 @@ def runtime_error_conext(self, ERROR_COUNTER, MODBUS_ADDRESS):
     print('Communication Error With Conext Device Modbus Address:'+str(MODBUS_ADDRESS)+'. Try:'+str(ERROR_COUNTER))
 
 
-    if error_counter >=5:
+    if ERROR_COUNTER >=5:
         print('Reconnect with Conext Device Modbus Address:'+str(MODBUS_ADDRESS))
         time.sleep(300)
         if self.reconnect(SERVER_UNIT=MODBUS_ADDRESS):
             print('Reconnect with Conext Succesful!')
             return True
-    if ERROR_COUNTER >=60:
+    if ERROR_COUNTER >=120:
         exit()
     return False
 
@@ -132,7 +132,7 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                         tmp_bms_log = PYLONTECH.read_BMS(N_MODULES=Battery_Modules)
                     except:
                         error_counter_pylontech=error_counter_pylontech+1
-                        runtime_error_pylontech(error_counter_pylontech)
+                        runtime_error_pylontech(ERROR_COUNTER=error_counter_pylontech)
                     
                     try:
                         tmp_xw_log = Inv.read_Inverter_All()
@@ -162,7 +162,7 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                             PYLONTECH.log_BMS(PATH=Log_file_path,BMS_LIST=tmp_bms_log)
                         except:
                             error_counter_pylontech=error_counter_pylontech+1
-                            runtime_error_pylontech(error_counter_pylontech)
+                            runtime_error_pylontech(ERROR_COUNTER=error_counter_pylontech)
                     if SQL_Log:
                         try:
                             SQL.write_BMS(BMS_LIST=tmp_bms_log)
@@ -180,7 +180,7 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                              +Inv.read_Inverter_Status())
                     except:
                         error_counter_conext=error_counter_conext+1
-                        if runtime_error_conext(Inv,error_counter_conext):
+                        if runtime_error_conext(Inv,ERROR_COUNTER=error_counter_conext):
                             error_counter_conext=0
 
 
@@ -203,7 +203,7 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                                 print('Grid Support: OFF')
                     except:
                         error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(Inv, error_counter_conext):
+                        if runtime_error_conext(Inv, ERROR_COUNTER=error_counter_conext, MODBUS_ADDRESS=Modbus_Address_XW):
                             error_counter_conext=0
 
 
