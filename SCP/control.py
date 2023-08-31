@@ -119,9 +119,9 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
 
         # ---------------------------------------------------------------------------#
         try:  # Program Loop
-            print('Write Battery Low Voltage Cut: '+str(Inv.write_Low_Battery_Cut_Out(Battery_low))+'Volt')
+            print('Write Battery Low Voltage Cut: '+str(Inv.write_Low_Battery_Cut_Out(Battery_low))+' Volt')
             time.sleep(1)
-            print('Write Battery Hysteresis: '+str(Inv.write_Hysteresis(Battery_hysteresis))+'Volt')
+            print('Write Battery Hysteresis: '+str(Inv.write_Hysteresis(Battery_hysteresis))+' Volt')
             time.sleep(1)
             error_counter_pylontech=0
             error_counter_conext = 0
