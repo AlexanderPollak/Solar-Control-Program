@@ -180,7 +180,7 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                              +Inv.read_Inverter_Status())
                     except:
                         error_counter_conext=error_counter_conext+1
-                        if runtime_error_conext(Inv,ERROR_COUNTER=error_counter_conext):
+                        if runtime_error_conext(Inv,ERROR_COUNTER=error_counter_conext, MODBUS_ADDRESS=Modbus_Address_XW):
                             error_counter_conext=0
 
 
