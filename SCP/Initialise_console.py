@@ -3,7 +3,7 @@
 import serial
 import time
 
-serial_interface='/dev/ttyUSB0'
+serial_interface='/dev/ttyUSB1'
 #serial_interface='/dev/ttyr00'
 
 pylontech = serial.Serial(serial_interface,1200, timeout=0.05)
