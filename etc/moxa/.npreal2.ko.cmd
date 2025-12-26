@@ -1,0 +1,1 @@
+savedcmd_/usr/local/Solar-Control-Program/etc/moxa/npreal2.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /usr/local/Solar-Control-Program/etc/moxa/npreal2.ko /usr/local/Solar-Control-Program/etc/moxa/npreal2.o /usr/local/Solar-Control-Program/etc/moxa/npreal2.mod.o

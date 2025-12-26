@@ -1,0 +1,1 @@
+savedcmd_/usr/local/Solar-Control-Program/etc/moxa/npreal2.mod := printf '%s\n'   npreal2.o | awk '!x[$$0]++ { print("/usr/local/Solar-Control-Program/etc/moxa/"$$0) }' > /usr/local/Solar-Control-Program/etc/moxa/npreal2.mod

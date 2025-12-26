@@ -8,7 +8,7 @@ def main():
     
     # Import SCP gonfiguration values from scp.cfg file in etc directory
     config = configparser.ConfigParser()
-    config.read('/usr/local/solar-control-program/etc/scp.cfg') # Location of config file
+    config.read('/usr/local/Solar-Control-Program/etc/scp.cfg') # Location of config file
 
     # Parse values into the control function.
 

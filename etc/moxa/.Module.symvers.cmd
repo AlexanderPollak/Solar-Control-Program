@@ -1,0 +1,1 @@
+savedcmd_/usr/local/Solar-Control-Program/etc/moxa/Module.symvers :=  scripts/mod/modpost -M -m -a      -o /usr/local/Solar-Control-Program/etc/moxa/Module.symvers -T /usr/local/Solar-Control-Program/etc/moxa/modules.order -i Module.symvers -e 
