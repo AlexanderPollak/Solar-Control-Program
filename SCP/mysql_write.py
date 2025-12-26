@@ -434,18 +434,18 @@ class MySQL_com():
             return False
 
 
-        try:
+        #try:
             # Executing the SQL command
-            cursor.executemany(tmp_sql, tmp_val)
+        cursor.executemany(tmp_sql, tmp_val)
             #print(cursor.rowcount, "records inserted.")
             # Commit your changes in the database
-            self._port.commit()
+        self._port.commit()
             #print("successfully send data to database")
-            return True
-        except:
+        return True
+        #except:
             # Rolling back in case of error
-            self._port.rollback()
-            print("Failed to send data to database")
-            return False
+        #    self._port.rollback()
+        #    print("Failed to send data to database")
+        #    return False
 
 
