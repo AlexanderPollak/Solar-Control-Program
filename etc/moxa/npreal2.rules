@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", ACTION=="add", RUN+="/usr/lib/npreal2/driver/mxrmtty"

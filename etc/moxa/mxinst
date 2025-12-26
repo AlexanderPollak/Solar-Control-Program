@@ -1,0 +1,590 @@
+#!/bin/bash
+##########################################################################
+#   Copyright (C) 2003  Moxa Inc.
+#   All Rights Reserved.
+#
+#
+# Version History :
+#   date        author      comment
+#   12/04/2003  James       first version
+#   07/01/2004  James       compatible with Real TTY V1
+##########################################################################
+################################################################################
+# define value and default value setting
+################################################################################
+DirTmp=$0
+DirTmp=${DirTmp%/mxinst}
+TempDir=$DirTmp
+
+NPPATH="/usr/lib/npreal2"
+ProductName="MOXA NPort Server Real TTY Driver"
+ProductVer=`awk '{if($2=="NPREAL_VERSION"){print $3}}' np_ver.h`
+OS_DEF=""
+Device=""
+check=""
+EntryPwd=`pwd`
+NET_TIMEOUT=10
+
+TTYNAME="ttyr"
+
+driverPath="/usr/lib/npreal2/driver"
+MX_MOD=npreal2
+udevPath="/etc/udev/rules.d"
+npreal2Rules="60-npreal2.rules"
+
+#OS Distribution
+OS_ID=0
+DEBIAN_ID=1
+UBUNTU_ID=2
+CENTOS_ID=3
+KYLIN_ID=4
+FEDORA_ID=5
+ROCKY_ID=6
+REDHAT_ID=7
+
+#Parameters
+MX_VERSION=6
+MX_PATCH_LEVEL=8
+MX_SUBLEVEL=5
+MX_VERSION_CODE=$(( ($MX_VERSION<<16)+($MX_PATCH_LEVEL<<8)+$MX_SUBLEVEL ))
+MX_VERSION_MIN=$(( ($MX_VERSION<<16)+(0<<8)+0 ))
+
+K_MODULE_VERSION=$(uname -r)
+K_RELEASE=$(echo $K_MODULE_VERSION | sed -e "s/-.*//g")
+K_VERSION=$(echo $K_RELEASE | cut -d '.' -f 1)
+K_PATCH_LEVEL=$(echo $K_RELEASE | cut -d '.' -f 2)
+K_SUBLEVEL=$(echo $K_RELEASE | cut -d '.' -f 3)
+K_VERSION_CODE=$(( ($K_VERSION<<16)+($K_PATCH_LEVEL<<8)+$K_SUBLEVEL ))
+
+K_SOURCE=/lib/modules/$K_MODULE_VERSION/build
+LINUX_DIS=$(grep '[0-9]' /etc/issue )
+
+################################################################################
+# interrupt_quit1()
+#   to quit install by interrupt or quit
+################################################################################
+interrupt_quit1() {
+    echo "\nInstallation aborted by INTERRUPT !"
+    exit 1
+}
+################################################################################
+# interrupt_quit2()
+#   to quit install by interrupt or quit
+################################################################################
+interrupt_quit2() {
+    echo "\nInstallation aborted by INTERRUPT !"
+    clean_tempfile
+    exit 1
+}
+
+interrupt_nothing1() {
+    exit 1
+}
+
+interrupt_nothing2() {
+    clean_tempfile
+    exit 1
+}
+
+################################################################################
+# clean_tempfile()
+################################################################################
+#clean_tempfile () {
+#    [ -d $TempDir ] && {
+#        rm -rf $TempDir > /dev/null 2>&1
+#    }
+#    [ -d $NPPATH ] && {
+#        rm -rf $NPPATH > /dev/null 2>&1
+#    }
+#    sync; sync
+#}
+
+clean_tempfile () {
+     sync;
+}
+################################################################################
+# get_OsName()
+#   get the OS name.
+################################################################################
+get_OsName() {
+
+	id=`awk -F= '$1=="ID" { print $2 ;}' /etc/os-release`	
+
+    if [ $id="rocky" ]
+    then
+        OS_ID=$ROCKY_ID
+	else
+		OS_ID=0
+    fi
+}
+
+################################################################################
+# print_usage()
+################################################################################
+print_usage() {
+	echo "Usage   : # ./mxinst [options]"
+	echo "Options : polling - Polling non-exist NPort without blocking tty"
+	echo "          m64 - Only for fixing compile-time errors with 64-bit openssl"
+	echo "          mppc64 - For PowerPC64 only"
+	echo "          no_udev_rule - Ignore udev rules to keep redundant tty files"
+	echo "          cmd_timeout - The timeout (second) that driver connect to NPort. Default is 10 seconds."
+}
+
+
+################################################################################
+# check_env()
+#   Check the environment for installation
+################################################################################
+check_env() {
+#Check kernel source
+if test  ! -e $K_SOURCE
+then
+echo "*********************************ERROR********************************"
+echo " Unable to locate matching source for kernel $K_MODULE_VERSION."
+echo " Please install proper kernel-header/source \"first\","
+echo " if you still have issue, you can contact support@moxa.com."
+echo "**********************************************************************"
+exit 1
+fi
+
+#Check supported kernel version
+if test $MX_VERSION_MIN -gt $K_VERSION_CODE
+then
+echo "********************************WARNING**********************************"
+echo " $ProductName only support kernel $MX_VERSION.0 or later versions."
+echo " That may not be compatible with Linux Kernel versions $K_MODULE_VERSION ."
+echo " To download the available driver, please visit Moxa at: http://www.moxa.com"
+echo " If you have questions, please contact Moxa support at: support@moxa.com"
+echo "*************************************************************************"
+echo "Press enter to continue..."
+read any
+fi
+
+#Check supported kernel version
+if test $MX_VERSION_CODE -lt $K_VERSION_CODE
+then
+echo "********************************WARNING**********************************"
+echo " $ProductName has been tested under kernel $MX_VERSION.$MX_PATCH_LEVEL.$MX_SUBLEVEL."
+echo " That may not be compatible with Linux Kernel versions $K_MODULE_VERSION ."
+echo " To download the available driver, please visit Moxa at: http://www.moxa.com"
+echo " If you have questions, please contact Moxa support at: support@moxa.com"
+echo "*************************************************************************"
+echo "Press enter to continue..."
+read any
+fi
+}
+
+########################################################
+#
+# Main procedures
+# To read the shell program input argument and process it.
+#
+########################################################
+trap interrupt_quit1 1 3 9 15           # trap signal
+trap interrupt_nothing1 2
+
+if [ "$#" -ge 6 ]
+then
+    print_usage
+    exit 1
+fi
+
+POLLING_MODE=""
+SP_MODE=0
+M64_MODe=0
+PPC_MODE=0
+CONCUR_MODE=0
+NO_UDEV=0
+
+idx=0
+
+for i in "$@";
+do
+	idx=$(($idx+1))
+
+	if [ "$i" = "cmd_timeout" ]
+	then
+		#echo The NUM is $idx
+		value_idx="$(($idx+1))"
+	fi
+
+	if [ "$idx" = "$value_idx" ]
+	then
+		#echo The VAL is $(($i))
+		NET_TIMEOUT=$(($i))
+	fi
+
+	if [ "$i" = "polling" ]
+	then
+		POLLING_MODE="-DOFFLINE_POLLING"
+	fi
+
+	if [ "$i" = "m64" ]
+	then
+		M64_MODE=1
+	fi
+
+	if [ "$i" = "mppc64" ]
+	then
+		PPC_MODE=1
+	fi
+	
+	if [ "$i" = "no_udev_rule" ]
+	then
+		NO_UDEV=1
+	fi
+
+	if [ "$i" = "--help" ]
+	then
+		print_usage
+		exit 1
+	fi
+
+done
+
+if [ "$(($NET_TIMEOUT))" = "0" ]
+then
+    echo 'The cmd_timeout parameter is invalid!'
+    exit 0
+fi
+
+echo -n "
+===============================================================================
+Copyright (C) 2002-2022  Moxa Inc.
+All Rights Reserved.
+
+$ProductName "
+
+echo -n $ProductVer | sed s/\"//g
+
+echo " Installation.
+System Information: Kernel `uname -r`; Machine `uname -m`.
+===============================================================================
+"
+
+check_env 
+
+get_OsName
+
+trap interrupt_quit2 1 3 9 15       # trap signal
+trap interrupt_nothing2 2           # trap signal SIGINT
+
+########################################################
+# check configuration file. (npreal2d.cf)
+########################################################
+if [ -f /usr/lib/npreal2/driver/npreal2d.cf ]
+then
+    echo 'The Real TTY Driver has been installed in your system.'
+    echo 'Continue to install will overwrite the old driver.'
+    echo 'Do you want to continue installing? [y/N].'
+
+    read reinstall 
+    case $reinstall in
+    [nN])
+        exit 0
+        ;;
+    [yY])
+	    reinstall='Y'
+        ;;
+    *)
+        exit 0
+        ;;
+    esac
+fi
+
+########################################################
+# rmmove module
+########################################################
+ps -ef | grep npreal2d | awk '$0 !~ /grep/ {system("kill -15 "$2)}'
+ps -ef | grep npreal2d | awk '$0 !~ /grep/ {system("kill -9 "$2)}'
+lsmod | grep npreal2 |
+awk '$0 != "" {system("rmmod npreal2")}'
+
+########################################################
+# Check conflict name
+########################################################
+rm -f tmp_conflict > /dev/null 2>&1
+find /sys/devices -name ''$TTYNAME'[0-9]*' > tmp_conflict
+
+reg='^tty[a-z,A-Z]{1,4}$'
+
+TTYN=""
+
+while [ -s tmp_conflict ]; do
+	echo
+	echo 'The TTY name : '$TTYNAME' has been used in the system,'
+	echo 'you must specify a new tty name to continue.'
+	echo 'Please enter the new name with the most 4 trailing letters. e.g.:ttyMoxa' 
+	read -p 'tty[a-z,A-Z] : ' TTYN
+
+	while [[ ! $TTYN =~ $reg ]]
+	do
+		echo 'The format is wrong!'
+		echo 'Please enter the new name with the most 4 trailing letters. e.g.:ttyMoxa'
+		read -p 'tty[a-z,A-Z] : ' TTYN
+		echo 
+	done
+	TTYNAME=$TTYN
+
+	rm -f tmp_conflict > /dev/null 2>&1
+	find /sys/devices -name ''$TTYNAME'[0-9]*' > tmp_conflict
+
+done
+
+rm -f tmp_conflict > /dev/null 2>&1
+
+if [ "$reinstall" = "Y" ]
+then
+	echo '***********************************************************'
+	echo '* NOTE:                                                   *'
+	echo '*   The Real TTY driver has been installed previously.    *'
+	echo '*   According to the TTY naming rule is changed, the      *'
+	echo '*   driver will assign this name to the new TTYs.         *'
+	echo '*   However, your previous TTY name will not be changed   *'
+	echo '*   until you modify the configuration manually.          *'
+	echo '*   Please edit /usr/lib/npreal2/driver/npreal2d.cf if    *'
+	echo '*   you need to change the tty name.                      *'
+	echo '***********************************************************'
+	read -p 'Press enter to continue...'
+	make clean
+fi
+
+
+########################################################
+# install driver
+########################################################
+echo ''
+
+echo "Building driver..."
+
+mkdir -p /lib/modules/`uname -r`/kernel/drivers/char > /dev/null 2>&1
+mkdir -p /lib/modules/`uname -r`/misc > /dev/null 2>&1
+
+echo
+echo 'If you want to use secure communication with target,'
+echo 'you might choose [y] to enable the SSL function.'
+echo 'Note: This function support RealCOM with secure mode only.'
+echo 'Do you want to enable secure function? [y/N].'
+
+read check
+check=${check:-n}
+case $check in
+[nN])
+    if [ "$POLLING_MODE" != "" ]
+    then
+        make clean
+    fi
+    make all PATH1=$(pwd) POLLING=$POLLING_MODE TTY=$TTYNAME OS_TYPE="-DOS_TYPE=$OS_ID" NP_TIMEOUT=$NET_TIMEOUT 
+    ;;
+[yY])
+    if [ "$POLLING_MODE" != "" ]
+    then
+        make clean
+    fi
+
+    if [ "$PPC_MODE" = "1" ]
+    then
+        make ppc64 PATH1=$(pwd) POLLING=$POLLING_MODE OS_TYPE="-DOS_TYPE=$OS_ID"
+    else
+        if [ "$M64_MODE" = "1" ]
+        then
+            make ssl64 PATH1=$(pwd) POLLING=$POLLING_MODE OS_TYPE="-DOS_TYPE=$OS_ID"
+        else
+            make ssl PATH1=$(pwd) POLLING=$POLLING_MODE TTY=$TTYNAME OS_TYPE="-DOS_TYPE=$OS_ID" NP_TIMEOUT=$NET_TIMEOUT 
+        fi
+    fi
+    ;;
+*)
+    if [ "$POLLING_MODE" != "" ]
+    then
+        make clean
+    fi
+    make all PATH1=$(pwd) POLLING=$POLLING_MODE TTY=$TTYNAME OS_TYPE="-DOS_TYPE=$OS_ID" NP_TIMEOUT=$NET_TIMEOUT 
+    ;;
+esac
+
+[ "$?" = "0" ] || {
+    echo ""
+    echo "FAILED !!! Please check above message."
+    echo ""
+    exit 0
+}
+
+echo "Check Driver..."
+[ -e $MX_MOD.o -a -e npreal2d.o -a -e npreal2d_redund ] || {
+    echo "FAILED !!!"
+    echo " "
+    echo "Install Not Completed !"
+    echo " "
+    clean_tempfile
+    exit 0
+}
+
+
+########################################################
+# Process File
+########################################################
+#$TempDir/npfile
+
+flag=0
+
+mkdir -p $NPPATH > /dev/null 2>&1
+mkdir -p $driverPath > /dev/null 2>&1
+mkdir -p $NPPATH/tmp > /dev/null 2>&1
+mkdir -p $driverPath/certificate > /dev/null 2>&1
+mkdir -p $driverPath/local_cert > /dev/null 2>&1
+
+[ -f /usr/lib/npreal2/driver/npreal2d.cf ] || {
+    echo -n "Copying configurations files ... "
+    cp -f $(pwd)/npreal2d.cf $driverPath
+
+    flag=$?
+    [ $flag = 0 ] ||    {
+        echo "FAILED! ($flag)"
+        exit 0
+    }
+    echo "OK!"
+}
+
+
+### driver ###
+NowPath=$(pwd)
+echo -n "Copying driver files ... "
+cp -f $NowPath/killp       $driverPath
+cp -f $NowPath/npreal2d_redund    $driverPath
+cp -f $NowPath/npreal2d    $driverPath
+#cp -f $NowPath/$MX_MOD   $driverPath
+cp -f $NowPath/Makefile    $driverPath
+cp -f $NowPath/npreal2d.c  $driverPath
+cp -f $NowPath/npreal2.h  $driverPath
+cp -f $NowPath/npreal2d.cf $driverPath/config
+cp -f $NowPath/npreal2.c   $driverPath
+#cp -f $NowPath/linux.mak   $driverPath
+cp -f $NowPath/mxaddsvr    $driverPath
+cp -f $NowPath/mxdelsvr    $driverPath
+cp -f $NowPath/mxcfmat     $driverPath
+cp -f $NowPath/mxloadsvr   $driverPath
+cp -f $NowPath/mxmknod     $driverPath
+cp -f $NowPath/mxrmnod     $driverPath
+cp -f $NowPath/mxuninst    $driverPath
+sed -i -e 's/ttyr/'$TTYNAME'/g' $driverPath/mxuninst
+cp -f $NowPath/mxsetsec    $driverPath
+cp -f $NowPath/mxcert	   $driverPath
+cp -f $NowPath/README.TXT  $NPPATH
+cp -f $NowPath/VERSION.TXT $NPPATH
+echo "OK!"
+
+### module ###
+#cp -f $driverPath/npreal2.o /lib/modules/`uname -r`/kernel/drivers/char
+#cp -f $driverPath/npreal2.o /lib/modules/`uname -r`/misc
+
+
+ps -ef | grep npreal2 |
+awk '$0 !~ /grep/ {system("kill -15 "$2)}'
+ps -ef | grep npreal2 |
+awk '$0 !~ /grep/ {system("kill -9 "$2)}'
+
+########################################################
+# install startup service
+#   Startup service management:
+#   (1) Once the realtty is installed, npreal2.ko is alway loaded.
+#   (2) Service daemon npreal2d & npreal2d_redund are auto-loaded only if related ports are configured.
+#       The system will restores tty ports after sytem restart.
+#   (4) Only standard installation (mxinst) supports startup service.
+#########################################################
+# find the correct path of bash 
+bashpath=$(which bash)
+shellheader="#!"${bashpath}
+echo ${shellheader} > $driverPath/mxstopsvr
+cat $NowPath/mxstopsvr >> $driverPath/mxstopsvr
+chmod +x $driverPath/mxstopsvr
+
+# systemctl script
+touch /usr/lib/npreal2/driver/load_npreal2.sh
+echo ${shellheader} > /usr/lib/npreal2/driver/load_npreal2.sh 2>&1
+echo 'modprobe npreal2 ttymajor=33 calloutmajor=38 verbose=0' >> /usr/lib/npreal2/driver/load_npreal2.sh 2>&1
+echo 'if [ -e /usr/lib/npreal2/driver/state.start ]; then' >> /usr/lib/npreal2/driver/load_npreal2.sh 2>&1
+echo '    /usr/lib/npreal2/driver/mxloadsvr' >> /usr/lib/npreal2/driver/load_npreal2.sh 2>&1 
+echo 'fi' >> /usr/lib/npreal2/driver/load_npreal2.sh 2>&1 
+chmod +x /usr/lib/npreal2/driver/load_npreal2.sh
+
+echo '[Unit]' > /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'Description=Moxa NPort Driver' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'Requires=systemd-hostnamed.service' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'After=remote-fs.target' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo '[Service]' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'Type=forking' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'ExecStart=/usr/lib/npreal2/driver/load_npreal2.sh' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'ExecStop=/usr/lib/npreal2/driver/mxstopsvr' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'RemainAfterExit=true' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo '[Install]' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+echo 'WantedBy=multi-user.target' >> /usr/lib/npreal2/tmp/npreal2.service 2>&1
+cp /usr/lib/npreal2/tmp/npreal2.service /etc/systemd/system 2>&1
+chmod 664 /etc/systemd/system/npreal2.service 2>&1
+
+systemctl enable npreal2
+
+rm -f /usr/lib/npreal2/tmp/npreal2.service > /dev/null 2>&1
+
+
+########################################################
+# load module
+########################################################
+echo -n "Load driver..."
+modprobe $MX_MOD 
+[ "$?" = "0" ] || {
+    echo ""
+    echo "Failed!!!  please contact the provider"
+    echo ""
+    exit 0
+}
+echo "OK!"
+
+#######################################################
+# install udev service
+########################################################
+if [ "$NO_UDEV" -ne "1" ]
+then
+	echo -n "Install udev service..."
+	# find the correct path of bash 
+	bashpath=$(which bash)
+	shellheader="#!"${bashpath}
+
+	echo ${shellheader} > $driverPath/mxrmtty
+	cat $NowPath/mxrmtty >> $driverPath/mxrmtty
+	sed -i -e 's/ttyr/'$TTYNAME'/g' $driverPath/mxrmtty
+	chmod +x $driverPath/mxrmtty
+	cp -f $NowPath/npreal2.rules    $udevPath/$npreal2Rules
+	udevadm control --reload
+
+	#echo ${shellheader} > $driverPath/mxstopsvr
+	#cat $NowPath/mxstopsvr >> $driverPath/mxstopsvr
+	#chmod +x $driverPath/mxstopsvr
+
+	echo "OK!"
+else
+	echo -n "Install udev service...Ignored"
+fi
+
+########################################################
+# Delete the line with npreal2 and append
+# "modprobe npreal2" in /etc/rc.d/rc.local.
+########################################################
+
+
+cd $NPPATH/driver
+./mxloadsvr install
+echo ''
+
+echo "
+===============================================================================
+Installation process is completed.
+The all driver files are installed on /usr/lib/npreal2/driver.
+Now you can "cd /usr/lib/npreal2/driver" and run "./mxaddsvr" to add tty port.
+===============================================================================
+"
+
+#[ -d $TempDir ] && {
+#    rm -rf $TempDir > /dev/null 2>&1
+#}
+

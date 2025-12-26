@@ -1,0 +1,32 @@
+#
+# This script is used to stop all processes
+#
+pidFile=/tmp/find-proc-pid
+nprealProc=npreal2d
+redundProc=npreal2d_redund
+
+#
+# kill redundant process
+#
+ps -ef | grep ${redundProc} | grep -v grep > ${pidFile}
+
+if [ -s $pidFile ]
+then
+	awk '{system("kill -9 "$2)}' $pidFile
+fi
+
+rm -f $pidFile
+
+#
+# kill npreal2d process
+#
+ps -ef | grep ${nprealProc} | grep -v grep > ${pidFile}
+
+if [ -s $pidFile ]
+then
+	awk '{system("kill -9 "$2)}' $pidFile
+fi
+
+rm -f $pidFile
+
+

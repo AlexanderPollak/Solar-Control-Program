@@ -1,0 +1,280 @@
+#!/bin/bash
+
+CERT_DIR_SERVER="/usr/lib/npreal2/driver/local_cert"
+CERT_DIR_CLIENT="/usr/lib/npreal2/driver/certificate"
+
+LOCAL_KEY_FILE="local_key.pem"
+LOCAL_CERT_FILE="local_cert.pem"
+
+# Function to trim trailing slash
+trim_trailing_slash() {
+    local DIR_PATH="$1"
+    echo "${DIR_PATH%/}"
+}
+
+# Function to rehash client certificates
+rehash_client_certs() {
+    local DIR_PATH="$1"
+    for PEM_FILE in "$DIR_PATH"/*.pem; do
+        if [ -f "$PEM_FILE" ]; then
+            HASH=$(openssl x509 -hash -noout -in "$PEM_FILE")
+            COUNT=0
+            while [ -f "$DIR_PATH/$HASH.$COUNT" ]; do
+                COUNT=$((COUNT + 1))
+            done
+            ln -sf "$PEM_FILE" "$DIR_PATH/$HASH.$COUNT"
+        fi
+    done
+}
+
+# Check if CERT_DIR_SERVER and CERT_DIR_CLIENT exist
+if [ ! -d "$CERT_DIR_SERVER" ] || [ ! -d "$CERT_DIR_CLIENT" ]; then
+    echo "Error: The directories '$CERT_DIR_SERVER' and/or '$CERT_DIR_CLIENT' do not exist."
+    echo "Please execute mxinst before running this script."
+    exit 1
+fi
+
+# Check input parameters and display usage instructions if insufficient arguments are provided
+if [ $# -lt 1 ]; then
+    echo "Usage:"
+    echo "  Server mode:"
+    echo "    $0 server -import <PEM_PATH>"
+    echo "      Imports a PEM file containing a private key and certificate into the server's certificate directory."
+    echo "      <PEM_PATH>: Path to the PEM file containing the private key and certificate."
+    echo ""
+    echo "    $0 server -export [<EXPORT_PATH>]"
+    echo "      Exports the server's certificate from the local certificate directory to the specified export path."
+    echo "      If <EXPORT_PATH> is not provided, the certificate is exported to the current directory."
+    echo "      <EXPORT_PATH>: (Optional) Path to export the server certificate."
+    echo ""
+    echo "    $0 server -regen"
+    echo "      Regenerates the server's certificate and private key in the server's certificate directory."
+    echo ""
+    echo "  Client mode:"
+    echo "    $0 client -import <CLI_PEM_PATH>"
+    echo "      Imports a PEM file containing a certificate into the client's certificate directory."
+    echo "      The PEM file can contain any supported format."
+    echo "      <CLI_PEM_PATH>: Path to the PEM file containing the client certificate."
+    echo ""
+    echo "    $0 client -list"
+    echo "      Lists all client certificates stored in the client's certificate directory."
+    echo ""
+    echo "    $0 client -del <PEM_NAME>"
+    echo "      Deletes the specified client certificate from the client's certificate directory."
+    echo "      <PEM_NAME>: Name of the PEM file to delete."
+    exit 1
+fi
+
+MODE="$1"
+shift
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    case $key in
+        -import)
+            if [ $# -lt 2 ]; then
+                echo "Error: Missing PEM_PATH for import."
+                exit 1
+            fi
+            PEM_PATH="$2"
+            shift
+            shift
+
+            # Check if the PEM file exists
+            if [ ! -f "$PEM_PATH" ]; then
+                echo "Error: PEM file '$PEM_PATH' does not exist."
+                exit 1
+            fi
+
+            # Extract certificate
+            CERTIFICATE=$(awk '/-----BEGIN CERTIFICATE-----/{flag=1} flag; /-----END CERTIFICATE-----/{flag=0}' "$PEM_PATH")
+
+            # Check extraction success
+            if [ -z "$CERTIFICATE" ]; then
+                echo "Error: Failed to extract certificate from '$PEM_PATH'."
+                exit 1
+            fi
+
+            if [ "$MODE" = "server" ]; then
+                # Import operation (server mode)
+                # Store certificate in respective files
+                cp "$PEM_PATH" "$CERT_DIR_SERVER/$LOCAL_KEY_FILE"
+                echo "$CERTIFICATE" > "$CERT_DIR_SERVER/$LOCAL_CERT_FILE"
+
+                echo "Certificate imported successfully for server."
+            elif [ "$MODE" = "client" ]; then
+                # Import operation (client mode)
+                PEM_FILE=$(basename "$PEM_PATH")
+                TARGET_FILE="$CERT_DIR_CLIENT/$PEM_FILE"
+
+                # Check if the target file already exists
+                if [ -f "$TARGET_FILE" ]; then
+                    read -p "File $PEM_FILE already exists. Do you want to overwrite it? (y/n): " choice
+                    case "$choice" in
+                        y|Y )
+                            # Delete existing hash files
+                            HASH=$(openssl x509 -hash -noout -in "$TARGET_FILE")
+                            COUNT=0
+                            while [ -f "$CERT_DIR_CLIENT/$HASH.$COUNT" ]; do
+                                rm -f "$CERT_DIR_CLIENT/$HASH.$COUNT"
+                                COUNT=$((COUNT + 1))
+                            done
+                            cp "$PEM_PATH" "$TARGET_FILE"
+                            ;;
+                        n|N )
+                            echo "Import canceled."
+                            exit 0
+                            ;;
+                        * )
+                            echo "Invalid choice. Exiting."
+                            exit 1
+                            ;;
+                    esac
+                else
+                    cp "$PEM_PATH" "$TARGET_FILE"
+                fi
+
+                # Rehash files in target directory
+                rehash_client_certs "$CERT_DIR_CLIENT"
+
+                echo "Certificate imported successfully for client."
+
+                # Check if the executable exists
+                if [ -x "./mxloadsvr" ]; then
+                    # Reload server setting
+                    ./mxloadsvr
+                else
+                    echo "Error: Could not find the mxloadsvr."
+                fi
+            fi
+            ;;
+        -list)
+            if [ "$MODE" = "client" ]; then
+                # List operation (client mode)
+                echo "Listing client certificates:"
+                ls -1 "$CERT_DIR_CLIENT"/*.pem
+            else
+                echo "Error: Option '-list' is only available in 'client' mode."
+                exit 1
+            fi
+            exit 0
+            ;;
+        -del)
+            if [ "$MODE" = "client" ]; then
+                if [ $# -lt 2 ]; then
+                    echo "Error: Missing PEM_NAME for deletion."
+                    exit 1
+                fi
+                PEM_NAME="$2"
+                shift
+                shift
+
+                # Deletion operation (client mode)
+                if [ -f "$CERT_DIR_CLIENT/$PEM_NAME" ]; then
+                    HASH=$(openssl x509 -hash -noout -in "$CERT_DIR_CLIENT/$PEM_NAME")
+                    COUNT=0
+                    while [ -f "$CERT_DIR_CLIENT/$HASH.$COUNT" ]; do
+                        rm -f "$CERT_DIR_CLIENT/$HASH.$COUNT"
+                        COUNT=$((COUNT + 1))
+                    done
+                    rm -f "$CERT_DIR_CLIENT/$PEM_NAME"
+                    echo "Deleted client certificate: $PEM_NAME"
+                    rehash_client_certs "$CERT_DIR_CLIENT"
+                else
+                    echo "Error: Certificate '$PEM_NAME' not found."
+                    exit 1
+                fi
+            else
+                echo "Error: Option '-del' is only available in 'client' mode."
+                exit 1
+            fi
+            exit 0
+            ;;
+        -export)
+            EXPORT_PATH=$(trim_trailing_slash "$2")
+
+            if [ -z "$EXPORT_PATH" ]; then
+                EXPORT_PATH="."
+            fi
+
+            # Check if the export path is a vaild directory
+            if [ ! -d "$EXPORT_PATH" ]; then
+                echo "Error: EXPORT_PATH '$EXPORT_PATH' is not a valid directory."
+                exit 1
+            fi
+
+            if [ "$MODE" = "server" ]; then
+                # Ensure the directory exists
+                mkdir -p "$EXPORT_PATH"
+
+                # Check if server certificate exists
+                if [ ! -f "$CERT_DIR_SERVER/$LOCAL_CERT_FILE" ]; then
+                    echo "Error: Server certificate not found. Import certificate first."
+                    exit 1
+                fi
+
+                # Copy the certificate to the export path
+                cp "$CERT_DIR_SERVER/$LOCAL_CERT_FILE" "$EXPORT_PATH/$LOCAL_CERT_FILE"
+
+                # Change ownership to original user if script is run with sudo
+                CURRENT_USER=$(whoami)
+                if [ "$CURRENT_USER" = "root" ]; then
+                    ORIGINAL_USER="$SUDO_USER"
+                    ORIGINAL_GROUP=$(id -gn "$SUDO_USER")
+
+                    chown "$ORIGINAL_USER:$ORIGINAL_GROUP" "$EXPORT_PATH/$LOCAL_CERT_FILE"
+                else
+                    # Otherwise, use current user and group
+                    chown "$CURRENT_USER:$CURRENT_GROUP" "$EXPORT_PATH/$LOCAL_CERT_FILE"
+                fi
+
+                echo "Certificate exported to: $EXPORT_PATH/$LOCAL_CERT_FILE"
+                echo "Note:"
+                echo "  When exporting certificates for import through a browser, ensure that the user and group ownership of the certificate file and its containing directory match the permissions required by the browser. This will allow the browser to access and import the certificate correctly."
+                exit 0
+            else
+                echo "Error: Option '-export' is only available in 'server' mode."
+                exit 1
+            fi
+            ;;
+        -regen)
+            if [ "$MODE" = "server" ]; then
+                SUBJECT="/C=CA/O=MOXA/CN=NPortRealtty$(date +%s)"
+
+                # Cleanup origin key and certificate
+                if [ -f "$CERT_DIR_SERVER/$LOCAL_KEY_FILE" ]; then
+                    rm $CERT_DIR_SERVER/$LOCAL_KEY_FILE
+                fi
+                if [ -f "$CERT_DIR_SERVER/$LOCAL_CERT_FILE" ]; then
+                    rm $CERT_DIR_SERVER/$LOCAL_CERT_FILE	
+                fi
+
+                # Gernerate the private key
+                openssl genpkey -algorithm RSA -out $CERT_DIR_SERVER/$LOCAL_KEY_FILE -pkeyopt rsa_keygen_bits:2048 > /dev/null 2>&1
+                read -n 1 -s -p "Press any key..."
+                echo
+                # Generate a certificate signing request (CSR)
+                openssl req -new -key $CERT_DIR_SERVER/$LOCAL_KEY_FILE -out  $CERT_DIR_SERVER/csr.pem -subj "$SUBJECT"
+                # Generate a self-signed certificate
+                openssl x509 -req -in  $CERT_DIR_SERVER/csr.pem -signkey $CERT_DIR_SERVER/$LOCAL_KEY_FILE -out  $CERT_DIR_SERVER/$LOCAL_CERT_FILE -days 365 -set_serial 1 > /dev/null 2>&1
+                # Cleanup
+                rm -f  $CERT_DIR_SERVER/csr.pem
+                # Output paths
+                echo "Generate output paths:"
+                echo "Private Key:  $CERT_DIR_SERVER/$LOCAL_KEY_FILE"
+                echo "Certifiacte:  $CERT_DIR_SERVER/$LOCAL_CERT_FILE"
+                exit 0
+            else
+                echo "Error: Option '-regen' is only available in 'server' mode."
+                exit 1
+            fi
+            ;;
+        *)
+            echo "Unknown option: $key"
+            exit 1
+            ;;
+    esac
+done
+
+exit 0

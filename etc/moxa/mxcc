@@ -1,0 +1,172 @@
+#!/bin/sh
+#############################################################################
+# Program:
+#               MOXA Linux driver cross compile script
+#
+# Description:
+#  The script cross compile the MOXA linux driver
+#
+#############################################################################
+
+#save current directory
+CUR_DIR=`pwd`
+#MOXA Driver name
+MOXA_DRIVER="MOXA NPort Real TTY Driver"
+#compile target drivers
+DRIVERS="npreal2"
+#output directory
+OUTPUT_FOLDER="output"
+
+#user input arch
+read -p "Enter target device architecture (ARCH) [arm]: " ARCH
+ARCH=${ARCH:-arm}
+
+#user input cross_compile
+read -p "Enter cross-compile (CROSS_COMPILE) [arm-linux-gnueabihf-]: " CROSS_COMPILE
+CROSS_COMPILE=${CROSS_COMPILE:-arm-linux-gnueabihf-}
+
+#user input target kernel source
+read -p "Enter target device kernel source directory [/moxa/kernel/]: " KDIR
+KDIR=${KDIR:-/moxa/kernel/}
+
+echo
+echo 'If you wish to use secure communication with the NPort 6000 Series device,'
+echo 'choose [Y] to enable the SSL function.'
+echo 'Note: This function supports RealCOM with secure mode in the NPort 6000 Series only.'
+read -p "Do you want to enable SSL function? [y/N]: " SSL
+
+case $SSL in
+[yY])
+	SSL="y"
+    read -p "OpenSSL include path: (OPENSSL_INC): " OPENSSL_INC
+    OPENSSL_INC=${OPENSSL_INC:-""}
+
+    read -p "OpenSSL library path: (OPENSSL_LIB): " OPENSSL_LIB
+    OPENSSL_LIB=${OPENSSL_LIB:-""}
+	;;
+*)
+	SSL="n"
+	;;
+esac
+
+echo
+echo 'The polling mode allows you to open tty port as nonblocking even if the NPort is not connected.'
+read -p "Do you want set the driver to polling mode? [y/N]: " POLLING
+
+case $POLLING in
+[yY])
+	POLLING="y"
+	;;
+*)
+	POLLING="n"
+	;;
+esac
+
+echo "mxcc script: " > $CUR_DIR/build.log
+echo "ARCH = $ARCH" >> $CUR_DIR/build.log
+echo "CROSS_COMPILE = $CROSS_COMPILE" >> $CUR_DIR/build.log
+echo "KDIR = $KDIR" >> $CUR_DIR/build.log
+echo "SSL = $SSL" >> $CUR_DIR/build.log
+echo "POLLING = $POLLING" >> $CUR_DIR/build.log
+echo "OPENSSL_INC = $OPENSSL_INC" >> $CUR_DIR/build.log
+echo "OPENSSL_LIB = $OPENSSL_LIB" >> $CUR_DIR/build.log
+
+export PATH=$PATH:/usr/local/arm-linux-gnueabihf-6.3/usr/bin
+
+#get target kernel source version
+cd $KDIR
+KVER=`make CROSS_COMPILE=$CROSS_COMPILE kernelversion 2>>$CUR_DIR/build.log`
+
+cd $CUR_DIR
+
+KVER_MAJOR=`echo $KVER | cut -f1 -d.`
+KVER_MINOR=`echo $KVER | cut -f2 -d.`
+
+echo "* K_MAJ = $KVER_MAJOR" >> $CUR_DIR/build.log
+echo "* K_MIN = $KVER_MINOR" >> $CUR_DIR/build.log
+
+export PATH=$PATH:/usr/local/arm-linux-gnueabihf-6.3/usr/bin
+echo "PATH = ${PATH}" >> $CUR_DIR/build.log
+
+cat $CUR_DIR/build.log
+
+if [ $POLLING = "y" ]
+then
+	CFLAGS="$CFLAGS -DOFFLINE_POLLING"
+fi
+
+CFLAGS="$CFLAGS -DNO_INIT"
+
+#compile drivers
+echo "--- Compile start ----------" >> $CUR_DIR/build.log
+
+if make -C $KDIR M=$CUR_DIR ARCH=$ARCH EXTRA_CFLAGS="$CFLAGS" CROSS_COMPILE=$CROSS_COMPILE KVER_MAJOR=$KVER_MAJOR KVER_MINOR=$KVER_MINOR modules >> $CUR_DIR/build.log 2>&1 ; then
+	echo "Kernel: $MOXA_DRIVER cross-compile is success."
+	echo "make kernel extension successfully." >> $CUR_DIR/build.log
+else
+	echo "Kernel: $MOXA_DRIVER cross-compile is failed"
+	echo "Error: Please check build.log for further information."
+	echo "Error: make kernel extension failed." >> $CUR_DIR/build.log
+	exit
+fi
+
+#copy driver to output folder
+[ ! -d ${CUR_DIR}/${OUTPUT_FOLDER} ] && mkdir "${CUR_DIR}/${OUTPUT_FOLDER}"
+cp ${CUR_DIR}/npreal2.ko "${CUR_DIR}/${OUTPUT_FOLDER}"
+
+#cd $CUR_DIR
+
+if [ $SSL = "y" ]
+then
+	TARGETS="npreal2d_redund tools"
+
+	${CROSS_COMPILE}gcc -c ${CFLAGS} -DSSL_ON -DOPENSSL_NO_KRB5 npreal2d.c -I"${OPENSSL_INC}/"
+	${CROSS_COMPILE}gcc npreal2d.o -o npreal2d -lssl -lcrypto -ldl -lpthread -L"${OPENSSL_LIB}/" -I"${OPENSSL_INC}/"
+
+	if [ "$?" -eq "0" ] ;
+	then
+		echo "npreal2d: $MOXA_DRIVER cross-compile is success."
+		echo "make npreal2d extension successfully." >> $CUR_DIR/build.log
+	else
+		echo "npreal2d: $MOXA_DRIVER cross-compile is failed"
+		echo "Error: Please check build.log for further information."
+		echo "Error: make npreal2d extension failed." >> $CUR_DIR/build.log
+	fi
+
+else
+	TARGETS="npreal2d npreal2d_redund tools"
+fi
+
+for TARGET in $TARGETS
+do
+
+	if make $TARGET CROSS_COMPILE=$CROSS_COMPILE CC=gcc CFLAGS="${CFLAGS}" >> $CUR_DIR/build.log 2>&1 ; then
+		echo "$TARGET: $MOXA_DRIVER cross-compile is success."
+		echo "make $TARGET extension successfully." >> $CUR_DIR/build.log
+	else
+		echo "$TARGET: $MOXA_DRIVER cross-compile is failed"
+		echo "Error: Please check build.log for further information."
+		echo "Error: make $TARGET extension failed." >> $CUR_DIR/build.log
+		exit
+	fi
+
+done
+
+echo "--- Compile finish ----------" >> $CUR_DIR/build.log
+
+TARGETS="npreal2d npreal2d_redund mxaddsvr mxdelsvr mxcfmat mxloadsvr mxsetsec npreal2d.cf mxmknod mxrmnod mxrmtty"
+for TARGET in $TARGETS
+do
+	cp ${CUR_DIR}/${TARGET} "${CUR_DIR}/${OUTPUT_FOLDER}"
+	if [ "$?" -ne "0" ]
+	then
+		echo "Error: Can't copy $TARGET to ${CUR_DIR}/${OUTPUT_FOLDER}"
+		echo "Error: Can't copy $TARGET to ${CUR_DIR}/${OUTPUT_FOLDER}" >> $CUR_DIR/build.log
+		exit
+	fi
+done
+
+echo "*****************************************************************************"
+echo " $MOXA_DRIVER cross-compiling finished."
+echo " When cross compiling is successful, the driver is outputted to ${OUTPUT_FOLDER} folder."
+echo "*****************************************************************************" 
