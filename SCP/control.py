@@ -168,6 +168,8 @@ def control(Serial_Port, Modbus_Host, Modbus_Address_XW, Modbus_Address_MPPT_Wes
                             SQL.write_BMS(BMS_LIST=tmp_bms_log)
                             SQL.write_XW(XW_LIST=tmp_xw_log)
                             SQL.write_MPPT(MPPT_LIST=tmp_mppt_log)
+                            print(tmp_xw_log)
+                            print(tmp_mppt_log)
                         except Exception as error:
                             print("SQL_Log error:", error)
 
