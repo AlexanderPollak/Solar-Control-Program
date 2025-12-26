@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `conext_xw`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `conext_xw` (
   `ts` datetime NOT NULL,
-  `device_name` varchar(16) DEFAULT (NULL),
+  `device_name` varchar(32) DEFAULT (NULL),
   `grid_voltage` float DEFAULT (NULL),
   `grid_current` float DEFAULT (NULL),
   `grid_power` float DEFAULT (NULL),
@@ -43,11 +43,11 @@ CREATE TABLE `conext_xw` (
   `battery_low_voltage` float DEFAULT (NULL),
   `battery_low_voltage_delay` float DEFAULT (NULL),
   `battery_hysteresis` float DEFAULT (NULL),
-  `inverter_status` varchar(16) DEFAULT (NULL),
-  `inverter_active_warnings_status` varchar(16) DEFAULT (NULL),
-  `inverter_active_faults_status` varchar(16) DEFAULT (NULL),
-  `inverter_grid_support_status` varchar(16) DEFAULT (NULL),
-  `inverter_load_shave_status` varchar(16) DEFAULT (NULL),
+  `inverter_status` varchar(32) DEFAULT (NULL),
+  `inverter_active_warnings_status` varchar(32) DEFAULT (NULL),
+  `inverter_active_faults_status` varchar(32) DEFAULT (NULL),
+  `inverter_grid_support_status` varchar(32) DEFAULT (NULL),
+  `inverter_load_shave_status` varchar(32) DEFAULT (NULL),
   PRIMARY KEY (`ts`,`device_name`),
   KEY `idx` (`device_name`,`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

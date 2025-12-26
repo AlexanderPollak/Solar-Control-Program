@@ -350,10 +350,10 @@ class MySQL_com():
             `energy_pv_week` float DEFAULT (NULL),
             `energy_pv_month` float DEFAULT (NULL),
             `energy_pv_year` float DEFAULT (NULL),
-            `mppt_status` varchar(16) DEFAULT (NULL),
-            `mppt_charger_status` varchar(16) DEFAULT (NULL),
-            `mppt_active_warnings_status` varchar(16) DEFAULT (NULL),
-            `mppt_active_faults_status` varchar(16) DEFAULT (NULL),
+            `mppt_status` varchar(32) DEFAULT (NULL),
+            `mppt_charger_status` varchar(32) DEFAULT (NULL),
+            `mppt_active_warnings_status` varchar(32) DEFAULT (NULL),
+            `mppt_active_faults_status` varchar(32) DEFAULT (NULL),
         PRIMARY KEY (`ts`,`device_name`),
         KEY `idx` (`device_name`,`ts`)
         ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -434,18 +434,18 @@ class MySQL_com():
             return False
 
 
-        #try:
+        try:
             # Executing the SQL command
-        cursor.executemany(tmp_sql, tmp_val)
+            cursor.executemany(tmp_sql, tmp_val)
             #print(cursor.rowcount, "records inserted.")
             # Commit your changes in the database
-        self._port.commit()
+            self._port.commit()
             #print("successfully send data to database")
-        return True
-        #except:
+            return True
+        except:
             # Rolling back in case of error
-        #    self._port.rollback()
-        #    print("Failed to send data to database")
-        #    return False
+            self._port.rollback()
+            print("Failed to send data to database")
+            return False
 
 

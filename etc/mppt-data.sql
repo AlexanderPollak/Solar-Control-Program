@@ -38,10 +38,10 @@ CREATE TABLE `conext_mppt` (
   `energy_pv_week` float DEFAULT (NULL),
   `energy_pv_month` float DEFAULT (NULL),
   `energy_pv_year` float DEFAULT (NULL),
-  `mppt_status` varchar(16) DEFAULT (NULL),
-  `mppt_charger_status` varchar(16) DEFAULT (NULL),
-  `mppt_active_warnings_status` varchar(16) DEFAULT (NULL),
-  `mppt_active_faults_status` varchar(16) DEFAULT (NULL),
+  `mppt_status` varchar(32) DEFAULT (NULL),
+  `mppt_charger_status` varchar(32) DEFAULT (NULL),
+  `mppt_active_warnings_status` varchar(32) DEFAULT (NULL),
+  `mppt_active_faults_status` varchar(32) DEFAULT (NULL),
   PRIMARY KEY (`ts`,`device_name`),
   KEY `idx` (`device_name`,`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
